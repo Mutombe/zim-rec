@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New Device Submission</title>
+</head>
+<body>
+    <h2>New Device Submitted</h2>
+    <p>A new device has been submitted for approval:</p>
+    
+    <ul>
+        <li>Device Name: {{ device.device_name }}</li>
+        <li>User: {{ user.get_full_name }} ({{ user.email }})</li>
+        <li>Fuel Type: {{ device.get_fuel_type_display }}</li>
+        <li>Technology: {{ device.get_technology_type_display }}</li>
+        <li>Submitted: {{ device.created_at|date:"DATETIME_FORMAT" }}</li>
+    </ul>
+    
+    <p>Please review the submission in the admin panel.</p>
+    
+    <hr>
+    <p>Best regards,<br>{{ app_name }} Team</p>
+</body>
+</html>

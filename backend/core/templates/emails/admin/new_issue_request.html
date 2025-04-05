@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New Issue Request Submitted</title>
+</head>
+<body>
+    <h2>New Issue Request Received</h2>
+    <p>An issue request requires review:</p>
+    
+    <div style="margin: 20px 0;">
+        <h3>Request Details</h3>
+        <ul>
+            <li>Device: {{ issue_request.device.device_name }}</li>
+            <li>User: {{ user.get_full_name }} ({{ user.email }})</li>
+            <li>Production Period: {{ issue_request.start_date|date }} - {{ issue_request.end_date|date }}</li>
+            <li>Amount: {{ issue_request.production_amount }} MWh</li>
+            <li>Submitted: {{ issue_request.created_at|date:"DATETIME_FORMAT" }}</li>
+        </ul>
+    </div>
+
+    <p>Review request in admin panel: <a href="{{ admin_url }}core/issuerequest/{{ issue_request.id }}/">View Issue Request</a></p>
+    
+    <hr>
+    <p>Best regards,<br>{{ app_name }} Team</p>
+</body>
+</html>

@@ -1,0 +1,146 @@
+from django.db import models
+from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator
+from django.contrib.auth.models import AbstractUser
+
+class User(AbstractUser):
+    company_name = models.CharField(max_length=255, blank=True, null=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+
+    groups = models.ManyToManyField(
+        "auth.Group",
+        verbose_name="groups",
+        blank=True,
+        related_name="custom_user_set",
+        related_query_name="custom_user",
+    )
+    user_permissions = models.ManyToManyField(
+        "auth.Permission",
+        verbose_name="user permissions",
+        blank=True,
+        related_name="custom_user_set",
+        related_query_name="custom_user",
+    )
+
+    def __str__(self):
+        return f"{self.username} - {self.id}"
+    
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    first_name = models.CharField(max_length=100, blank=True)
+    last_name = models.CharField(max_length=100, blank=True)
+    profile_picture = models.ImageField(
+        upload_to="profile_pictures/", null=True, blank=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s Profile"
+
+
+class Device(models.Model):
+    STATUS_CHOICES = [
+        ('draft', 'Draft'),
+        ('submitted', 'Submitted'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+
+    FUEL_TECHNOLOGY_MAP = {
+        'ES100': ['TC110', 'TC120', 'TC130', 'TC140'],
+        'ES200': ['TC210', 'TC220'],
+        'ES300': ['TC310', 'TC320', 'TC330'],
+        'ES400': ['TC410', 'TC411', 'TC421', 'TC422', 'TC423', 'TC424'],
+        'ES500': ['TC510', 'TC520', 'TC530'],
+    }
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='devices')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    
+    # General Information
+    device_name = models.CharField(max_length=255)
+    issuer_organisation = models.CharField(max_length=255)
+    default_account_code = models.CharField(max_length=255, blank=True, null=True)
+    
+    # Technical Information
+    fuel_type = models.CharField(max_length=10)
+    technology_type = models.CharField(max_length=10)
+    capacity = models.DecimalField(
+        max_digits=10, 
+        decimal_places=6,
+        validators=[MinValueValidator(0.000001)]
+    )
+    commissioning_date = models.DateField()
+    effective_date = models.DateField()
+    
+    # Location Information
+    address = models.TextField()
+    country = models.CharField(max_length=100)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    
+    # Audit Fields
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    _original_status = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._original_status = self.status
+
+    def save(self, *args, **kwargs):
+        self.status_changed = self.status != self._original_status
+        super().save(*args, **kwargs)
+        self._original_status = self.status
+
+
+    def clean(self):
+        """Validate technology type against fuel type"""
+        from django.core.exceptions import ValidationError
+        if self.technology_type not in self.FUEL_TECHNOLOGY_MAP.get(self.fuel_type, []):
+            raise ValidationError("Invalid technology for selected fuel type")
+
+class DeviceDocument(models.Model):
+    DOCUMENT_TYPES = [
+        ('SF02', 'SF-02 Production Facility Registration'),
+        ('SF02C', 'SF-02C Ownership Declaration'),
+        ('METER', 'Metering Evidence'),
+        ('DIAGRAM', 'Single Line Diagram'),
+        ('PHOTOS', 'Project Photos'),
+    ]
+
+    device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name='documents')
+    document_type = models.CharField(max_length=10, choices=DOCUMENT_TYPES)
+    file = models.FileField(upload_to='device_documents/%Y/%m/%d/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+class IssueRequest(models.Model):
+    STATUS_CHOICES = [
+        ('draft', 'Draft'),
+        ('submitted', 'Submitted'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+
+    device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name='issue_requests')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    start_date = models.DateField()
+    end_date = models.DateField()
+    production_amount = models.DecimalField(max_digits=15, decimal_places=6)
+    recipient_account = models.CharField(max_length=255)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    _original_status = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._original_status = self.status
+
+    def save(self, *args, **kwargs):
+        self.status_changed = self.status != self._original_status
+        super().save(*args, **kwargs)
+        self._original_status = self.status

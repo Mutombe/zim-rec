@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Device Status Update</title>
+</head>
+<body>
+    <h2>Dear {{ user.get_full_name }},</h2>
+    <p>Your device registration status has been updated to: <strong>{{ status|upper }}</strong></p>
+    <p>Visit your dashboard to view details: {{ app_name }} Dashboard</p>
+    <hr>
+    <p>Best regards,<br>{{ app_name }} Team</p>
+</body>
+</html>

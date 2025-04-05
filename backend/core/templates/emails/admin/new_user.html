@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New User Registration</title>
+</head>
+<body>
+    <h2>New User Registered</h2>
+    <p>A new user has joined the platform:</p>
+    
+    <ul>
+        <li>Name: {{ user.get_full_name }}</li>
+        <li>Email: {{ user.email }}</li>
+        <li>Registration Date: {{ user.date_joined|date:"DATETIME_FORMAT" }}</li>
+        <li>Account Type: {% if user.is_staff %}Admin{% else %}Registrant{% endif %}</li>
+    </ul>
+    
+    <p>Review user in admin panel: <a href="{{ admin_url }}users/user/{{ user.id }}/">View User</a></p>
+    
+    <hr>
+    <p>Best regards,<br>{{ app_name }} Team</p>
+</body>
+</html>
