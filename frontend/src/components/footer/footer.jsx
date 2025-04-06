@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Facebook, Twitter, Linkedin, Mail, Phone, Leaf, MapPin, ChevronRight, Send } from 'lucide-react';
+import { Facebook, Twitter, Linkedin, Mail, Phone, Leaf, MapPin, ChevronRight, Send, Zap } from 'lucide-react';
 import { Typography, Grid, TextField, Button } from '@mui/material';
 
 const Footer = () => {
@@ -26,9 +26,9 @@ const Footer = () => {
           <Grid item xs={12} md={4}>
             <motion.div whileHover={{ scale: 1.02 }} className="mb-6">
               <Link to="/" className="flex items-center space-x-2 mb-4">
-                <div className="bg-white p-1 rounded-full">
-                  <img src="/logo-white.png" alt="Zim-REC" className="h-8 w-8" />
-                </div>
+              <div className="bg-gradient-to-r from-green-500 to-green-600 p-2 rounded-full mr-2">
+                    <Zap className="h-6 w-6 text-white" />
+                  </div>
                 <Typography variant="h6" className="!font-bold !text-white">
                   Zim-REC
                 </Typography>
