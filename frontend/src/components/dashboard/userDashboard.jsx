@@ -9,9 +9,132 @@ import { selectDashboardData, selectUserDevices, selectUserIssueRequests, select
 import { StatsCard, EnergyPieChart, RecentActivityList } from './analytics';
 import { DataTable } from './analytics';
 import { fadeIn, staggerChildren } from './animations';
+import DeviceUploadStepper from './deviceUpload';
+import { useState } from 'react';
+import { 
+  Fab,
+  Modal,
+  Backdrop,
+  Fade,
+  TextField,
+  Button,
+  Box,
+    Typography,
+  IconButton
+} from '@mui/material';
+import { X, SquarePlus } from 'lucide-react';
+import { createDevice } from '../../redux/slices/deviceSlice';
+
+const DeviceUploadForm = ({ open, onClose }) => {
+  const dispatch = useDispatch();
+  const [formData, setFormData] = useState({
+    name: '',
+    fuelType: '',
+    capacity: '',
+    technology: ''
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(createDevice(formData))
+      .unwrap()
+      .then(() => {
+        onClose();
+        setFormData({
+          name: '',
+          fuelType: '',
+          capacity: '',
+          technology: ''
+        });
+      });
+  };
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      closeAfterTransition
+      BackdropComponent={Backdrop}
+      BackdropProps={{ timeout: 500 }}
+    >
+      <Fade in={open}>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl p-6 w-full max-w-md">
+          <div className="flex justify-between items-center mb-6">
+            <Typography variant="h6">Register New Device</Typography>
+            <IconButton onClick={onClose}>
+              <X />
+            </IconButton>
+          </div>
+          
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <TextField
+              fullWidth
+              label="Device Name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              required
+            />
+            
+            <TextField
+              fullWidth
+              label="Fuel Type"
+              select
+              SelectProps={{ native: true }}
+              value={formData.fuelType}
+              onChange={(e) => setFormData({ ...formData, fuelType: e.target.value })}
+              required
+            >
+              <option value=""></option>
+              <option value="solar">Solar</option>
+              <option value="wind">Wind</option>
+              <option value="hydro">Hydro</option>
+            </TextField>
+
+            <TextField
+              fullWidth
+              label="Technology"
+              select
+              SelectProps={{ native: true }}
+              value={formData.technology}
+              onChange={(e) => setFormData({ ...formData, technology: e.target.value })}
+              required
+            >
+              <option value=""></option>
+              <option value="pv-ground">PV Ground Mounted</option>
+              <option value="pv-roof">PV Roof Mounted</option>
+              <option value="onshore-wind">Onshore Wind</option>
+            </TextField>
+
+            <TextField
+              fullWidth
+              label="Capacity (MW)"
+              type="number"
+              value={formData.capacity}
+              onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
+              inputProps={{ step: "0.01" }}
+              required
+            />
+
+            <Button 
+              fullWidth 
+              variant="contained" 
+              type="submit"
+              className="bg-green-600 hover:bg-green-700"
+            >
+              Register Device
+            </Button>
+          </form>
+        </div>
+      </Fade>
+    </Modal>
+  );
+};
 
 const UserDashboard = () => {
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+    const [formOpen, setFormOpen] = useState(false);
+
   const dashboardData = useSelector(selectDashboardData);
   const recentDevices = useSelector(state => selectRecentSubmissions(state, 7));
 
@@ -95,7 +218,28 @@ const UserDashboard = () => {
             />
           </motion.div>
         </AnimatePresence>
-      </div>
+          </div>
+          <motion.div
+        className="fixed bottom-8 right-8"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <Fab
+          color="primary"
+          aria-label="add"
+          className="bg-green-600 hover:bg-green-700"
+          onClick={() => setOpen(true)}
+        >
+          <SquarePlus className="text-white" />
+        </Fab>
+      </motion.div>
+
+      <DeviceUploadStepper 
+  open={open} 
+  onClose={() => setOpen(false)}
+/>
     </motion.div>
   );
 };
