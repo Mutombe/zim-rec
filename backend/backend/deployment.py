@@ -15,7 +15,7 @@ SECRET_KEY = SECRET_KEY
 # CORS SETTINGS
 CORS_ALLOWED_ORIGINS = [
     'https://zim-rec.co.zw',
-    'https://www.zim-rec.co.zw'
+    'https://www.zim-rec.co.zw',
     'http://localhost:5173',
 ]
 
@@ -50,7 +50,7 @@ CORS_EXPOSE_HEADERS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://zimrec.co.zw',
+    'https://zim-rec.co.zw',
     'https://zim-rec-backend.onrender.com'
 ]
 

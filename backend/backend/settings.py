@@ -12,19 +12,26 @@ SECRET_KEY = "django-insecure-igp4zng9i5t1zk@ry$7r964mw45rj#+*f#@)&5u#$d3ngh^w7$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-# settings.py
+ALLOWED_HOSTS = [
+    'zim-rec-backend.onrender.com',
+    'zim-rec.co.zw',
+    'localhost',
+    '127.0.0.1'  # This is what's missing
+]
+
+ALLOWED_HOSTS1 = ['zim-rec-backend.onrender.com', 'zim-rec.co.zw', 'http://127.0.0.1:5173', 'http://localhost:5173' ]
+
 TIME_ZONE = 'UTC'  # or 'Africa/Harare' for Zimbabwe time
 USE_TZ = True
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
-    'https://errandx.onrender.com',
+    'https://zim-rec.co.zw',
     'http://127.0.0.1:5173'
 ]
 
 CORS_TRUSTED_ORIGINS = [
-    'https://errandx.onrender.com/',
+    'https://zim-rec.co.zw/',
     'http://localhost:5173',
 ]
 
