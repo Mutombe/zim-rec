@@ -28,7 +28,7 @@ import {
   Settings,
   Shield,
   HelpCircle,
-  Book
+  Book,
 } from "lucide-react";
 import {
   Dialog,
@@ -46,7 +46,7 @@ import {
   Menu as MuiMenu,
   MenuItem,
   ListItemIcon,
-  ListItemText
+  ListItemText,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -176,7 +176,9 @@ export const AuthModals = ({ openType, onClose }) => {
                   setFormData({ ...formData, email: e.target.value })
                 }
                 InputProps={{
-                  startAdornment: <AtSign className="text-gray-400 mr-2" size={18} />,
+                  startAdornment: (
+                    <AtSign className="text-gray-400 mr-2" size={18} />
+                  ),
                 }}
               />
             )}
@@ -189,7 +191,9 @@ export const AuthModals = ({ openType, onClose }) => {
                 setFormData({ ...formData, username: e.target.value })
               }
               InputProps={{
-                startAdornment: <User className="text-gray-400 mr-2" size={18} />,
+                startAdornment: (
+                  <User className="text-gray-400 mr-2" size={18} />
+                ),
               }}
             />
             <TextField
@@ -201,7 +205,9 @@ export const AuthModals = ({ openType, onClose }) => {
                 setFormData({ ...formData, password: e.target.value })
               }
               InputProps={{
-                startAdornment: <Lock className="text-gray-400 mr-2" size={18} />,
+                startAdornment: (
+                  <Lock className="text-gray-400 mr-2" size={18} />
+                ),
               }}
             />
           </div>
@@ -264,7 +270,7 @@ export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [notificationAnchor, setNotificationAnchor] = useState(null);
-  const isMobile = useMediaQuery('(max-width:768px)');
+  const isMobile = useMediaQuery("(max-width:768px)");
 
   const handleUserMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -285,7 +291,6 @@ export const Navbar = () => {
   const navLinks = [
     { name: "Home", path: "/", icon: <Home size={18} /> },
     { name: "About", path: "/about", icon: <Info size={18} /> },
-    { name: "Projects", path: "/projects", icon: <FileText size={18} /> },
     { name: "Contact", path: "/contact", icon: <Phone size={18} /> },
   ];
 
@@ -305,13 +310,13 @@ export const Navbar = () => {
               </span>
             </Link>
           </div>
-            
+
           {/* Desktop Navigation */}
           <div className="hidden md:flex md:items-center md:space-x-6">
             {navLinks.map((link) => (
-              <Link 
+              <Link
                 key={link.name}
-                to={link.path} 
+                to={link.path}
                 className="text-gray-700 hover:text-green-600 flex items-center px-3 py-2 rounded-md hover:bg-green-50 transition-colors group"
               >
                 <span className="text-green-600 mr-2 group-hover:scale-110 transition-transform">
@@ -320,25 +325,37 @@ export const Navbar = () => {
                 {link.name}
               </Link>
             ))}
-            
+
             {isAuthenticated && (
-              <Link 
-                to="/dashboard" 
-                className="text-gray-700 hover:text-green-600 flex items-center px-3 py-2 rounded-md hover:bg-green-50 transition-colors group"
-              >
-                <span className="text-green-600 mr-2 group-hover:scale-110 transition-transform">
-                  <LayoutDashboard size={18} />
-                </span>
-                Dashboard
-              </Link>
+              <>
+                <Link
+                  to="/issue-requests"
+                  className="text-gray-700 hover:text-green-600 flex items-center px-3 py-2 rounded-md hover:bg-green-50 transition-colors group"
+                >
+                  <span className="text-green-600 mr-2 group-hover:scale-110 transition-transform">
+                    <LayoutDashboard size={18} />
+                  </span>
+                  Issue Requests
+                </Link>
+                <Link
+                  to="/dashboard"
+                  className="text-gray-700 hover:text-green-600 flex items-center px-3 py-2 rounded-md hover:bg-green-50 transition-colors group"
+                >
+                  <span className="text-green-600 mr-2 group-hover:scale-110 transition-transform">
+                    <LayoutDashboard size={18} />
+                  </span>
+                  Dashboard
+                </Link>
+
+              </>
             )}
           </div>
 
           {/* Right Section */}
           <div className="flex items-center gap-2 md:gap-4">
             {/* Mobile Menu Button */}
-            <IconButton 
-              className="md:hidden text-green-600" 
+            <IconButton
+              className="md:hidden text-green-600"
               onClick={() => setMobileMenuOpen(true)}
             >
               <Menu />
@@ -357,11 +374,14 @@ export const Navbar = () => {
                 <Tooltip title="Notifications">
                   <IconButton onClick={handleNotificationClick}>
                     <Badge badgeContent={3} color="error">
-                      <Bell className="text-gray-600 hover:text-green-600" size={20} />
+                      <Bell
+                        className="text-gray-600 hover:text-green-600"
+                        size={20}
+                      />
                     </Badge>
                   </IconButton>
                 </Tooltip>
-                
+
                 {/* User Menu */}
                 <div className="flex items-center gap-1">
                   <Button
@@ -372,9 +392,7 @@ export const Navbar = () => {
                     <Avatar className="!h-8 !w-8 !bg-green-600">
                       {user?.username?.[0]?.toUpperCase()}
                     </Avatar>
-                    <span className="hidden lg:block">
-                      {user?.username}
-                    </span>
+                    <span className="hidden lg:block">{user?.username}</span>
                   </Button>
                 </div>
               </div>
@@ -414,7 +432,11 @@ export const Navbar = () => {
           >
             <div className="p-4 h-full flex flex-col">
               <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-                <Link to="/" className="flex items-center" onClick={() => setMobileMenuOpen(false)}>
+                <Link
+                  to="/"
+                  className="flex items-center"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
                   <div className="bg-gradient-to-r from-green-500 to-green-600 p-2 rounded-full mr-2">
                     <Zap className="h-6 w-6 text-white" />
                   </div>
@@ -426,7 +448,7 @@ export const Navbar = () => {
                   <X className="text-gray-600" />
                 </IconButton>
               </div>
-              
+
               <div className="mt-6 space-y-1 flex-1">
                 {/* Search bar for mobile */}
                 <div className="relative mb-6">
@@ -439,7 +461,7 @@ export const Navbar = () => {
                     placeholder="Search"
                   />
                 </div>
-                
+
                 {/* Navigation Links */}
                 {navLinks.map((link) => (
                   <Link
@@ -454,7 +476,7 @@ export const Navbar = () => {
                     <span className="font-medium">{link.name}</span>
                   </Link>
                 ))}
-                
+
                 {isAuthenticated && (
                   <>
                     <Link
@@ -467,7 +489,17 @@ export const Navbar = () => {
                       </span>
                       <span className="font-medium">Dashboard</span>
                     </Link>
-                    
+                    <Link
+                      to="/issue-requests"
+                      className="flex items-center p-3 rounded-lg hover:bg-green-50 text-gray-700"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <span className="bg-green-100 p-2 rounded-lg mr-4 text-green-600">
+                        <FileText size={18} />
+                      </span>
+                      <span className="font-medium">Issue Request</span>
+                    </Link>
+
                     <Link
                       to="/profile"
                       className="flex items-center p-3 rounded-lg hover:bg-green-50 text-gray-700"
@@ -478,7 +510,7 @@ export const Navbar = () => {
                       </span>
                       <span className="font-medium">My Profile</span>
                     </Link>
-                    
+
                     <Link
                       to="/notifications"
                       className="flex items-center p-3 rounded-lg hover:bg-green-50 text-gray-700"
@@ -549,8 +581,8 @@ export const Navbar = () => {
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleUserMenuClose}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem onClick={handleUserMenuClose} component={Link} to="/profile">
           <ListItemIcon>
@@ -558,7 +590,11 @@ export const Navbar = () => {
           </ListItemIcon>
           <ListItemText>My Profile</ListItemText>
         </MenuItem>
-        <MenuItem onClick={handleUserMenuClose} component={Link} to="/dashboard">
+        <MenuItem
+          onClick={handleUserMenuClose}
+          component={Link}
+          to="/dashboard"
+        >
           <ListItemIcon>
             <LayoutDashboard size={18} className="text-green-600" />
           </ListItemIcon>
@@ -583,7 +619,7 @@ export const Navbar = () => {
           </ListItemIcon>
           <ListItemText>Help Center</ListItemText>
         </MenuItem>
-        <MenuItem 
+        <MenuItem
           onClick={() => {
             dispatch(logout());
             handleUserMenuClose();
@@ -602,19 +638,21 @@ export const Navbar = () => {
         anchorEl={notificationAnchor}
         open={Boolean(notificationAnchor)}
         onClose={handleNotificationClose}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         className="!mt-2"
       >
         <div className="px-4 py-2 border-b border-gray-100">
-          <Typography variant="subtitle2" className="font-bold">Notifications</Typography>
+          <Typography variant="subtitle2" className="font-bold">
+            Notifications
+          </Typography>
         </div>
         <MenuItem onClick={handleNotificationClose}>
           <ListItemIcon>
             <Shield size={18} className="text-green-600" />
           </ListItemIcon>
-          <ListItemText 
-            primary="REC Verification Complete" 
+          <ListItemText
+            primary="REC Verification Complete"
             secondary="Your project has been verified successfully"
           />
         </MenuItem>
@@ -622,8 +660,8 @@ export const Navbar = () => {
           <ListItemIcon>
             <Book size={18} className="text-green-600" />
           </ListItemIcon>
-          <ListItemText 
-            primary="New REC Policy Update" 
+          <ListItemText
+            primary="New REC Policy Update"
             secondary="Check the latest policy changes"
           />
         </MenuItem>
@@ -631,8 +669,8 @@ export const Navbar = () => {
           <ListItemIcon>
             <AlertCircle size={18} className="text-amber-500" />
           </ListItemIcon>
-          <ListItemText 
-            primary="Action Required" 
+          <ListItemText
+            primary="Action Required"
             secondary="Please complete your profile"
           />
         </MenuItem>

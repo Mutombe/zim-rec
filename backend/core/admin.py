@@ -2,16 +2,6 @@
 from django.contrib import admin
 from .models import User, Profile, Device, IssueRequest
 
-
-class AdminUserOverview(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "company_name",
-        "username",
-        "email",
-    )
-    search_fields = ("username",)
-
 class AdminIssueRequestOverview(admin.ModelAdmin):
     list_display = (
         "id",
@@ -38,7 +28,6 @@ class AdminDeviceOverview(admin.ModelAdmin):
     )
     search_fields = ("username",)
 
-admin.site.register(User, AdminUserOverview)
 admin.site.register(IssueRequest, AdminIssueRequestOverview)
 admin.site.register(Profile, AdminProfileOverview)
 admin.site.register(Device, AdminDeviceOverview)

@@ -79,8 +79,15 @@ class Device(models.Model):
     country = models.CharField(max_length=100)
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    postcode = models.CharField(max_length=20, default='000000')
     
     # Audit Fields
+    production_facility_registration = models.FileField(upload_to='device_documents/facility_registration/', null=True)
+    declaration_of_ownership = models.FileField(upload_to='device_documents/ownership_declaration/', null=True)
+    metering_evidence = models.FileField(upload_to='device_documents/metering_evidence/', null=True)
+    single_line_diagram = models.FileField(upload_to='device_documents/single_line_diagram/', null=True)
+    project_photos = models.FileField(upload_to='device_documents/project_photos/', null=True)
+    additional_notes = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     _original_status = None
@@ -100,6 +107,8 @@ class Device(models.Model):
         from django.core.exceptions import ValidationError
         if self.technology_type not in self.FUEL_TECHNOLOGY_MAP.get(self.fuel_type, []):
             raise ValidationError("Invalid technology for selected fuel type")
+        
+
 
 class DeviceDocument(models.Model):
     DOCUMENT_TYPES = [

@@ -11,6 +11,24 @@ const initialState = {
   },
 };
 
+export const fetchRequests = createAsyncThunk(
+  'requests/fetchAll',
+  async () => {
+    const response = await api.get('/issue-requests/');
+    return response.data;
+  }
+);
+
+export const saveRequest = createAsyncThunk(
+  'requests/save',
+  async (request) => {
+    const method = request.id ? 'put' : 'post';
+    const url = request.id ? `/issue-requests/${request.id}/` : '/issue-requests/';
+    const response = await api[method](url, request);
+    return response.data;
+  }
+);
+
 export const createIssueRequest = createAsyncThunk(
   'issueRequests/create',
   async (requestData, { rejectWithValue }) => {
@@ -78,6 +96,21 @@ const issueRequestSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+    .addCase(fetchRequests.pending, (state) => {
+      state.status = 'loading';
+    })
+    .addCase(fetchRequests.fulfilled, (state, action) => {
+      state.status = 'succeeded';
+      state.requests = action.payload;
+    })
+    .addCase(saveRequest.fulfilled, (state, action) => {
+      const index = state.requests.findIndex(r => r.id === action.payload.id);
+      if (index >= 0) {
+        state.requests[index] = action.payload;
+      } else {
+        state.requests.push(action.payload);
+      }
+    })
       .addCase(createIssueRequest.pending, (state) => {
         state.status = 'loading';
       })

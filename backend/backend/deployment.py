@@ -6,7 +6,7 @@ from .settings import BASE_DIR
 ALLOWED_HOSTS = [
     os.environ.get('RENDER_EXTERNAL_HOSTNAME'),
     'taskoba-backend.onrender.com',
-    'errandx.onrender.com',
+    'zim-rec.co.zw',
 ]
 
 DEBUG = False
@@ -14,8 +14,8 @@ SECRET_KEY = SECRET_KEY
 
 # CORS SETTINGS
 CORS_ALLOWED_ORIGINS = [
-    'https://errandx.onrender.com',
-    'https://www.errandx.onrender.com'
+    'https://zim-rec.co.zw',
+    'https://www.zim-rec.co.zw'
     'http://localhost:5173',
 ]
 
@@ -50,7 +50,7 @@ CORS_EXPOSE_HEADERS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://errandx.onrender.com',
+    'https://zimrec.co.zw',
     'https://taskoba-backend.onrender.com'
 ]
 
@@ -78,13 +78,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # DATABASE CONFIGURATION
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'bnzjaefpljfwkculw8dl',
-        'USER': 'uldg1qqg4izramkjs53e',
-        'PASSWORD': 'QsGbjZe9aI6wDpAVi2WlqYp23LtHxS',
-        'HOST': 'bnzjaefpljfwkculw8dl-postgresql.services.clever-cloud.com',
+        'NAME': 'b2gzaoncfur4uzxibt04',
+        'USER': 'uxdwqextncoc67h31p6m',
+        'PASSWORD': 'DjJmbVHST4Mv04ivjHvWF3hvxxTyqj',
+        'HOST': 'b2gzaoncfur4uzxibt04-postgresql.services.clever-cloud.com',
         'PORT': '50013',
     }
 }

@@ -1,13 +1,41 @@
-import axios from 'axios';
+import axios from "axios";
+
+// Centralized token refresh function
+export const refreshTokens = async (refresh) => {
+  try {
+    const { data } = await axios.post(
+      "http://127.0.0.1:8000/core/auth/refresh/", 
+      { refresh },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+    return {
+      access: data.access,
+      refresh: data.refresh || refresh 
+    };
+  } catch (error) {
+    console.error("Token Refresh Error:", error);
+    throw error;
+  }
+};
+
 
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:8000/',
-  timeout: 10000,
+  baseURL:  'http://localhost:8000/',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  },
+  xsrfCookieName: "csrftoken",
+  xsrfHeaderName: "X-CSRFToken",
 });
 
-// Request interceptor for auth token
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
+// Add request interceptor for auth token
+api.interceptors.request.use(config => {
+  const token = JSON.parse(localStorage.getItem('auth'))?.access;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -20,7 +48,7 @@ api.interceptors.response.use(
       const originalRequest = error.config;
       if (error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
-        const newToken = await refreshAccessToken();
+        const newToken = await refreshTokens();
         localStorage.setItem('accessToken', newToken);
         return api(originalRequest);
       }
@@ -29,19 +57,19 @@ api.interceptors.response.use(
   );
 
 export const deviceAPI = {
-  getFuelOptions: () => api.get('/api/fuel-options/'),
+  getFuelOptions: () => api.get('/fuel-options/'),
   getTechnologyOptions: (fuelType) => 
-        api.get(`/api/technology-options/?fuel_type=${fuelType}`),
-  getAll: () => api.get('/api/devices/'),
-  create: (data) => api.post('/api/devices/', data),
-  update: (id, data) => api.patch(`/api/devices/${id}/`, data),
-  delete: (id) => api.delete(`/api/devices/${id}/`),
-  submit: (id) => api.post(`/api/devices/${id}/submit/`),
+    api.get(`/technology-options/?fuel_type=${fuelType}`),
+  getAll: () => api.get('/devices/'),
+  create: (data) => api.post('/devices/', data),
+  update: (id, data) => api.patch(`/devices/${id}/`, data),
+  delete: (id) => api.delete(`/devices/${id}/`),
+  submit: (id) => api.post(`/devices/${id}/submit/`),
 };
 
 export const issueRequestAPI = {
-  create: (data) => api.post('/api/issue-requests/', data),
-  submit: (id) => api.patch(`/api/issue-requests/${id}/submit/`),
+  create: (data) => api.post('/issue-requests/', data),
+  submit: (id) => api.patch(`/issue-requests/${id}/submit/`),
 };
 
 export default api;

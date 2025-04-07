@@ -6,6 +6,7 @@ import storage from 'redux-persist/lib/storage';
 import deviceReducer from '../slices/deviceSlice';
 import issueRequestReducer from '../slices/issueSlice';
 import authReducer from '../slices/authSlice';
+import profileReducer from '../slices/profileSlice';
 //import notificationReducer from './slices/notificationSlice';
 
 // Redux-Persist configuration
@@ -20,6 +21,7 @@ const persistConfig = {
 // Combine reducers with routing (if using connected-react-router)
 const rootReducer = combineReducers({
   auth: authReducer,
+  profile: profileReducer,
   devices: deviceReducer,
   issueRequests: issueRequestReducer,
 });

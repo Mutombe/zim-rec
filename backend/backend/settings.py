@@ -188,30 +188,36 @@ AUTHENTICATION_BACKENDS = [
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
-ADMIN_BASE_URL = 'https://your-admin-domain.com/admin/'
-ADMINS = [('Zim-Rec Admin', 'admin@zim-rec.com')]
-SERVER_EMAIL = 'server@zim-rec.com'
+ADMIN_BASE_URL = 'https://zim-rec.co.zw/admin/'
+ADMINS = [('Zim-Rec Admin', 'admin@zim-rec.co.zw')]
+SERVER_EMAIL = 'admin@zim-rec.com'
 APP_NAME = 'Zim-Rec'
 
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.yourprovider.com'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'noreply@zim-rec.com'
-EMAIL_HOST_PASSWORD = 'your-email-password'
+EMAIL_HOST_USER = 'simbamtombe@gmail.com'
+EMAIL_HOST_PASSWORD = 'itzh jjkc hdmv csih'
 DEFAULT_FROM_EMAIL = 'Zim-Rec Platform <noreply@zim-rec.com>'
+SUPPORT_EMAIL = 'admin@zim-rec.co.zw'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'b2gzaoncfur4uzxibt04',
+        'USER': 'uxdwqextncoc67h31p6m',
+        'PASSWORD': 'DjJmbVHST4Mv04ivjHvWF3hvxxTyqj',
+        'HOST': 'b2gzaoncfur4uzxibt04-postgresql.services.clever-cloud.com',
+        'PORT': '50013',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
