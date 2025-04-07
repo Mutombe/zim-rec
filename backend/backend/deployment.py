@@ -5,7 +5,7 @@ from .settings import BASE_DIR
 # SECURITY SETTINGS
 ALLOWED_HOSTS = [
     os.environ.get('RENDER_EXTERNAL_HOSTNAME'),
-    'taskoba-backend.onrender.com',
+    'zim-rec-backend.onrender.com',
     'zim-rec.co.zw',
 ]
 
@@ -51,7 +51,7 @@ CORS_EXPOSE_HEADERS = [
 
 CSRF_TRUSTED_ORIGINS = [
     'https://zimrec.co.zw',
-    'https://taskoba-backend.onrender.com'
+    'https://zim-rec-backend.onrender.com'
 ]
 
 # MIDDLEWARE CONFIGURATION
