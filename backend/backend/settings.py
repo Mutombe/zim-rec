@@ -16,12 +16,12 @@ ALLOWED_HOSTS = [
     'zim-rec-backend.onrender.com',
     'zim-rec.co.zw',
     'localhost',
-    '127.0.0.1'  # This is what's missing
+    '127.0.0.1'
 ]
 
 ALLOWED_HOSTS1 = ['zim-rec-backend.onrender.com', 'zim-rec.co.zw', 'http://127.0.0.1:5173', 'http://localhost:5173' ]
 
-TIME_ZONE = 'UTC'  # or 'Africa/Harare' for Zimbabwe time
+TIME_ZONE = 'UTC' 
 USE_TZ = True
 
 CORS_ALLOWED_ORIGINS = [
@@ -187,7 +187,7 @@ CELERY_TASK_ROUTES = {
 
 # Important: Add to bottom of settings.py
 # Celery app configuration
-CELERY_APP = 'your_project.celery:app'
+CELERY_APP = 'backend.celery:app'
 
 AUTHENTICATION_BACKENDS = [
    'django.contrib.auth.backends.ModelBackend',
@@ -196,8 +196,8 @@ AUTHENTICATION_BACKENDS = [
 WSGI_APPLICATION = "backend.wsgi.application"
 
 ADMIN_BASE_URL = 'https://zim-rec.co.zw/admin/'
-ADMINS = [('Zim-Rec Admin', 'admin@zim-rec.co.zw')]
-SERVER_EMAIL = 'admin@zim-rec.com'
+ADMINS = [('Zim-Rec Admin', 'simbamtombe@gmail.com')]
+SERVER_EMAIL = 'simbamtombe@gmail.com'
 APP_NAME = 'Zim-Rec'
 
 
@@ -234,8 +234,16 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
     ),
+        'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.MultiPartParser',
+    ],
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',

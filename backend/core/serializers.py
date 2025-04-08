@@ -1,18 +1,21 @@
 from rest_framework import serializers
-from .models import Device, DeviceDocument, IssueRequest, Profile, User
+from .models import Device, DeviceDocument, IssueRequest, Profile
+from django.contrib.auth.models import User  
+from django.core.exceptions import ValidationError
+from decimal import Decimal
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ("id", "username", "email", "password", "company_name", "phone", "is_active", "is_staff", "is_superuser")
+        fields = ("id", "username", "email", "password", "is_active", "is_staff", "is_superuser")
 
     def create(self, validated_data):
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],
-            password=validated_data['password']
+            password=validated_data['password'],
         )
         return user
 
@@ -133,12 +136,70 @@ class DeviceSerializer(serializers.ModelSerializer):
         }
 
     def validate(self, data):
+        # Perform original validation first
+        data = super().validate(data)
+        
+        # Add any custom validation here
         if data['effective_date'] < data['commissioning_date']:
-            raise serializers.ValidationError("Effective date must be after commissioning date")
-        return data
+            raise serializers.ValidationError(
+                "Effective date must be after commissioning date"
+            )
+            
+        # You MUST return the validated data
+        return data  # <-- This line was missing
+    
+    def to_internal_value(self, data):
+        try:
+            return super().to_internal_value(data)
+        except serializers.ValidationError as e:
+            # Format validation errors properly
+            raise serializers.ValidationError(e.detail)
+
+    def validate_latitude(self, value):
+        if value < Decimal('-90') or value > Decimal('90'):
+            raise serializers.ValidationError(
+                "Latitude must be between -90 and 90"
+            )
+        return value  # <-- Ensure this returns the value
+
+    def validate_longitude(self, value):
+        if value < Decimal('-180') or value > Decimal('180'):
+            raise serializers.ValidationError(
+                "Longitude must be between -180 and 180"
+            )
+        return value  
 
 class IssueRequestSerializer(serializers.ModelSerializer):
+    device_name = serializers.CharField(source='device.device_name', read_only=True)
+    
     class Meta:
         model = IssueRequest
         fields = '__all__'
         read_only_fields = ['user', 'status', 'created_at', 'updated_at']
+
+    def validate(self, data):
+        data = super().validate(data)
+        
+        # Date validation
+        if data['end_date'] <= data['start_date']:
+            raise serializers.ValidationError({
+                'end_date': 'End date must be after start date'
+            })
+            
+        # Production amount validation
+        if data['production_amount'] <= Decimal('0'):
+            raise serializers.ValidationError({
+                'production_amount': 'Production amount must be positive'
+            })
+            
+        return data
+
+    def create(self, validated_data):
+        # Ensure device belongs to user
+        device = validated_data['device']
+        if device.user != self.context['request'].user:
+            raise serializers.ValidationError({
+                'device': 'You do not own this device'
+            })
+            
+        return super().create(validated_data)

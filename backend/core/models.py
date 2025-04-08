@@ -1,29 +1,7 @@
 from django.db import models
-from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator
-from django.contrib.auth.models import AbstractUser
-
-class User(AbstractUser):
-    company_name = models.CharField(max_length=255, blank=True, null=True)
-    phone = models.CharField(max_length=20, blank=True, null=True)
-
-    groups = models.ManyToManyField(
-        "auth.Group",
-        verbose_name="groups",
-        blank=True,
-        related_name="custom_user_set",
-        related_query_name="custom_user",
-    )
-    user_permissions = models.ManyToManyField(
-        "auth.Permission",
-        verbose_name="user permissions",
-        blank=True,
-        related_name="custom_user_set",
-        related_query_name="custom_user",
-    )
-
-    def __str__(self):
-        return f"{self.username} - {self.id}"
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User  
+from decimal import Decimal
     
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
@@ -48,11 +26,12 @@ class Device(models.Model):
     ]
 
     FUEL_TECHNOLOGY_MAP = {
-        'ES100': ['TC110', 'TC120', 'TC130', 'TC140'],
+        'ES100': ['TC110', 'TC120', 'TC130', 'TC140', 'TC150'],
         'ES200': ['TC210', 'TC220'],
         'ES300': ['TC310', 'TC320', 'TC330'],
-        'ES400': ['TC410', 'TC411', 'TC421', 'TC422', 'TC423', 'TC424'],
+        'ES400': ['TC410', 'TC411', 'TC421', 'TC422', 'TC423', 'TC424', 'TC431', 'TC432', 'TC441', 'TC442', 'TC482'],
         'ES500': ['TC510', 'TC520', 'TC530'],
+        'E5510': ['TC410', 'TC411', 'TC421', 'TC422', 'TC423', 'TC424', 'TC431', 'TC432', 'TC441', 'TC442'],
     }
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='devices')
@@ -69,7 +48,7 @@ class Device(models.Model):
     capacity = models.DecimalField(
         max_digits=10, 
         decimal_places=6,
-        validators=[MinValueValidator(0.000001)]
+         validators=[MinValueValidator(Decimal('0.000001'))]
     )
     commissioning_date = models.DateField()
     effective_date = models.DateField()
@@ -77,8 +56,23 @@ class Device(models.Model):
     # Location Information
     address = models.TextField()
     country = models.CharField(max_length=100)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    latitude = models.DecimalField(
+        max_digits=9,  # 3 digits before + 6 after = 9 total
+        decimal_places=6,
+        validators=[
+            MinValueValidator(Decimal('-90.0')),
+            MaxValueValidator(Decimal('90.0'))
+        ]
+    )
+    
+    longitude = models.DecimalField(
+        max_digits=9,  # 3 digits before + 6 after = 9 total
+        decimal_places=6,
+        validators=[
+            MinValueValidator(Decimal('-180.0')),
+            MaxValueValidator(Decimal('180.0'))
+        ]
+    )
     postcode = models.CharField(max_length=20, default='000000')
     
     # Audit Fields

@@ -1,0 +1,21 @@
+# src/templates/emails/new_device_status.txt
+Subject: Device Status Update - {{ device_name }}
+
+Dear {{ user_name }},
+
+The status of your device "{{ device_name }}" has been updated to: {{ new_status|upper }}.
+
+{% if new_status == "approved" %}
+Your device is now fully certified and ready for REC generation!
+Access your dashboard to create issue requests: {{ dashboard_url }}
+{% elif new_status == "rejected" %}
+Reason for rejection: {{ rejection_reason|default:"Please contact support for details" }}
+Please review the requirements and resubmit: {{ edit_url }}
+{% else %}
+You can view the current status and required actions in your dashboard: {{ dashboard_url }}
+{% endif %}
+
+Need help? Contact our support team: {{ support_email }}
+
+Best regards,
+The Zim-REC Team

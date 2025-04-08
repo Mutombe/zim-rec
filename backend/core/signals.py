@@ -1,12 +1,13 @@
-# signals.py
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
-from .models import Device, IssueRequest, User, Profile
+from .models import Device, IssueRequest, Profile
+from django.db import transaction
+from django.contrib.auth.models import User  
 
-ADMIN_EMAILS = ['admin@zim-rec.com']
+ADMIN_EMAILS = ['simbamtombe@gmail.com']
 
 def send_admin_notification(subject, context, template_base):
 
@@ -55,8 +56,8 @@ def send_status_email(user, entity_type, status):
         'app_name': 'Zim-Rec'
     }
     
-    text_message = render_to_string(f'emails/{entity_type}_status_update.txt', context)
-    html_message = render_to_string(f'emails/{entity_type}_status_update.html', context)
+    text_message = render_to_string(f'emails/user/{entity_type}_status_update.txt', context)
+    html_message = render_to_string(f'emails/user/{entity_type}_status_update.html', context)
     
     send_mail(
         subject=subject,
@@ -150,8 +151,10 @@ def handle_issue_request_status_change(sender, instance, **kwargs):
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        Profile.objects.create(user=instance)
+        # Use transaction to ensure User is committed first
+        transaction.on_commit(lambda: Profile.objects.create(user=instance))
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
+    if hasattr(instance, 'profile'):
+        instance.profile.save()

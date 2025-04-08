@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ subject }}</title>
+</head>
+<body>
+    <p>Hello <strong>{{ user.username }}</strong>,</p>
+    
+    <p>Your account status has been updated to: <strong>{{ status|upper }}</strong></p>
+
+    {% if status == 'created' %}
+    <p>Thank you for registering with {{ app_name }}! Please wait for admin approval.</p>
+    {% elif status == 'activated' %}
+    <p>Your account has been activated! You can now login.</p>
+    {% endif %}
+
+    <p>Best regards,<br>
+    The {{ app_name }} Team</p>
+</body>
+</html>

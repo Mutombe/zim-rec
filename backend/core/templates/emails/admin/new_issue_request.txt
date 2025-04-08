@@ -1,0 +1,16 @@
+New Issue Request Notification
+
+An issue request has been submitted requiring review:
+
+Device: {{ issue_request.device.device_name }}
+User: {{ user.get_full_name }} ({{ user.email }})
+Production Period: {{ issue_request.start_date|date }} - {{ issue_request.end_date|date }}
+Amount: {{ issue_request.production_amount }} MWh
+Submitted: {{ issue_request.created_at|date:"DATETIME_FORMAT" }}
+
+Review this request in the admin panel:
+{{ admin_url }}core/issuerequest/{{ issue_request.id }}/
+
+---
+Best regards,
+{{ app_name }} Team
