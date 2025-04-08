@@ -1,35 +1,6 @@
-import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  IconButton,
-  MenuItem,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow,
-  TextField,
-  Typography,
-} from "@mui/material";
-import {
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Add as AddIcon,
-  BarChart as BarChartIcon,
-} from "@mui/icons-material";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { PlusCircle, Edit, Trash2, BarChart, X } from 'lucide-react';
 import {
   selectUserIssueRequests,
   selectAllIssueRequestsForAdmin,
@@ -38,7 +9,6 @@ import {
   selectAllDevicesForAdmin,
   selectDashboardData,
   selectRecentSubmissions,
-  makeSelectRequestsByDevice,
 } from "../../redux/selectors";
 import {
   fetchRequests,
@@ -51,27 +21,19 @@ const IssueRequestDashboard = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector(selectCurrentUser);
   const isAdmin = currentUser?.isAdmin;
+  
   const [openDialog, setOpenDialog] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState(false);
   const [currentRequest, setCurrentRequest] = useState(null);
-  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [selectedDeviceId, setSelectedDeviceId] = useState(null);
+  const [errors, setErrors] = useState({});
 
-  // Selector-derived data
-  const requests = useSelector(
-    isAdmin ? selectAllIssueRequestsForAdmin : selectUserIssueRequests
-  );
-  const devices = useSelector(
-    isAdmin ? selectAllDevicesForAdmin : selectUserDevices
-  );
+  // Redux selectors
+  const requests = useSelector(isAdmin ? selectAllIssueRequestsForAdmin : selectUserIssueRequests);
+  const devices = useSelector(isAdmin ? selectAllDevicesForAdmin : selectUserDevices);
   const dashboardStats = useSelector(selectDashboardData);
-  const recentSubmissions = useSelector((state) =>
-    selectRecentSubmissions(state, 7)
-  );
-  const deviceRequests = useSelector((state) =>
-    makeSelectRequestsByDevice()(state, selectedDeviceId)
-  );
+  const recentSubmissions = useSelector((state) => selectRecentSubmissions(state, 7));
 
   useEffect(() => {
     dispatch(fetchRequests());
@@ -90,11 +52,6 @@ const IssueRequestDashboard = () => {
     setOpenDialog(true);
   };
 
-  const handleEdit = (request) => {
-    setCurrentRequest(request);
-    setOpenDialog(true);
-  };
-
   const handleSubmit = () => {
     const formErrors = validateRequestForm(currentRequest);
     if (Object.keys(formErrors).length > 0) {
@@ -106,334 +63,332 @@ const IssueRequestDashboard = () => {
       .unwrap()
       .then(() => setOpenDialog(false))
       .catch((error) => {
-        if (error.errors) {
-          setErrors(error.errors);
-        } else {
-          enqueueSnackbar("Submission failed", { variant: "error" });
-        }
+        setErrors(error.errors || {});
       });
-  };
-
-  const handleSubmit1 = () => {
-    dispatch(saveRequest(currentRequest))
-      .unwrap()
-      .then(() => setOpenDialog(false));
   };
 
   const handleDelete = () => {
     dispatch(deleteIssueRequest(currentRequest.id))
       .unwrap()
-      .then(() => setDeleteConfirmOpen(false));
+      .then(() => setDeleteDialog(false));
   };
 
-  const statusColor = {
-    draft: "default",
-    submitted: "primary",
-    approved: "success",
-    rejected: "error",
+  const validateRequestForm = (data) => {
+    const newErrors = {};
+    if (!data.device) newErrors.device = "Device is required";
+    if (!data.start_date) newErrors.start_date = "Start date is required";
+    if (!data.end_date) newErrors.end_date = "End date is required";
+    if (!data.production_amount || parseFloat(data.production_amount) <= 0) {
+      newErrors.production_amount = "Valid production amount required";
+    }
+    return newErrors;
   };
+
+  const statusColors = {
+    draft: "bg-gray-200 text-gray-800",
+    submitted: "bg-blue-200 text-blue-800",
+    approved: "bg-green-200 text-green-800",
+    rejected: "bg-red-200 text-red-800"
+  };
+
+  const stats = [
+    { title: "Total Devices", value: dashboardStats.totalDevices, icon: <BarChart className="w-6 h-6" /> },
+    { title: "Active Requests", value: dashboardStats.pendingRequests, icon: <BarChart className="w-6 h-6" /> },
+    { title: "Total Production", value: `${dashboardStats.totalProduction?.toFixed(2)} MW`, icon: <BarChart className="w-6 h-6" /> },
+    { title: "Recent Submissions", value: recentSubmissions.length, icon: <BarChart className="w-6 h-6" /> }
+  ];
 
   return (
-    <Box sx={{ p: 3 }}>
-      {/* Dashboard Header */}
-      <Box sx={{ mb: 3, display: "flex", justifyContent: "space-between" }}>
-        <Typography variant="h4">Issue Request Management</Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
+    <div className="p-4 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Issue Request Management</h1>
+        <button 
           onClick={handleCreate}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
         >
-          New Request
-        </Button>
-      </Box>
+          <PlusCircle className="w-5 h-5" />
+          <span>New Request</span>
+        </button>
+      </div>
 
-      {/* Statistics Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} md={6} lg={3}>
-          <StatCard
-            title="Total Devices"
-            value={dashboardStats.totalDevices}
-            icon={<BarChartIcon />}
-          />
-        </Grid>
-        <Grid item xs={12} md={6} lg={3}>
-          <StatCard
-            title="Active Requests"
-            value={dashboardStats.pendingRequests}
-            icon={<BarChartIcon />}
-          />
-        </Grid>
-        <Grid item xs={12} md={6} lg={3}>
-          <StatCard
-            title="Total Production"
-            value={dashboardStats.totalProduction?.toFixed(2) + " MW"}
-            icon={<BarChartIcon />}
-          />
-        </Grid>
-        <Grid item xs={12} md={6} lg={3}>
-          <StatCard
-            title="Recent Submissions"
-            value={recentSubmissions.length}
-            icon={<BarChartIcon />}
-          />
-        </Grid>
-      </Grid>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {stats.map((stat, index) => (
+          <div key={index} className="bg-white rounded-xl shadow-sm p-4">
+            <div className="flex justify-between items-start">
+              <p className="text-gray-500 font-medium">{stat.title}</p>
+              {stat.icon}
+            </div>
+            <p className="text-2xl font-bold mt-2">{stat.value}</p>
+          </div>
+        ))}
+      </div>
 
-      {/* Main Requests Table */}
-      <TableContainer component={Paper} sx={{ mb: 3 }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>Device</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Dates</TableCell>
-              <TableCell>Production</TableCell>
-              <TableCell>Recipient</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      {/* Requests Table */}
+      <div className="overflow-x-auto bg-white rounded-xl shadow-sm">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Device</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dates</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Production</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
             {requests
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((request) => (
-                <TableRow key={request.id}>
-                  <TableCell>{request.id}</TableCell>
-                  <TableCell>{request.device?.device_name}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={request.status}
-                      color={statusColor[request.status]}
-                    />
-                  </TableCell>
-                  <TableCell>
+                <tr key={request.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">{request.id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">{request.device?.device_name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 py-1 text-xs rounded-full ${statusColors[request.status]}`}>
+                      {request.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
                     {new Date(request.start_date).toLocaleDateString()} -
                     {new Date(request.end_date).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>{request.production_amount} MW</TableCell>
-                  <TableCell>{request.recipient_account}</TableCell>
-                  <TableCell>
-                    <IconButton onClick={() => handleEdit(request)}>
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      onClick={() => {
-                        setCurrentRequest(request);
-                        setDeleteConfirmOpen(true);
-                      }}
-                    >
-                      <DeleteIcon color="error" />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 50]}
-        component="div"
-        count={requests.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={(_, newPage) => setPage(newPage)}
-        onRowsPerPageChange={(e) => {
-          setRowsPerPage(parseInt(e.target.value, 10));
-          setPage(0);
-        }}
-      />
-
-      {/* Request Form Dialog */}
-      <Dialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>
-          {currentRequest?.id ? "Edit Request" : "Create Request"}
-        </DialogTitle>
-        <DialogContent dividers>
-          <Grid container spacing={2} sx={{ pt: 2 }}>
-            {Object.keys(errors).map((key) => (
-              <Grid item xs={12} key={key}>
-                <Typography color="error" variant="body2">
-                  {errors[key]}
-                </Typography>
-              </Grid>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">{request.production_amount} MW</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => {
+                          setCurrentRequest(request);
+                          setOpenDialog(true);
+                        }}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        <Edit className="w-5 h-5" />
+                      </button>
+                      <button 
+                        onClick={() => {
+                          setCurrentRequest(request);
+                          setDeleteDialog(true);
+                        }}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
             ))}
-            <Grid item xs={12}>
-              <TextField
-                select
-                fullWidth
-                label="Device"
-                value={currentRequest?.device || ""}
-                onChange={(e) =>
-                  setCurrentRequest((prev) => ({
-                    ...prev,
-                    device: e.target.value,
-                  }))
-                }
+          </tbody>
+        </table>
+      </div>
+
+      {openDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center p-6 border-b">
+              <h2 className="text-xl font-semibold">
+                {currentRequest?.id ? 'Edit Request' : 'Create New Request'}
+              </h2>
+              <button
+                onClick={() => setOpenDialog(false)}
+                className="text-gray-500 hover:text-gray-700"
               >
-                {devices.map((device) => (
-                  <MenuItem key={device.id} value={device.id}>
-                    {device.device_name} ({device.status})
-                  </MenuItem>
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {Object.keys(errors).length > 0 && (
+              <div className="mx-6 mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                {Object.values(errors).map((error, index) => (
+                  <p key={index} className="text-red-600 text-sm">• {error}</p>
                 ))}
-              </TextField>
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Start Date"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                value={currentRequest?.start_date || ""}
-                onChange={(e) =>
-                  setCurrentRequest((prev) => ({
-                    ...prev,
-                    start_date: e.target.value,
-                  }))
-                }
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="End Date"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                value={currentRequest?.end_date || ""}
-                onChange={(e) => {
-                  const newEndDate = e.target.value;
-                  if (
-                    currentRequest?.start_date &&
-                    newEndDate <= currentRequest.start_date
-                  ) {
-                    setErrors((prev) => ({
-                      ...prev,
-                      end_date: "End date must be after start date",
-                    }));
-                  } else {
-                    setErrors((prev) => ({ ...prev, end_date: "" }));
-                  }
-                  setCurrentRequest((prev) => ({
-                    ...prev,
-                    end_date: newEndDate,
-                  }));
-                }}
-                error={!!errors.end_date}
-                helperText={errors.end_date}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Production (MW)"
-                type="number"
-                inputProps={{
-                  step: "0.000001",
-                  min: "0.000001",
-                }}
-                value={currentRequest?.production_amount || ""}
-                onChange={(e) =>
-                  setCurrentRequest((prev) => ({
-                    ...prev,
-                    production_amount: e.target.value,
-                  }))
-                }
-                error={!!errors.production_amount}
-                helperText={errors.production_amount}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Recipient Account"
-                value={currentRequest?.recipient_account || ""}
-                onChange={(e) =>
-                  setCurrentRequest((prev) => ({
-                    ...prev,
-                    recipient_account: e.target.value,
-                  }))
-                }
-              />
-            </Grid>
-
-            {currentRequest?.id && (
-              <Grid item xs={12}>
-                <TextField
-                  select
-                  fullWidth
-                  label="Status"
-                  value={currentRequest?.status || "draft"}
-                  onChange={(e) =>
-                    setCurrentRequest((prev) => ({
-                      ...prev,
-                      status: e.target.value,
-                    }))
-                  }
-                >
-                  {["draft", "submitted", "approved", "rejected"].map(
-                    (status) => (
-                      <MenuItem key={status} value={status}>
-                        {status.charAt(0).toUpperCase() + status.slice(1)}
-                      </MenuItem>
-                    )
-                  )}
-                </TextField>
-              </Grid>
+              </div>
             )}
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleSubmit}>
-            {currentRequest?.id ? "Update" : "Create"}
-          </Button>
-        </DialogActions>
-      </Dialog>
 
-      {/* Delete Confirmation Dialog */}
-      <Dialog
-        open={deleteConfirmOpen}
-        onClose={() => setDeleteConfirmOpen(false)}
-      >
-        <DialogTitle>Confirm Deletion</DialogTitle>
-        <DialogContent>
-          <Typography>Are you sure you want to delete this request?</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteConfirmOpen(false)}>Cancel</Button>
-          <Button variant="contained" color="error" onClick={handleDelete}>
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+            <div className="p-6 space-y-4">
+              {/* Device Selection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Device
+                </label>
+                <select
+                  value={currentRequest?.device || ""}
+                  onChange={(e) => setCurrentRequest(prev => ({
+                    ...prev,
+                    device: e.target.value
+                  }))}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Select a device</option>
+                  {devices.map((device) => (
+                    <option key={device.id} value={device.id}>
+                      {device.device_name} ({device.status})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Date Range */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Start Date
+                  </label>
+                  <input
+                    type="date"
+                    value={currentRequest?.start_date || ""}
+                    onChange={(e) => setCurrentRequest(prev => ({
+                      ...prev,
+                      start_date: e.target.value
+                    }))}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    End Date
+                  </label>
+                  <input
+                    type="date"
+                    value={currentRequest?.end_date || ""}
+                    onChange={(e) => setCurrentRequest(prev => ({
+                      ...prev,
+                      end_date: e.target.value
+                    }))}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              {/* Production Amount */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Production Amount (MW)
+                </label>
+                <input
+                  type="number"
+                  step="0.000001"
+                  min="0.000001"
+                  value={currentRequest?.production_amount || ""}
+                  onChange={(e) => setCurrentRequest(prev => ({
+                    ...prev,
+                    production_amount: e.target.value
+                  }))}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              {/* Recipient Account */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Recipient Account
+                </label>
+                <input
+                  type="text"
+                  value={currentRequest?.recipient_account || ""}
+                  onChange={(e) => setCurrentRequest(prev => ({
+                    ...prev,
+                    recipient_account: e.target.value
+                  }))}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              {/* Status Selection (for editing) */}
+              {currentRequest?.id && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Status
+                  </label>
+                  <select
+                    value={currentRequest?.status || "draft"}
+                    onChange={(e) => setCurrentRequest(prev => ({
+                      ...prev,
+                      status: e.target.value
+                    }))}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {["draft", "submitted", "approved", "rejected"].map((status) => (
+                      <option key={status} value={status}>
+                        {status.charAt(0).toUpperCase() + status.slice(1)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end gap-3 p-6 border-t bg-gray-50">
+              <button
+                onClick={() => setOpenDialog(false)}
+                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSubmit}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                {currentRequest?.id ? 'Update Request' : 'Create Request'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Pagination */}
+      <div className="flex justify-between items-center mt-4 bg-white rounded-lg p-4">
+        <div className="text-sm text-gray-700">
+          Showing {page * rowsPerPage + 1} to {Math.min((page + 1) * rowsPerPage, requests.length)} of{' '}
+          <span className="font-medium">{requests.length}</span> results
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setPage(Math.max(0, page - 1))}
+            disabled={page === 0}
+            className="px-3 py-1 border rounded-md hover:bg-gray-50 disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <button
+            onClick={() => setPage(page + 1)}
+            disabled={(page + 1) * rowsPerPage >= requests.length}
+            className="px-3 py-1 border rounded-md hover:bg-gray-50 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+
+      {deleteDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+            <div className="p-6">
+              <h3 className="text-lg font-semibold mb-2">Confirm Deletion</h3>
+              <p className="text-gray-600">
+                Are you sure you want to delete this request? This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex justify-end gap-3 p-6 border-t bg-gray-50">
+              <button
+                onClick={() => setDeleteDialog(false)}
+                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
-
-// Stat Card Component
-const StatCard = ({ title, value, icon }) => (
-  <Card>
-    <CardContent>
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography variant="h6" color="textSecondary">
-          {title}
-        </Typography>
-        {icon}
-      </Box>
-      <Typography variant="h4" component="div">
-        {value}
-      </Typography>
-    </CardContent>
-  </Card>
-);
 
 export default IssueRequestDashboard;
