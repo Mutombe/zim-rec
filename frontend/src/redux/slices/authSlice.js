@@ -28,6 +28,8 @@ export const register = createAsyncThunk(
     try {
       const response = await api.post("register/", userData);
       return {
+        access: response.data.access,
+        refresh: response.data.refresh,
         email: userData.email,
         detail: response.data?.detail || "Registration Successful",
       };
@@ -79,6 +81,17 @@ const authSlice = createSlice({
         state.status = "succeeded";
         state.error = null;
         state.user = action.payload.user;
+        console.log("User", state.user);
+        state.tokens = action.payload;
+        state.isAuthenticated = true;
+        localStorage.setItem(
+          "auth",
+          JSON.stringify({
+            access: action.payload.access,
+            refresh: action.payload.refresh,
+            user: action.payload.user,
+          })
+        );
       })
       .addCase(register.rejected, (state, action) => {
         state.status = "failed";

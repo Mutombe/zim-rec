@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -21,26 +21,31 @@ import {
   TablePagination,
   TableRow,
   TextField,
-  Typography
-} from '@mui/material';
-import { 
+  Typography,
+} from "@mui/material";
+import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   Add as AddIcon,
-  BarChart as BarChartIcon
-} from '@mui/icons-material';
-import { useSelector, useDispatch } from 'react-redux';
-import {   selectUserIssueRequests,
-    selectAllIssueRequestsForAdmin,
-    selectCurrentUser,
-    selectUserDevices,
-    selectAllDevicesForAdmin,
-    selectDashboardData,
-    selectRecentSubmissions,
-    makeSelectRequestsByDevice
-} from '../../redux/selectors';
-import { fetchRequests, saveRequest, deleteIssueRequest } from '../../redux/slices/issueSlice';
-import { fetchDevices } from '../../redux/slices/deviceSlice';
+  BarChart as BarChartIcon,
+} from "@mui/icons-material";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  selectUserIssueRequests,
+  selectAllIssueRequestsForAdmin,
+  selectCurrentUser,
+  selectUserDevices,
+  selectAllDevicesForAdmin,
+  selectDashboardData,
+  selectRecentSubmissions,
+  makeSelectRequestsByDevice,
+} from "../../redux/selectors";
+import {
+  fetchRequests,
+  saveRequest,
+  deleteIssueRequest,
+} from "../../redux/slices/issueSlice";
+import { fetchDevices } from "../../redux/slices/deviceSlice";
 
 const IssueRequestDashboard = () => {
   const dispatch = useDispatch();
@@ -54,19 +59,17 @@ const IssueRequestDashboard = () => {
   const [selectedDeviceId, setSelectedDeviceId] = useState(null);
 
   // Selector-derived data
-  const requests = useSelector(isAdmin 
-    ? selectAllIssueRequestsForAdmin 
-    : selectUserIssueRequests
+  const requests = useSelector(
+    isAdmin ? selectAllIssueRequestsForAdmin : selectUserIssueRequests
   );
-  const devices = useSelector(isAdmin 
-    ? selectAllDevicesForAdmin 
-    : selectUserDevices
+  const devices = useSelector(
+    isAdmin ? selectAllDevicesForAdmin : selectUserDevices
   );
   const dashboardStats = useSelector(selectDashboardData);
-  const recentSubmissions = useSelector(state => 
+  const recentSubmissions = useSelector((state) =>
     selectRecentSubmissions(state, 7)
   );
-  const deviceRequests = useSelector(state => 
+  const deviceRequests = useSelector((state) =>
     makeSelectRequestsByDevice()(state, selectedDeviceId)
   );
 
@@ -77,12 +80,12 @@ const IssueRequestDashboard = () => {
 
   const handleCreate = () => {
     setCurrentRequest({
-      device: '',
-      start_date: '',
-      end_date: '',
-      production_amount: '',
-      recipient_account: '',
-      status: 'draft'
+      device: "",
+      start_date: "",
+      end_date: "",
+      production_amount: "",
+      recipient_account: "",
+      status: "draft",
     });
     setOpenDialog(true);
   };
@@ -93,6 +96,25 @@ const IssueRequestDashboard = () => {
   };
 
   const handleSubmit = () => {
+    const formErrors = validateRequestForm(currentRequest);
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
+    dispatch(saveRequest(currentRequest))
+      .unwrap()
+      .then(() => setOpenDialog(false))
+      .catch((error) => {
+        if (error.errors) {
+          setErrors(error.errors);
+        } else {
+          enqueueSnackbar("Submission failed", { variant: "error" });
+        }
+      });
+  };
+
+  const handleSubmit1 = () => {
     dispatch(saveRequest(currentRequest))
       .unwrap()
       .then(() => setOpenDialog(false));
@@ -105,18 +127,22 @@ const IssueRequestDashboard = () => {
   };
 
   const statusColor = {
-    draft: 'default',
-    submitted: 'primary',
-    approved: 'success',
-    rejected: 'error'
+    draft: "default",
+    submitted: "primary",
+    approved: "success",
+    rejected: "error",
   };
 
   return (
     <Box sx={{ p: 3 }}>
       {/* Dashboard Header */}
-      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between' }}>
+      <Box sx={{ mb: 3, display: "flex", justifyContent: "space-between" }}>
         <Typography variant="h4">Issue Request Management</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={handleCreate}>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={handleCreate}
+        >
           New Request
         </Button>
       </Box>
@@ -124,7 +150,7 @@ const IssueRequestDashboard = () => {
       {/* Statistics Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} md={6} lg={3}>
-          <StatCard 
+          <StatCard
             title="Total Devices"
             value={dashboardStats.totalDevices}
             icon={<BarChartIcon />}
@@ -140,7 +166,7 @@ const IssueRequestDashboard = () => {
         <Grid item xs={12} md={6} lg={3}>
           <StatCard
             title="Total Production"
-            value={dashboardStats.totalProduction?.toFixed(2) + ' MW'}
+            value={dashboardStats.totalProduction?.toFixed(2) + " MW"}
             icon={<BarChartIcon />}
           />
         </Grid>
@@ -175,13 +201,13 @@ const IssueRequestDashboard = () => {
                   <TableCell>{request.id}</TableCell>
                   <TableCell>{request.device?.device_name}</TableCell>
                   <TableCell>
-                    <Chip 
-                      label={request.status} 
+                    <Chip
+                      label={request.status}
                       color={statusColor[request.status]}
                     />
                   </TableCell>
                   <TableCell>
-                    {new Date(request.start_date).toLocaleDateString()} - 
+                    {new Date(request.start_date).toLocaleDateString()} -
                     {new Date(request.end_date).toLocaleDateString()}
                   </TableCell>
                   <TableCell>{request.production_amount} MW</TableCell>
@@ -190,10 +216,12 @@ const IssueRequestDashboard = () => {
                     <IconButton onClick={() => handleEdit(request)}>
                       <EditIcon />
                     </IconButton>
-                    <IconButton onClick={() => {
-                      setCurrentRequest(request);
-                      setDeleteConfirmOpen(true);
-                    }}>
+                    <IconButton
+                      onClick={() => {
+                        setCurrentRequest(request);
+                        setDeleteConfirmOpen(true);
+                      }}
+                    >
                       <DeleteIcon color="error" />
                     </IconButton>
                   </TableCell>
@@ -217,22 +245,36 @@ const IssueRequestDashboard = () => {
       />
 
       {/* Request Form Dialog */}
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>
-          {currentRequest?.id ? 'Edit Request' : 'Create Request'}
+          {currentRequest?.id ? "Edit Request" : "Create Request"}
         </DialogTitle>
         <DialogContent dividers>
           <Grid container spacing={2} sx={{ pt: 2 }}>
+            {Object.keys(errors).map((key) => (
+              <Grid item xs={12} key={key}>
+                <Typography color="error" variant="body2">
+                  {errors[key]}
+                </Typography>
+              </Grid>
+            ))}
             <Grid item xs={12}>
               <TextField
                 select
                 fullWidth
                 label="Device"
-                value={currentRequest?.device || ''}
-                onChange={(e) => setCurrentRequest(prev => ({
-                  ...prev,
-                  device: e.target.value
-                }))}
+                value={currentRequest?.device || ""}
+                onChange={(e) =>
+                  setCurrentRequest((prev) => ({
+                    ...prev,
+                    device: e.target.value,
+                  }))
+                }
               >
                 {devices.map((device) => (
                   <MenuItem key={device.id} value={device.id}>
@@ -248,11 +290,13 @@ const IssueRequestDashboard = () => {
                 label="Start Date"
                 type="date"
                 InputLabelProps={{ shrink: true }}
-                value={currentRequest?.start_date || ''}
-                onChange={(e) => setCurrentRequest(prev => ({
-                  ...prev,
-                  start_date: e.target.value
-                }))}
+                value={currentRequest?.start_date || ""}
+                onChange={(e) =>
+                  setCurrentRequest((prev) => ({
+                    ...prev,
+                    start_date: e.target.value,
+                  }))
+                }
               />
             </Grid>
 
@@ -262,11 +306,27 @@ const IssueRequestDashboard = () => {
                 label="End Date"
                 type="date"
                 InputLabelProps={{ shrink: true }}
-                value={currentRequest?.end_date || ''}
-                onChange={(e) => setCurrentRequest(prev => ({
-                  ...prev,
-                  end_date: e.target.value
-                }))}
+                value={currentRequest?.end_date || ""}
+                onChange={(e) => {
+                  const newEndDate = e.target.value;
+                  if (
+                    currentRequest?.start_date &&
+                    newEndDate <= currentRequest.start_date
+                  ) {
+                    setErrors((prev) => ({
+                      ...prev,
+                      end_date: "End date must be after start date",
+                    }));
+                  } else {
+                    setErrors((prev) => ({ ...prev, end_date: "" }));
+                  }
+                  setCurrentRequest((prev) => ({
+                    ...prev,
+                    end_date: newEndDate,
+                  }));
+                }}
+                error={!!errors.end_date}
+                helperText={errors.end_date}
               />
             </Grid>
 
@@ -275,11 +335,19 @@ const IssueRequestDashboard = () => {
                 fullWidth
                 label="Production (MW)"
                 type="number"
-                value={currentRequest?.production_amount || ''}
-                onChange={(e) => setCurrentRequest(prev => ({
-                  ...prev,
-                  production_amount: e.target.value
-                }))}
+                inputProps={{
+                  step: "0.000001",
+                  min: "0.000001",
+                }}
+                value={currentRequest?.production_amount || ""}
+                onChange={(e) =>
+                  setCurrentRequest((prev) => ({
+                    ...prev,
+                    production_amount: e.target.value,
+                  }))
+                }
+                error={!!errors.production_amount}
+                helperText={errors.production_amount}
               />
             </Grid>
 
@@ -287,11 +355,13 @@ const IssueRequestDashboard = () => {
               <TextField
                 fullWidth
                 label="Recipient Account"
-                value={currentRequest?.recipient_account || ''}
-                onChange={(e) => setCurrentRequest(prev => ({
-                  ...prev,
-                  recipient_account: e.target.value
-                }))}
+                value={currentRequest?.recipient_account || ""}
+                onChange={(e) =>
+                  setCurrentRequest((prev) => ({
+                    ...prev,
+                    recipient_account: e.target.value,
+                  }))
+                }
               />
             </Grid>
 
@@ -301,17 +371,21 @@ const IssueRequestDashboard = () => {
                   select
                   fullWidth
                   label="Status"
-                  value={currentRequest?.status || 'draft'}
-                  onChange={(e) => setCurrentRequest(prev => ({
-                    ...prev,
-                    status: e.target.value
-                  }))}
+                  value={currentRequest?.status || "draft"}
+                  onChange={(e) =>
+                    setCurrentRequest((prev) => ({
+                      ...prev,
+                      status: e.target.value,
+                    }))
+                  }
                 >
-                  {['draft', 'submitted', 'approved', 'rejected'].map((status) => (
-                    <MenuItem key={status} value={status}>
-                      {status.charAt(0).toUpperCase() + status.slice(1)}
-                    </MenuItem>
-                  ))}
+                  {["draft", "submitted", "approved", "rejected"].map(
+                    (status) => (
+                      <MenuItem key={status} value={status}>
+                        {status.charAt(0).toUpperCase() + status.slice(1)}
+                      </MenuItem>
+                    )
+                  )}
                 </TextField>
               </Grid>
             )}
@@ -320,13 +394,16 @@ const IssueRequestDashboard = () => {
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
           <Button variant="contained" onClick={handleSubmit}>
-            {currentRequest?.id ? 'Update' : 'Create'}
+            {currentRequest?.id ? "Update" : "Create"}
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteConfirmOpen} onClose={() => setDeleteConfirmOpen(false)}>
+      <Dialog
+        open={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+      >
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
           <Typography>Are you sure you want to delete this request?</Typography>
@@ -346,7 +423,7 @@ const IssueRequestDashboard = () => {
 const StatCard = ({ title, value, icon }) => (
   <Card>
     <CardContent>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Typography variant="h6" color="textSecondary">
           {title}
         </Typography>

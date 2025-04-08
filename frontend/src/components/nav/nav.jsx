@@ -108,6 +108,11 @@ export const AuthModals = ({ openType, onClose }) => {
             severity: "success",
           });
           onClose();
+          localStorage.setItem('auth', JSON.stringify({
+            access: response.access,
+            refresh: response.refresh,
+            user: response.user
+        }));
         })
         .catch((err) => {
           console.error("Registration Failed:", err);
@@ -271,6 +276,7 @@ export const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notificationAnchor, setNotificationAnchor] = useState(null);
   const isMobile = useMediaQuery("(max-width:768px)");
+  const isAdmin = user?.is_superuser;
 
   const handleUserMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -501,7 +507,7 @@ export const Navbar = () => {
                     </Link>
 
                     <Link
-                      to="/profile"
+                      to="/settings"
                       className="flex items-center p-3 rounded-lg hover:bg-green-50 text-gray-700"
                       onClick={() => setMobileMenuOpen(false)}
                     >
@@ -584,7 +590,7 @@ export const Navbar = () => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={handleUserMenuClose} component={Link} to="/profile">
+        <MenuItem onClick={handleUserMenuClose} component={Link} to="/settings">
           <ListItemIcon>
             <User size={18} className="text-green-600" />
           </ListItemIcon>
@@ -600,12 +606,14 @@ export const Navbar = () => {
           </ListItemIcon>
           <ListItemText>Dashboard</ListItemText>
         </MenuItem>
+        {isAdmin && (
         <MenuItem onClick={handleUserMenuClose} component={Link} to="/admin">
           <ListItemIcon>
             <LayoutDashboard size={18} className="text-green-600" />
           </ListItemIcon>
           <ListItemText>Admin Dashboard</ListItemText>
         </MenuItem>
+           )}
         <MenuItem onClick={handleUserMenuClose} component={Link} to="/settings">
           <ListItemIcon>
             <Settings size={18} className="text-green-600" />

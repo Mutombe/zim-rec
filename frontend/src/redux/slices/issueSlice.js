@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { issueRequestAPI } from '../../utils/api';
+import api from '../../utils/api';
 
 const initialState = {
   requests: [],
@@ -36,11 +37,12 @@ export const createIssueRequest = createAsyncThunk(
       const response = await issueRequestAPI.create(requestData);
       return response.data;
     } catch (err) {
-      return rejectWithValue(err.response.data);
+      return rejectWithValue(
+        err.response?.data || { non_field_errors: ['Submission failed'] }
+      );
     }
   }
 );
-
 export const submitIssueRequest = createAsyncThunk(
   'issueRequests/submit',
   async (requestId, { rejectWithValue }) => {

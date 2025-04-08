@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSnackbar } from "notistack";
 import {
   Stepper,
   Step,
@@ -24,6 +25,7 @@ import {
   Chip,
 } from "@mui/material";
 import { useDispatch } from "react-redux";
+import { deviceAPI } from "../../utils/api";
 import { useTheme } from "@mui/material/styles";
 import { createDevice } from "../../redux/slices/deviceSlice";
 import { CloudUpload, FileText, X, ArrowLeft, ArrowRight } from "lucide-react";
@@ -33,6 +35,23 @@ const DeviceUploadStepper = ({ open, onClose }) => {
   const dispatch = useDispatch();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [activeStep, setActiveStep] = useState(0);
+  const [technologyOptions, setTechnologyOptions] = useState([]);
+  const { enqueueSnackbar } = useSnackbar();
+  const [errors, setErrors] = useState({
+    device_name: '',
+    issuer_organisation: '',
+    fuel_type: '',
+    technology_type: '',
+    capacity: '',
+    commissioning_date: '',
+    effective_date: '',
+    address: '',
+    country: '',
+    latitude: '',
+    longitude: '',
+    postcode: '',
+    documents: ''
+  });
 
   const initialFormState = {
     device_name: "",
@@ -134,6 +153,19 @@ const DeviceUploadStepper = ({ open, onClose }) => {
     }));
   };
 
+  const handleDecimalChange = (name, value, before, after) => {
+    const isValid = validateDecimal(value, before, after);
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: !isValid,
+    }));
+
+    if (isValid) {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
   const handleFileRemove = (docType) => {
     setFormData((prev) => ({
       ...prev,
@@ -144,54 +176,147 @@ const DeviceUploadStepper = ({ open, onClose }) => {
     }));
   };
 
-  const handleSubmit = () => {
-    const formDataToSend = new FormData();
+  const validateDecimal = (value, before, after) => {
+    // Allow empty value for intermediate states
+    if (value === "") return true;
 
-    // Append all non-document fields
-    const { documents, ...otherFields } = formData;
-    Object.entries(otherFields).forEach(([key, value]) => {
-      formDataToSend.append(key, value);
-    });
+    // Check total digit count
+    const totalDigits = value.replace(/[.-]/g, "").length;
+    if (totalDigits > before + after) return false;
 
-    // Map document keys to backend field names
-    const documentMappings = {
-      sf02: "production_facility_registration",
-      sf02c: "declaration_of_ownership",
-      metering: "metering_evidence",
-      diagram: "single_line_diagram",
-      photos: "project_photos",
-    };
-
-    // Append documents with correct field names
-    Object.entries(documents).forEach(([docKey, file]) => {
-      const backendFieldName = documentMappings[docKey];
-      if (file && backendFieldName) {
-        formDataToSend.append(backendFieldName, file);
-      }
-    });
-
-    dispatch(createDevice(formDataToSend))
-      .unwrap()
-      .then(() => {
-        onClose();
-        setFormData(initialFormState); // Reset form data
-      })
-      .catch((error) => {
-        console.error("Submission failed:", error);
-        // Optionally show error to user
-      });
+    // Check format
+    const regex = new RegExp(`^-?\\d{0,${before}}(\\.\\d{0,${after}})?$`);
+    return regex.test(value);
   };
 
-  // Reset technology type when fuel type changes
+  const handleSubmit = async () => {
+    const requiredDocuments = [
+      "sf02",
+      "sf02c",
+      "metering",
+      "diagram",
+      "photos",
+    ];
+    const missingDocuments = requiredDocuments.filter(
+      (doc) => !formData.documents[doc]
+    );
+
+    if (missingDocuments.length > 0) {
+      const missingLabels = missingDocuments.map(
+        (doc) => DOCUMENT_TYPES.find((d) => d.id === doc).shortLabel
+      );
+
+      enqueueSnackbar(
+        `Missing required documents: ${missingLabels.join(", ")}`,
+        { variant: "error" }
+      );
+      setActiveStep(3); // Jump to documents step
+      return;
+    }
+
+    try {
+      const formDataToSend = new FormData();
+
+      // Append regular fields
+      const fields = [
+        "device_name",
+        "issuer_organisation",
+        "default_account_code",
+        "fuel_type",
+        "technology_type",
+        "capacity",
+        "commissioning_date",
+        "effective_date",
+        "address",
+        "country",
+        "postcode",
+        "additional_notes",
+      ];
+
+      fields.forEach((field) => {
+        formDataToSend.append(field, formData[field]);
+      });
+
+      // Append numbers with proper formatting
+      formDataToSend.append(
+        "latitude",
+        parseFloat(formData.latitude).toFixed(6)
+      );
+      formDataToSend.append(
+        "longitude",
+        parseFloat(formData.longitude).toFixed(6)
+      );
+
+      // Append files
+      const fileFields = {
+        sf02: "production_facility_registration",
+        sf02c: "declaration_of_ownership",
+        metering: "metering_evidence",
+        diagram: "single_line_diagram",
+        photos: "project_photos",
+      };
+
+      Object.entries(fileFields).forEach(([frontendKey, backendKey]) => {
+        if (formData.documents[frontendKey]) {
+          formDataToSend.append(backendKey, formData.documents[frontendKey]);
+        }
+      });
+
+      // Create device
+      const response = await deviceAPI.create(formDataToSend);
+
+      // Submit device
+      await deviceAPI.submit(response.data.id);
+
+      // Handle success
+      console.log("Submission successful");
+      onClose();
+    } catch (error) {
+      console.error("Submission error:", error);
+      
+      // Handle validation errors
+      if (error.response?.data) {
+        // Handle field-specific errors
+        const apiErrors = error.response.data;
+        const fieldErrors = {};
+        
+        // Map API errors to form fields
+        Object.keys(apiErrors).forEach((key) => {
+          fieldErrors[key] = apiErrors[key].join(', ');
+        });
+  
+        // Update form errors state
+        setErrors(prev => ({
+          ...prev,
+          ...fieldErrors
+        }));
+  
+        // Show first error in snackbar
+        const firstError = Object.values(apiErrors)[0]?.[0];
+        if (firstError) {
+          enqueueSnackbar(firstError, { variant: 'error' });
+        }
+        
+        // Jump to first error step
+        const errorStep = steps.findIndex(step =>
+          Object.keys(apiErrors).some(field =>
+            getStepFields(step).includes(field)
+          ));
+        if (errorStep >= 0) setActiveStep(errorStep);
+      } else {
+        enqueueSnackbar('Submission failed. Please try again.', { variant: 'error' });
+      }
+    }
+  };
+
   useEffect(() => {
-    if (
-      formData.fuel_type &&
-      !fuelTechnologyMap[formData.fuel_type]?.includes(formData.technology_type)
-    ) {
-      setFormData((prev) => ({
-        ...prev,
-        technology_type: "",
-      }));
+    if (formData.fuel_type) {
+      deviceAPI
+        .getTechnologyOptions(formData.fuel_type)
+        .then((response) => {
+          setTechnologyOptions(response.data.options);
+        })
+        .catch(console.error);
     }
   }, [formData.fuel_type]);
 
@@ -329,11 +454,10 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                   value={formData.technology_type}
                   onChange={handleInputChange}
                   required
-                  MenuProps={{ PaperProps: { sx: { maxHeight: 200 } } }}
                 >
-                  {fuelTechnologyMap[formData.fuel_type]?.map((tech) => (
-                    <MenuItem key={tech} value={tech}>
-                      {tech}
+                  {technologyOptions.map((tech) => (
+                    <MenuItem key={tech.value} value={tech.value}>
+                      {tech.label}
                     </MenuItem>
                   ))}
                 </Select>
@@ -346,7 +470,11 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                 name="capacity"
                 type="number"
                 value={formData.capacity}
-                onChange={handleInputChange}
+                onChange={
+                  (e) => handleDecimalChange("capacity", e.target.value, 4, 6) // 4 digits before, 6 after
+                }
+                error={!!errors.capacity}
+                helperText={errors.capacity}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">MW</InputAdornment>
@@ -414,28 +542,37 @@ const DeviceUploadStepper = ({ open, onClose }) => {
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                fullWidth
                 label="Latitude"
                 name="latitude"
-                type="number"
-                inputProps={{ step: "any" }}
                 value={formData.latitude}
-                onChange={handleInputChange}
-                required
-                size={isMobile ? "small" : "medium"}
+                onChange={(e) => {
+                  // First validate decimal format
+                  handleDecimalChange("latitude", e.target.value, 2, 6); // 2 digits before decimal
+                  // Then validate numeric range
+                  const value = parseFloat(e.target.value);
+                  if (value < -90 || value > 90) {
+                    setErrors((prev) => ({
+                      ...prev,
+                      latitude: "Must be between -90 and 90",
+                    }));
+                  }
+                }}
+                error={!!errors.latitude}
+                helperText={errors.latitude || "Range: -90.000000 to 90.000000"}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                fullWidth
                 label="Longitude"
                 name="longitude"
-                type="number"
-                inputProps={{ step: "any" }}
                 value={formData.longitude}
-                onChange={handleInputChange}
-                required
-                size={isMobile ? "small" : "medium"}
+                onChange={
+                  (e) => handleDecimalChange("longitude", e.target.value, 3, 6) // 3 before, 6 after
+                }
+                error={!!errors.longitude}
+                helperText={
+                  errors.longitude ? "Max 3 digits before decimal" : ""
+                }
               />
             </Grid>
             <Grid item xs={12} sm={6}>

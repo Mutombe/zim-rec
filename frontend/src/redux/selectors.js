@@ -11,12 +11,12 @@ const selectAuthState = state => state.auth;
 // Memoized selectors
 export const selectAllDevices = createSelector(
   [selectDevicesState],
-  devicesState => devicesState.devices
+  devicesState => devicesState.devices || []
 );
 
 export const selectAllIssueRequests = createSelector(
   [selectIssueRequestsState],
-  requestsState => requestsState.requests
+  requestsState => requestsState.requests || []
 );
 
 export const selectCurrentUser = createSelector(
@@ -28,7 +28,7 @@ export const selectCurrentUser = createSelector(
 export const selectUserDevices = createSelector(
   [selectAllDevices, selectCurrentUser],
   (devices, user) => {
-    if (!user) return [];
+    if (!user || !devices) return []; // Add null check for devices
     return devices.filter(device => device.user.id === user.id);
   }
 );
@@ -101,11 +101,15 @@ export const makeSelectDeviceById = () => createSelector(
 
 export const makeSelectRequestsByDevice = () => createSelector(
   [selectAllIssueRequests, (_, deviceId) => deviceId],
-  (requests, deviceId) => requests.filter(req => req.device.id === deviceId)
+  (requests, deviceId) => {
+    // Add array safety check
+    if (!Array.isArray(requests)) return [];
+    return requests.filter(req => req.device?.id === deviceId);
+  }
 );
 
 // High-performance date range selectors
-export const selectRecentSubmissions = createSelector(
+export const selectRecentSubmissions1 = createSelector(
   [selectAllDevices, (_, days = 7) => days],
   (devices, days) => {
     const cutoffDate = new Date();
@@ -113,6 +117,23 @@ export const selectRecentSubmissions = createSelector(
     return devices.filter(device => 
       new Date(device.created_at) > cutoffDate
     );
+  }
+);
+
+export const selectRecentSubmissions = createSelector(
+  [selectAllDevices, (_, days = 7) => days],
+  (devices, days) => {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - days);
+    
+    // Add array safety check
+    if (!Array.isArray(devices)) return [];
+    
+    return devices.filter(device => {
+      // Add optional chaining for date safety
+      const deviceDate = device?.created_at ? new Date(device.created_at) : null;
+      return deviceDate > cutoffDate;
+    });
   }
 );
 

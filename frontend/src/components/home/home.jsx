@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import { Zap, ArrowRight, Sun, Wind, Droplet, Award, TrendingUp, Shield } from 'lucide-react';
 import { useState } from 'react';
 import { AuthModals } from '../nav/nav';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 // Custom animation hook for scrolling elements
 const useScrollAnimation = () => {
@@ -72,7 +74,9 @@ const Home = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
   const isLargeMobile = useMediaQuery(theme.breakpoints.down('lg'));
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
   const [authModal, setAuthModal] = useState(null);
+  const navigate = useNavigate()
   const controls = useScrollAnimation();
   
   const features = [
@@ -143,7 +147,20 @@ const Home = () => {
                 </Typography>
                 
                 <div className="flex flex-wrap gap-3 sm:gap-4">
+                {isAuthenticated ? (
                   <Button
+                    component={Link}
+                      onClick={() => navigate('/dashboard')}
+                      to="/dashboard"
+                    variant="contained"
+                    size={isMobile ? "medium" : "large"}
+                    endIcon={<ArrowRight size={isMobile ? 16 : 24} />}
+                    className={`!bg-green-400 !hover:bg-green-300 !text-green-900 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full !shadow-lg`}
+                  >
+                    Dashboard
+                  </Button>
+                  ) : (  
+                    <Button
                     component={Link}
                     onClick={() => setAuthModal("register")}
                     variant="contained"
@@ -153,7 +170,7 @@ const Home = () => {
                   >
                     Get Started
                   </Button>
-                  
+ )}
                   <Button
                     component={Link}
                     to="/about"
