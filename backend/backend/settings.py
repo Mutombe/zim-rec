@@ -19,8 +19,6 @@ ALLOWED_HOSTS = [
     '127.0.0.1'
 ]
 
-ALLOWED_HOSTS1 = ['zim-rec-backend.onrender.com', 'zim-rec.co.zw', 'http://127.0.0.1:5173', 'http://localhost:5173' ]
-
 TIME_ZONE = 'UTC' 
 USE_TZ = True
 
@@ -195,7 +193,7 @@ AUTHENTICATION_BACKENDS = [
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
-ADMIN_BASE_URL = 'https://zim-rec.co.zw/admin/'
+ADMIN_BASE_URL = 'https://zim-rec.co.zw/'
 ADMINS = [('Zim-Rec Admin', 'simbamtombe@gmail.com')]
 SERVER_EMAIL = 'simbamtombe@gmail.com'
 APP_NAME = 'Zim-Rec'

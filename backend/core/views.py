@@ -10,7 +10,6 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.parsers import MultiPartParser, FormParser
 from .permissions import IsDeviceOwner
-
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.db import transaction
 
@@ -21,11 +20,9 @@ class RegisterView(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             try:
-                # Use atomic transaction to handle User and Profile creation
                 with transaction.atomic():
                     user = serializer.save(is_active=True)
-                    # Force profile creation within the transaction
-                    Profile.objects.get_or_create(user=user)
+                    # Let the signal handle profile creation
                     
                     refresh = RefreshToken.for_user(user)
                     return Response({
