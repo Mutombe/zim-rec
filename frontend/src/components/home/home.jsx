@@ -197,10 +197,10 @@ const Home = () => {
                     <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-white flex items-center justify-center bg-green-600">
                       <Shield className="text-white" size={isMobile ? 16 : 20} />
                     </div>
-                    <div className="ml-2 sm:ml-3">
+                   {/*} <div className="ml-2 sm:ml-3">
                       <Typography variant="body2" className="text-green-200 text-xs sm:text-sm">Blockchain Secured</Typography>
                       <Typography variant="body1" className="font-medium text-sm sm:text-base">Transparent & Immutable</Typography>
-                    </div>
+                    </div>*/}
                   </div>
                 </div>
               </motion.div>
@@ -215,7 +215,7 @@ const Home = () => {
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-green-600 rounded-full opacity-20 blur-3xl transform -translate-x-10"></div>
                 <div className="relative bg-gradient-to-br from-green-50 to-white p-4 sm:p-6 rounded-3xl shadow-2xl">
-                  <div className="grid grid-cols-2 gap-2 sm:gap-4">
+                  {/*<div className="grid grid-cols-2 gap-2 sm:gap-4">
                     <div className="aspect-square bg-green-100 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col justify-between">
                       <Sun className="text-green-600" size={isMobile ? 24 : 32} />
                       <div>
@@ -244,7 +244,7 @@ const Home = () => {
                         <Typography className="text-base sm:text-lg font-bold text-gray-900">5.4%</Typography>
                       </div>
                     </div>
-                  </div>
+                  </div>*/}
                   <Typography className="mt-2 sm:mt-4 text-center text-gray-500 text-xs sm:text-sm">
                     Zimbabwe REC Distribution 2025
                   </Typography>
@@ -321,7 +321,7 @@ const Home = () => {
             </Typography>
           </motion.div>
           
-          <Grid container spacing={2} sm={3} md={4}>
+          {/*<Grid container spacing={2} sm={3} md={4}>
             <Grid item xs={6} md={3}>
               <Statistic 
                 value="350+" 
@@ -350,7 +350,7 @@ const Home = () => {
                 icon={<TrendingUp size={isMobile ? 18 : 24} className="text-green-600" />} 
               />
             </Grid>
-          </Grid>
+          </Grid>*/}
         </div>
       </section>
       
