@@ -161,7 +161,7 @@ const Footer = () => {
 
           <div className="mt-4 text-center">
             <Typography variant="body2" className="!text-green-100">
-              Developed by <a href="https://zettabyte.com" className="!text-green-300 hover:!text-white !transition-colors" target="_blank" rel="noopener noreferrer">Zettabyte</a>
+              Developed by <a href="https://zettabyte.co.zw" className="!text-green-300 hover:!text-white !transition-colors" target="_blank" rel="noopener noreferrer">Zettabyte</a>
             </Typography>
           </div>
         </div>
