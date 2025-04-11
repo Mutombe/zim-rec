@@ -231,7 +231,7 @@ const Contact = () => {
                       Office Location
                     </Typography>
                     <Typography variant="body2" className="text-gray-600">
-                      123 Renewable Energy Way<br />
+                    7 KingsRow Northgate , Borrowdale<br />
                       Harare, Zimbabwe
                     </Typography>
                   </div>
