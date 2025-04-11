@@ -82,11 +82,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'b2gzaoncfur4uzxibt04',
-        'USER': 'uxdwqextncoc67h31p6m',
-        'PASSWORD': 'DjJmbVHST4Mv04ivjHvWF3hvxxTyqj',
-        'HOST': 'b2gzaoncfur4uzxibt04-postgresql.services.clever-cloud.com',
-        'PORT': '50013',
+        'NAME': 'bzotuqo0khnb1zpfbaov',
+        'USER': 'uodas4jqktivae3abowk',
+        'PASSWORD': 'uPAOcFBMDgTMOhlc1Qen',
+        'HOST': 'bzotuqo0khnb1zpfbaov-postgresql.services.clever-cloud.com',
+        'PORT': '7120',
     }
 }
 

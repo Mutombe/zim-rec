@@ -89,6 +89,7 @@ class Device(models.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._original_status = self.status
+        self.status_changed = False
 
     def save(self, *args, **kwargs):
         self.status_changed = self.status != self._original_status

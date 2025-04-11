@@ -140,12 +140,12 @@ def handle_issue_request_changes(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Device)
 def handle_device_status_change(sender, instance, **kwargs):
-    if instance.status_changed():
+    if instance.status_changed:
         send_status_email(instance.user, 'device', instance.status)
 
 @receiver(post_save, sender=IssueRequest)
 def handle_issue_request_status_change(sender, instance, **kwargs):
-    if instance.status_changed():
+    if instance.status_changed:
         send_status_email(instance.user, 'issue_request', instance.status)
 
 @receiver(post_save, sender=User)
