@@ -415,7 +415,7 @@ const Home = () => {
         </div>
       </section>
       
-      {/* Trusted By Section */}
+      {/* Trusted By Section 
       <section className="py-10 sm:py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Typography variant="h6" className="text-center text-gray-600 mb-6 sm:mb-10 text-sm sm:text-base">
@@ -434,7 +434,7 @@ const Home = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section>*/}
       <AuthModals openType={authModal} onClose={() => setAuthModal(null)} />
     </div>
   );

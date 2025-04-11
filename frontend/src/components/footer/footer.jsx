@@ -33,10 +33,10 @@ const Footer = () => {
                   Zim-REC
                 </Typography>
               </Link>
-              <Typography variant="body2" className="!text-green-50 !leading-relaxed">
+              {/*<Typography variant="body2" className="!text-green-50 !leading-relaxed">
                 Catalyzing sustainable energy markets through transparent REC trading.
                 Partnered with Silver Carbon and AICTS for a greener Zimbabwe.
-              </Typography>
+              </Typography>*/}
               
               <div className="flex space-x-4 mt-6">
                 {socialLinks.map((social, index) => (
