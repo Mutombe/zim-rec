@@ -90,7 +90,7 @@ const Footer = () => {
                   <Phone className="text-white" size={16} />
                 </div>
                 <Typography variant="body2" className="!text-green-50">
-                  +263 716 780 112
+                +263 78 004 9196
                 </Typography>
               </motion.div>
               <motion.div whileHover={{ x: 5 }} className="flex items-center space-x-3">

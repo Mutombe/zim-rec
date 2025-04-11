@@ -246,8 +246,8 @@ const Contact = () => {
                       Phone Numbers
                     </Typography>
                     <Typography variant="body2" className="text-gray-600">
-                      +263 716 780 112<br />
-                      +263 777 700 465
+                    +263 78 004 9196<br />
+                      +263 78 004 9196
                     </Typography>
                   </div>
                 </div>
