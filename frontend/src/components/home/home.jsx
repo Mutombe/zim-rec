@@ -136,7 +136,7 @@ const Home = () => {
                   className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4 sm:mb-6"
                 >
                   Powering Zimbabwe's 
-                  <span className="text-green-300"> Renewable Future</span>
+                  <span className="text-green-300"> Renewable Energy Future</span>
                 </Typography>
                 
                 {/*<Typography 
