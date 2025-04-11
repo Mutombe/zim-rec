@@ -139,12 +139,12 @@ const Home = () => {
                   <span className="text-green-300"> Renewable Future</span>
                 </Typography>
                 
-                <Typography 
+                {/*<Typography 
                   variant={isMobile ? "body1" : "h2"} 
                   className="text-base xs:text-lg sm:text-xl md:text-2xl text-green-50 opacity-90 mb-6 sm:mb-8 max-w-xl"
                 >
                   Connect, trade, and verify Renewable Energy Certificates to accelerate sustainability across Zimbabwe.
-                </Typography>
+                </Typography>*/}
                 
                 <div className="flex flex-wrap gap-3 sm:gap-4">
                 {isAuthenticated ? (
@@ -182,7 +182,7 @@ const Home = () => {
                   </Button>
                 </div>
                 
-                <div className="mt-6 sm:mt-10 flex gap-4 sm:gap-6 flex-wrap">
+                {/*<div className="mt-6 sm:mt-10 flex gap-4 sm:gap-6 flex-wrap">
                   <div className="flex items-center">
                     <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-white flex items-center justify-center bg-green-600">
                       <Zap className="text-white" size={isMobile ? 16 : 20} />
@@ -197,12 +197,12 @@ const Home = () => {
                     <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-white flex items-center justify-center bg-green-600">
                       <Shield className="text-white" size={isMobile ? 16 : 20} />
                     </div>
-                   {/*} <div className="ml-2 sm:ml-3">
+                   } <div className="ml-2 sm:ml-3">
                       <Typography variant="body2" className="text-green-200 text-xs sm:text-sm">Blockchain Secured</Typography>
                       <Typography variant="body1" className="font-medium text-sm sm:text-base">Transparent & Immutable</Typography>
-                    </div>*/}
+                    </div>
                   </div>
-                </div>
+                </div>*/}
               </motion.div>
             </Grid>
             
@@ -245,9 +245,10 @@ const Home = () => {
                       </div>
                     </div>
                   </div>*/}
+                  {/*
                   <Typography className="mt-2 sm:mt-4 text-center text-gray-500 text-xs sm:text-sm">
                     Zimbabwe REC Distribution 2025
-                  </Typography>
+                  </Typography>*/}
                 </div>
               </motion.div>
             </Grid>
@@ -262,7 +263,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Features Section *
       <section className="py-12 sm:py-16 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
@@ -297,7 +298,6 @@ const Home = () => {
         </div>
       </section>
       
-      {/* Statistics Section */}
       <section className="py-12 sm:py-16 md:py-20 bg-green-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -319,7 +319,7 @@ const Home = () => {
               Since our launch, we've helped accelerate Zimbabwe's renewable energy sector 
               through transparent certification and efficient market mechanisms.
             </Typography>
-          </motion.div>
+          </motion.div>/}
           
           {/*<Grid container spacing={2} sm={3} md={4}>
             <Grid item xs={6} md={3}>
@@ -350,9 +350,9 @@ const Home = () => {
                 icon={<TrendingUp size={isMobile ? 18 : 24} className="text-green-600" />} 
               />
             </Grid>
-          </Grid>*/}
+          </Grid>
         </div>
-      </section>
+      </section>*/}
       
       {/* CTA Section */}
       <section className="py-12 sm:py-16 md:py-20 bg-white">
@@ -377,10 +377,10 @@ const Home = () => {
                 <Typography variant="h3" className="text-2xl xs:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6">
                   Ready to join Zimbabwe's renewable energy revolution?
                 </Typography>
-                <Typography variant="body1" className="text-green-100 mb-6 sm:mb-8 text-sm sm:text-base">
+                {/*<Typography variant="body1" className="text-green-100 mb-6 sm:mb-8 text-sm sm:text-base">
                   Whether you're a project developer, corporate buyer, or investor, our platform 
                   provides the tools you need to participate in Zimbabwe's sustainable future.
-                </Typography>
+                </Typography>*/}
                 <div className="flex flex-wrap gap-3 sm:gap-4">
                   <Button
                     component={Link}
@@ -421,6 +421,7 @@ const Home = () => {
           <Typography variant="h6" className="text-center text-gray-600 mb-6 sm:mb-10 text-sm sm:text-base">
             TRUSTED BY LEADING ORGANIZATIONS
           </Typography>
+          <br></br>
           <div className="flex flex-wrap justify-center gap-5 sm:gap-10 md:gap-16 opacity-70">
             {['AICTS', 'Silver Carbon', 'Zimbabwe Energy', 'Green Africa', 'EcoSolutions', 'Sustainable ZW'].map((partner) => (
               <Typography 

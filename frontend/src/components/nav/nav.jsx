@@ -350,7 +350,7 @@ export const Navbar = () => {
                   <span className="text-green-600 mr-2 group-hover:scale-110 transition-transform">
                     <LayoutDashboard size={18} />
                   </span>
-                  Dashboard
+                  Device Registration
                 </Link>
 
               </>
@@ -604,7 +604,7 @@ export const Navbar = () => {
           <ListItemIcon>
             <LayoutDashboard size={18} className="text-green-600" />
           </ListItemIcon>
-          <ListItemText>Dashboard</ListItemText>
+          <ListItemText>Device Registration</ListItemText>
         </MenuItem>
         {isAdmin && (
         <MenuItem onClick={handleUserMenuClose} component={Link} to="/admin">
