@@ -261,8 +261,7 @@ const Contact = () => {
                       Email Addresses
                     </Typography>
                     <Typography variant="body2" className="text-gray-600">
-                      contact@zimrec.co.zw<br />
-                      contact@africarbontraining.com
+                      admin@zimrec.co.zw<br />
                     </Typography>
                   </div>
                 </div>

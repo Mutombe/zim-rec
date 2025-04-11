@@ -98,7 +98,7 @@ const Footer = () => {
                   <Mail className="text-white" size={16} />
                 </div>
                 <Typography variant="body2" className="!text-green-50">
-                  contact@zimrec.co.zw
+                  admin@zim-rec.co.zw
                 </Typography>
               </motion.div>
             </div>
