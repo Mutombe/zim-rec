@@ -493,7 +493,7 @@ export const Navbar = () => {
                       <span className="bg-green-100 p-2 rounded-lg mr-4 text-green-600">
                         <LayoutDashboard size={18} />
                       </span>
-                      <span className="font-medium">Dashboard</span>
+                      <span className="font-medium">Device Registration</span>
                     </Link>
                     <Link
                       to="/issue-requests"
