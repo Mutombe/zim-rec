@@ -321,7 +321,7 @@ const Contact = () => {
             </Paper>
             
             {/* Quick Links */}
-            <Paper elevation={0} className="p-6 rounded-2xl shadow-lg bg-gradient-to-br from-green-600 to-green-700 text-white">
+            <Paper elevation={""} className="p-6 rounded-2xl shadow-lg bg-gradient-to-br from-green-700 to-green-800 text-white">
               <Typography variant="h6" className="font-bold mb-4">
                 Quick Links
               </Typography>

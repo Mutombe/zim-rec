@@ -238,7 +238,7 @@ const Home = () => {
               </motion.div>
             </Grid>
 
-            <Grid
+            {/*<Grid
               item
               xs={12}
               md={5}
@@ -282,13 +282,13 @@ const Home = () => {
                       </div>
                     </div>
                   </div>*/}
-                  {/*
+            {/*
                   <Typography className="mt-2 sm:mt-4 text-center text-gray-500 text-xs sm:text-sm">
                     Zimbabwe REC Distribution 2025
-                  </Typography>*/}
-                </div>
-              </motion.div>
-            </Grid>
+                  </Typography>
+        </div>
+      </motion.div>
+    </Grid>*/}
           </Grid>
         </div>
 
@@ -434,8 +434,8 @@ const Home = () => {
                       variant="contained"
                       size={isMobile ? "medium" : "large"}
                       className={`!bg-white !text-green-800 !hover:bg-green-50 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full`}
-                    >
-                      Create Account
+                    >Show our Devices
+                      
                     </Button>
                   ) : (
                     <Button
@@ -445,7 +445,7 @@ const Home = () => {
                       size={isMobile ? "medium" : "large"}
                       className={`!bg-white !text-green-800 !hover:bg-green-50 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full`}
                     >
-                      Show our Devices
+                      Create Account
                     </Button>
                   )}
                   <Button
