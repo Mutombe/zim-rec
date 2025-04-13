@@ -510,7 +510,18 @@ export const Navbar = () => {
                       </span>
                       <span className="font-medium">Issue Request</span>
                     </Link>
-
+                    {isAdmin && (
+                    <Link
+                      to="/admin"
+                      className="flex items-center p-3 rounded-lg hover:bg-green-50 text-gray-700"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <span className="bg-green-100 p-2 rounded-lg mr-4 text-green-600">
+                        <LayoutDashboard size={18} />
+                      </span>
+                      <span className="font-medium">Admin Dashboard</span>
+                    </Link>
+                    )}
                     <Link
                       to="/settings"
                       className="flex items-center p-3 rounded-lg hover:bg-green-50 text-gray-700"
