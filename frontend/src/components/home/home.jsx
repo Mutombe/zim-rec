@@ -1,31 +1,48 @@
-import React, { useEffect } from 'react';
-import { motion, useAnimation } from 'framer-motion';
-import { Button, Typography, Card, Grid, Box, useMediaQuery, useTheme } from '@mui/material';
-import { Link } from 'react-router-dom';
-import { Zap, ArrowRight, Sun, Wind, Droplet, Award, TrendingUp, Shield } from 'lucide-react';
-import { useState } from 'react';
-import { AuthModals } from '../nav/nav';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from "react";
+import { motion, useAnimation } from "framer-motion";
+import {
+  Button,
+  Typography,
+  Card,
+  Grid,
+  Box,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
+import { Link } from "react-router-dom";
+import {
+  Zap,
+  ArrowRight,
+  Sun,
+  Wind,
+  Droplet,
+  Award,
+  TrendingUp,
+  Shield,
+} from "lucide-react";
+import { useState } from "react";
+import { AuthModals } from "../nav/nav";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 // Custom animation hook for scrolling elements
 const useScrollAnimation = () => {
   const controls = useAnimation();
-  
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
-      
+
       if (scrollY > windowHeight * 0.1) {
-        controls.start('visible');
+        controls.start("visible");
       }
     };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [controls]);
-  
+
   return controls;
 };
 
@@ -53,17 +70,23 @@ const FeatureCard = ({ icon, title, description, delay }) => (
 
 // Statistics component
 const Statistic = ({ value, label, icon }) => (
-  <motion.div 
+  <motion.div
     whileHover={{ scale: 1.05 }}
     className="bg-white p-3 sm:p-6 rounded-2xl shadow-md flex flex-col items-center"
   >
     <div className="rounded-full bg-green-100 p-2 sm:p-3 mb-2 sm:mb-4">
       {icon}
     </div>
-    <Typography variant="h4" className="text-green-700 font-bold mb-1 text-center">
+    <Typography
+      variant="h4"
+      className="text-green-700 font-bold mb-1 text-center"
+    >
       {value}
     </Typography>
-    <Typography variant="body2" className="text-gray-600 text-center text-xs sm:text-sm">
+    <Typography
+      variant="body2"
+      className="text-gray-600 text-center text-xs sm:text-sm"
+    >
       {label}
     </Typography>
   </motion.div>
@@ -71,45 +94,51 @@ const Statistic = ({ value, label, icon }) => (
 
 const Home = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
-  const isLargeMobile = useMediaQuery(theme.breakpoints.down('lg'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
+  const isLargeMobile = useMediaQuery(theme.breakpoints.down("lg"));
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const [authModal, setAuthModal] = useState(null);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const controls = useScrollAnimation();
-  
+
   const features = [
     {
       icon: <Sun size={isMobile ? 24 : 32} className="text-green-600" />,
       title: "Solar Energy Certificates",
-      description: "Track and trade solar energy production with transparent, blockchain-verified certificates."
+      description:
+        "Track and trade solar energy production with transparent, blockchain-verified certificates.",
     },
     {
       icon: <Wind size={isMobile ? 24 : 32} className="text-green-600" />,
       title: "Wind Power RECs",
-      description: "Connect with wind energy producers and purchase certified renewable energy credits."
+      description:
+        "Connect with wind energy producers and purchase certified renewable energy credits.",
     },
     {
       icon: <Droplet size={isMobile ? 24 : 32} className="text-green-600" />,
       title: "Hydro Energy Trading",
-      description: "Access Zimbabwe's growing hydroelectric energy market through verified certificates."
+      description:
+        "Access Zimbabwe's growing hydroelectric energy market through verified certificates.",
     },
     {
       icon: <Shield size={isMobile ? 24 : 32} className="text-green-600" />,
       title: "Compliance Solutions",
-      description: "Meet regulatory requirements and sustainability goals with verified RECs."
+      description:
+        "Meet regulatory requirements and sustainability goals with verified RECs.",
     },
     {
       icon: <TrendingUp size={isMobile ? 24 : 32} className="text-green-600" />,
       title: "Market Analytics",
-      description: "Access real-time data and insights on renewable energy market trends."
+      description:
+        "Access real-time data and insights on renewable energy market trends.",
     },
     {
       icon: <Award size={isMobile ? 24 : 32} className="text-green-600" />,
       title: "Sustainability Reporting",
-      description: "Generate comprehensive reports to showcase your environmental impact."
-    }
+      description:
+        "Generate comprehensive reports to showcase your environmental impact.",
+    },
   ];
 
   return (
@@ -122,7 +151,7 @@ const Home = () => {
           <div className="absolute bottom-10 sm:bottom-20 right-5 sm:right-10 w-40 sm:w-80 h-40 sm:h-80 rounded-full bg-green-500"></div>
           <div className="absolute top-20 sm:top-40 right-10 sm:right-20 w-20 sm:w-40 h-20 sm:h-40 rounded-full bg-green-400"></div>
         </div>
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 md:py-32 lg:py-40 relative z-10">
           <Grid container spacing={isMobile ? 6 : 4} alignItems="center">
             <Grid item xs={12} md={7}>
@@ -131,46 +160,49 @@ const Home = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
               >
-                <Typography 
-                  variant={isMobile ? "h2" : "h1"} 
+                <Typography
+                  variant={isMobile ? "h2" : "h1"}
                   className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4 sm:mb-6"
                 >
-                  Powering Zimbabwe's 
-                  <span className="text-green-300"> Renewable Energy Future</span>
+                  Powering Zimbabwe's
+                  <span className="text-green-300">
+                    {" "}
+                    Renewable Energy Future
+                  </span>
                 </Typography>
-                
+
                 {/*<Typography 
                   variant={isMobile ? "body1" : "h2"} 
                   className="text-base xs:text-lg sm:text-xl md:text-2xl text-green-50 opacity-90 mb-6 sm:mb-8 max-w-xl"
                 >
                   Connect, trade, and verify Renewable Energy Certificates to accelerate sustainability across Zimbabwe.
                 </Typography>*/}
-                
+
                 <div className="flex flex-wrap gap-3 sm:gap-4">
-                {isAuthenticated ? (
-                  <Button
-                    component={Link}
-                      onClick={() => navigate('/dashboard')}
-                      to="/dashboard"
-                    variant="contained"
-                    size={isMobile ? "medium" : "large"}
-                    endIcon={<ArrowRight size={isMobile ? 16 : 24} />}
-                    className={`!bg-green-400 !hover:bg-green-300 !text-green-900 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full !shadow-lg`}
-                  >
-                    Dashboard
-                  </Button>
-                  ) : (  
+                  {isAuthenticated ? (
                     <Button
-                    component={Link}
-                    onClick={() => setAuthModal("register")}
-                    variant="contained"
-                    size={isMobile ? "medium" : "large"}
-                    endIcon={<ArrowRight size={isMobile ? 16 : 24} />}
-                    className={`!bg-green-400 !hover:bg-green-300 !text-green-900 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full !shadow-lg`}
-                  >
-                    Get Started
-                  </Button>
- )}
+                      component={Link}
+                      onClick={() => navigate("/dashboard")}
+                      to="/dashboard"
+                      variant="contained"
+                      size={isMobile ? "medium" : "large"}
+                      endIcon={<ArrowRight size={isMobile ? 16 : 24} />}
+                      className={`!bg-green-400 !hover:bg-green-300 !text-green-900 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full !shadow-lg`}
+                    >
+                      Dashboard
+                    </Button>
+                  ) : (
+                    <Button
+                      component={Link}
+                      onClick={() => setAuthModal("register")}
+                      variant="contained"
+                      size={isMobile ? "medium" : "large"}
+                      endIcon={<ArrowRight size={isMobile ? 16 : 24} />}
+                      className={`!bg-green-400 !hover:bg-green-300 !text-green-900 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full !shadow-lg`}
+                    >
+                      Get Started
+                    </Button>
+                  )}
                   <Button
                     component={Link}
                     to="/about"
@@ -181,7 +213,7 @@ const Home = () => {
                     Learn More
                   </Button>
                 </div>
-                
+
                 {/*<div className="mt-6 sm:mt-10 flex gap-4 sm:gap-6 flex-wrap">
                   <div className="flex items-center">
                     <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-white flex items-center justify-center bg-green-600">
@@ -205,8 +237,13 @@ const Home = () => {
                 </div>*/}
               </motion.div>
             </Grid>
-            
-            <Grid item xs={12} md={5} className={isTablet ? "flex justify-center" : "hidden md:block"}>
+
+            <Grid
+              item
+              xs={12}
+              md={5}
+              className={isTablet ? "flex justify-center" : "hidden md:block"}
+            >
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -254,10 +291,15 @@ const Home = () => {
             </Grid>
           </Grid>
         </div>
-        
+
         {/* Wave SVG Divider */}
         <div className="absolute bottom-0 left-0 right-0">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" fill="#ffffff" preserveAspectRatio="none">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1440 120"
+            fill="#ffffff"
+            preserveAspectRatio="none"
+          >
             <path d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,42.7C1120,32,1280,32,1360,32L1440,32L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
           </svg>
         </div>
@@ -353,7 +395,7 @@ const Home = () => {
           </Grid>
         </div>
       </section>*/}
-      
+
       {/* CTA Section */}
       <section className="py-12 sm:py-16 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -362,7 +404,7 @@ const Home = () => {
             animate={controls}
             variants={{
               visible: { opacity: 1, transition: { duration: 0.8 } },
-              hidden: { opacity: 0 }
+              hidden: { opacity: 0 },
             }}
             className="bg-gradient-to-br from-green-800 to-green-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 lg:p-16 shadow-xl relative overflow-hidden"
           >
@@ -371,10 +413,13 @@ const Home = () => {
               <div className="absolute top-5 sm:top-10 right-5 sm:right-10 w-20 sm:w-40 h-20 sm:h-40 rounded-full bg-green-300"></div>
               <div className="absolute bottom-5 sm:bottom-10 left-5 sm:left-10 w-30 sm:w-60 h-30 sm:h-60 rounded-full bg-green-500"></div>
             </div>
-            
+
             <Grid container spacing={4} sm={6} className="relative z-10">
               <Grid item xs={12} md={7}>
-                <Typography variant="h3" className="text-2xl xs:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6">
+                <Typography
+                  variant="h3"
+                  className="text-2xl xs:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6"
+                >
                   Ready to join Zimbabwe's renewable energy revolution?
                 </Typography>
                 {/*<Typography variant="body1" className="text-green-100 mb-6 sm:mb-8 text-sm sm:text-base">
@@ -382,15 +427,27 @@ const Home = () => {
                   provides the tools you need to participate in Zimbabwe's sustainable future.
                 </Typography>*/}
                 <div className="flex flex-wrap gap-3 sm:gap-4">
-                  <Button
-                    component={Link}
-                    onClick={() => setAuthModal("register")}
-                    variant="contained"
-                    size={isMobile ? "medium" : "large"}
-                    className={`!bg-white !text-green-800 !hover:bg-green-50 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full`}
-                  >
-                    Create Account
-                  </Button>
+                  {isAuthenticated ? (
+                    <Button
+                      component={Link}
+                      onClick={() => setAuthModal("register")}
+                      variant="contained"
+                      size={isMobile ? "medium" : "large"}
+                      className={`!bg-white !text-green-800 !hover:bg-green-50 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full`}
+                    >
+                      Create Account
+                    </Button>
+                  ) : (
+                    <Button
+                      component={Link}
+                      onClick={() => setAuthModal("register")}
+                      variant="contained"
+                      size={isMobile ? "medium" : "large"}
+                      className={`!bg-white !text-green-800 !hover:bg-green-50 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full`}
+                    >
+                      Show our Devices
+                    </Button>
+                  )}
                   <Button
                     component={Link}
                     to="/contact"
@@ -402,7 +459,12 @@ const Home = () => {
                   </Button>
                 </div>
               </Grid>
-              <Grid item xs={12} md={5} className="hidden md:flex justify-center items-center">
+              <Grid
+                item
+                xs={12}
+                md={5}
+                className="hidden md:flex justify-center items-center"
+              >
                 <div className="relative">
                   <div className="absolute inset-0 bg-green-400 rounded-full opacity-20 blur-2xl"></div>
                   <div className="relative rounded-full bg-white/10 p-6 backdrop-blur-sm border border-white/20">
@@ -414,7 +476,7 @@ const Home = () => {
           </motion.div>
         </div>
       </section>
-      
+
       {/* Trusted By Section 
       <section className="py-10 sm:py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -445,16 +507,16 @@ export default Home;
 // Missing component import added for Statistics section
 const Users = ({ size, className }) => {
   return (
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      width={size} 
-      height={size} 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className={className}
     >
       <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
