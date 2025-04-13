@@ -4,6 +4,7 @@ import api from '../../utils/api';
 
 const initialState = {
   requests: [],
+  loading: false,
   status: 'idle',
   error: null,
   filters: {
@@ -100,9 +101,11 @@ const issueRequestSlice = createSlice({
     builder
     .addCase(fetchRequests.pending, (state) => {
       state.status = 'loading';
+      state.loading = true;
     })
     .addCase(fetchRequests.fulfilled, (state, action) => {
       state.status = 'succeeded';
+      state.loading = false;
       state.requests = action.payload;
     })
     .addCase(saveRequest.fulfilled, (state, action) => {

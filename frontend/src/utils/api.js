@@ -24,7 +24,7 @@ export const refreshTokens = async (refresh) => {
 };
 
 const api = axios.create({
-  baseURL: "https://zim-rec-backend.onrender.com", //|| import.meta.env.VITE_API_BASE_URL ,
+  baseURL: "http://127.0.0.1:8000", //|| import.meta.env.VITE_API_BASE_URL ,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -51,6 +51,8 @@ export const deviceAPI = {
   getTechnologyOptions: (fuelType) =>
     api.get(`/technology-options/?fuel_type=${fuelType}`),
   getAll: () => api.get("/devices/"),
+  getById: (id) => api.get(`/devices/${id}/`),
+  getUserDevices: (userId) => api.get(`/devices/?user_id=${userId}`),
   create: (data) => api.post("/devices/", data),
   update: (id, data) => api.patch(`/devices/${id}/`, data),
   delete: (id) => api.delete(`/devices/${id}/`),

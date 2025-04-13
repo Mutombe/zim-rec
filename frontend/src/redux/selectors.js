@@ -19,13 +19,27 @@ export const selectAllIssueRequests = createSelector(
   requestsState => requestsState.requests || []
 );
 
+
+
 export const selectCurrentUser = createSelector(
   [selectAuthState],
   auth => auth.user
 );
 
-// User-specific selectors
 export const selectUserDevices = createSelector(
+  [selectAllDevices, selectCurrentUser],
+  (devices, user) => {
+    if (!user || !devices) return [];
+    // Handle both numeric and string IDs
+    return devices.filter(device => 
+      String(device.user.id) === String(user.id) ||
+      String(device.user) === String(user.id)
+    );
+  }
+);
+
+// User-specific selectors
+export const selectUserDevices2 = createSelector(
   [selectAllDevices, selectCurrentUser],
   (devices, user) => {
     if (!user || !devices) return []; // Add null check for devices
@@ -36,8 +50,17 @@ export const selectUserDevices = createSelector(
 export const selectUserIssueRequests = createSelector(
   [selectAllIssueRequests, selectCurrentUser],
   (requests, user) => {
-    if (!user) return [];
-    return requests.filter(req => req.user.id === user.id);
+    // 1. Ensure we have an array
+    if (!Array.isArray(requests)) return [];
+    
+    // 2. Check for valid user
+    if (!user?.id) return [];
+    
+    // 3. Safe filtering with null checks
+    return requests.filter(req => {
+      const requestUserId = req.user?.id;
+      return requestUserId && requestUserId === user.id;
+    });
   }
 );
 
@@ -105,18 +128,6 @@ export const makeSelectRequestsByDevice = () => createSelector(
     // Add array safety check
     if (!Array.isArray(requests)) return [];
     return requests.filter(req => req.device?.id === deviceId);
-  }
-);
-
-// High-performance date range selectors
-export const selectRecentSubmissions1 = createSelector(
-  [selectAllDevices, (_, days = 7) => days],
-  (devices, days) => {
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - days);
-    return devices.filter(device => 
-      new Date(device.created_at) > cutoffDate
-    );
   }
 );
 

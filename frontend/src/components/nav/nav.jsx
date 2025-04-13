@@ -108,11 +108,14 @@ export const AuthModals = ({ openType, onClose }) => {
             severity: "success",
           });
           onClose();
-          localStorage.setItem('auth', JSON.stringify({
-            access: response.access,
-            refresh: response.refresh,
-            user: response.user
-        }));
+          localStorage.setItem(
+            "auth",
+            JSON.stringify({
+              access: response.access,
+              refresh: response.refresh,
+              user: response.user,
+            })
+          );
         })
         .catch((err) => {
           console.error("Registration Failed:", err);
@@ -140,7 +143,7 @@ export const AuthModals = ({ openType, onClose }) => {
         <motion.div
           initial={{ scale: 0.95 }}
           animate={{ scale: 1 }}
-          className="p-6 space-y-6"
+          className="p-6 space-y-6 space-x-4"
         >
           <div className="text-center">
             <div className="mx-auto w-fit p-3 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl mb-4">
@@ -188,6 +191,8 @@ export const AuthModals = ({ openType, onClose }) => {
               />
             )}
 
+            <Divider className="!my-4"></Divider>
+
             <TextField
               fullWidth
               label="Username"
@@ -201,6 +206,7 @@ export const AuthModals = ({ openType, onClose }) => {
                 ),
               }}
             />
+            <Divider className="!my-4"></Divider>
             <TextField
               fullWidth
               label="Password"
@@ -352,7 +358,6 @@ export const Navbar = () => {
                   </span>
                   Device Registration
                 </Link>
-
               </>
             )}
           </div>
@@ -607,13 +612,13 @@ export const Navbar = () => {
           <ListItemText>Device Registration</ListItemText>
         </MenuItem>
         {isAdmin && (
-        <MenuItem onClick={handleUserMenuClose} component={Link} to="/admin">
-          <ListItemIcon>
-            <LayoutDashboard size={18} className="text-green-600" />
-          </ListItemIcon>
-          <ListItemText>Admin Dashboard</ListItemText>
-        </MenuItem>
-           )}
+          <MenuItem onClick={handleUserMenuClose} component={Link} to="/admin">
+            <ListItemIcon>
+              <LayoutDashboard size={18} className="text-green-600" />
+            </ListItemIcon>
+            <ListItemText>Admin Dashboard</ListItemText>
+          </MenuItem>
+        )}
         <MenuItem onClick={handleUserMenuClose} component={Link} to="/settings">
           <ListItemIcon>
             <Settings size={18} className="text-green-600" />

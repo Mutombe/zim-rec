@@ -3,6 +3,7 @@ import { deviceAPI } from '../../utils/api';
 
 const initialState = {
   devices: [],
+  loading: false,
   status: 'idle',
   error: null,
   filters: {
@@ -11,12 +12,35 @@ const initialState = {
   },
 };
 
-// Async Thunks
+export const fetchDeviceById = createAsyncThunk(
+  'devices/fetchById',
+  async (deviceId, { rejectWithValue }) => {
+    try {
+      const response = await deviceAPI.getById(deviceId);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
 export const fetchDevices = createAsyncThunk(
-  'devices/fetchAll',
+  'devices/fetchByUser',
   async (_, { rejectWithValue }) => {
     try {
       const response = await deviceAPI.getAll();
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const fetchUserDevices = createAsyncThunk(
+  'devices/fetchAll',
+  async (userId, { rejectWithValue }) => { // Add userId parameter
+    try {
+      const response = await deviceAPI.getUserDevices(userId); // Use new API endpoint
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response.data);
@@ -84,13 +108,30 @@ const deviceSlice = createSlice({
       // Fetch Devices
       .addCase(fetchDevices.pending, (state) => {
         state.status = 'loading';
+        state.loading = true;
       })
       .addCase(fetchDevices.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.devices = action.payload;
+        state.loading = false;
+        state.devices = action.payload.results;
       })
       .addCase(fetchDevices.rejected, (state, action) => {
         state.status = 'failed';
+        state.loading = false;
+        state.error = action.payload?.error || 'Failed to fetch devices';
+      })
+      .addCase(fetchUserDevices.pending, (state) => {
+        state.status = 'loading';
+        state.loading = true;
+      })
+      .addCase(fetchUserDevices.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.loading = false;
+        state.devices = action.payload.results;
+      })
+      .addCase(fetchUserDevices.rejected, (state, action) => {
+        state.status = 'failed';
+        state.loading = false;
         state.error = action.payload?.error || 'Failed to fetch devices';
       })
       
@@ -103,6 +144,14 @@ const deviceSlice = createSlice({
       .addCase(updateDevice.fulfilled, (state, action) => {
         const index = state.devices.findIndex(d => d.id === action.payload.id);
         if (index !== -1) {
+          state.devices[index] = action.payload;
+        }
+      })
+      .addCase(fetchDeviceById.fulfilled, (state, action) => {
+        const index = state.devices.findIndex(d => d.id === action.payload.id);
+        if (index === -1) {
+          state.devices.push(action.payload);
+        } else {
           state.devices[index] = action.payload;
         }
       })

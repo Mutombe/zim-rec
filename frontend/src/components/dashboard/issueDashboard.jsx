@@ -46,11 +46,15 @@ const IssueRequestDashboard = () => {
       start_date: "",
       end_date: "",
       production_amount: "",
+      period_of_production: "",
       recipient_account: "",
       status: "draft",
+      notes: "",
+      upload_file: null,
     });
     setOpenDialog(true);
   };
+
 
   const handleSubmit = () => {
     const formErrors = validateRequestForm(currentRequest);
@@ -58,8 +62,20 @@ const IssueRequestDashboard = () => {
       setErrors(formErrors);
       return;
     }
-
-    dispatch(saveRequest(currentRequest))
+  
+    // Create FormData for file upload
+    const formData = new FormData();
+    for (const key in currentRequest) {
+      if (key === 'upload_file') {
+        if (currentRequest[key]) {
+          formData.append(key, currentRequest[key]);
+        }
+      } else {
+        formData.append(key, currentRequest[key]);
+      }
+    }
+  
+    dispatch(saveRequest(formData))  // Assuming your backend accepts FormData
       .unwrap()
       .then(() => setOpenDialog(false))
       .catch((error) => {
@@ -105,7 +121,7 @@ const IssueRequestDashboard = () => {
         <h1 className="text-2xl font-bold text-gray-900">Issue Request Management</h1>
         <button 
           onClick={handleCreate}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center gap-2 from-green-500 to-green-600 text-white px-4 py-2 rounded-lg  transition-colors"
         >
           <PlusCircle className="w-5 h-5" />
           <span>New Request</span>
@@ -279,6 +295,21 @@ const IssueRequestDashboard = () => {
                 />
               </div>
 
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Period of Production
+                </label>
+                <input
+                  type="text"
+                  value={currentRequest?.period_of_production || ""}
+                  onChange={(e) => setCurrentRequest(prev => ({
+                    ...prev,
+                    period_of_production: e.target.value
+                  }))}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
               {/* Recipient Account */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -318,6 +349,47 @@ const IssueRequestDashboard = () => {
                 </div>
               )}
             </div>
+
+            <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Notes
+    </label>
+    <textarea
+      value={currentRequest?.notes || ""}
+      onChange={(e) => setCurrentRequest(prev => ({
+        ...prev,
+        notes: e.target.value
+      }))}
+      rows={4}
+      className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+  {/* File Upload Field */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Upload Supporting Document
+    </label>
+    <div className="flex items-center space-x-2">
+      <input
+        type="file"
+        onChange={(e) => setCurrentRequest(prev => ({
+          ...prev,
+          upload_file: e.target.files[0]
+        }))}
+        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+        accept=".pdf,.doc,.docx,.xls,.xlsx,image/*"
+      />
+      {currentRequest?.upload_file && (
+        <span className="text-sm text-gray-600 truncate">
+          {currentRequest.upload_file.name}
+        </span>
+      )}
+    </div>
+    <p className="mt-1 text-xs text-gray-500">
+      Supported formats: PDF, DOC, XLS, JPG, PNG (Max 25MB)
+    </p>
+  </div>
 
             <div className="flex justify-end gap-3 p-6 border-t bg-gray-50">
               <button

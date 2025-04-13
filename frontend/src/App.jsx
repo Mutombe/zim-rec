@@ -10,11 +10,11 @@ import Footer from './components/footer/footer';
 import About from './components/about/about';
 import Contact from './components/contact/contact';
 import UserDashboard from './components/dashboard/userDashboard';
-import AdminDashboard from './components/dashboard/adminDashboard';
 import IssueRequestDashboard from './components/dashboard/issueDashboard';
 import Settings from './components/settings/settings';
 import HelpCenter from './components/helpcenter/helpcenter';
 import ProfilePage from './components/profile/profile';
+import AdminDashboard from './components/dashboard/adminDashboard';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -46,10 +46,10 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/dashboard" element={<UserDashboard />} />
-          <Route path="/admin" element={<AdminDashboard />} />
           <Route path='/profile' element={<ProfilePage />} />
           <Route path="/help" element={<HelpCenter />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/issue-requests" element={<IssueRequestDashboard />} />
         </Routes>
       </Layout>

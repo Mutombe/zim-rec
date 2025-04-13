@@ -28,22 +28,25 @@ import {
   CircularProgress,
   Card,
   CardContent,
+  Snackbar,
   Divider,
   Fade,
-  alpha
+  alpha,
+  Alert,
 } from "@mui/material";
-import { 
-  CloudUpload, 
-  FileText, 
-  X, 
-  ArrowLeft, 
-  ArrowRight, 
-  Info, 
-  MapPin, 
-  Calendar, 
-  Settings, 
-  Zap, 
-  File 
+import {
+  CloudUpload,
+  FileText,
+  X,
+  ArrowLeft,
+  ArrowRight,
+  Info,
+  MapPin,
+  Calendar,
+  Settings,
+  Zap,
+  File,
+  AlertCircle,
 } from "lucide-react";
 
 const DeviceUploadStepper = ({ open, onClose }) => {
@@ -55,20 +58,25 @@ const DeviceUploadStepper = ({ open, onClose }) => {
   const [technologyOptions, setTechnologyOptions] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "info",
+  });
   const [errors, setErrors] = useState({
-    device_name: '',
-    issuer_organisation: '',
-    fuel_type: '',
-    technology_type: '',
-    capacity: '',
-    commissioning_date: '',
-    effective_date: '',
-    address: '',
-    country: '',
-    latitude: '',
-    longitude: '',
-    postcode: '',
-    documents: ''
+    device_name: "",
+    issuer_organisation: "",
+    fuel_type: "",
+    technology_type: "",
+    capacity: "",
+    commissioning_date: "",
+    effective_date: "",
+    address: "",
+    country: "",
+    latitude: "",
+    longitude: "",
+    postcode: "",
+    documents: "",
   });
 
   const initialFormState = {
@@ -98,25 +106,25 @@ const DeviceUploadStepper = ({ open, onClose }) => {
   const [formData, setFormData] = useState(initialFormState);
 
   const steps = [
-    { 
+    {
       id: 0,
       title: "General Information",
-      icon: <Info size={isTablet ? 18 : 22} />
+      icon: <Info size={isTablet ? 18 : 22} />,
     },
-    { 
+    {
       id: 1,
-      title: "Technical Details", 
-      icon: <Settings size={isTablet ? 18 : 22} />
+      title: "Technical Details",
+      icon: <Settings size={isTablet ? 18 : 22} />,
     },
-    { 
+    {
       id: 2,
-      title: "Location Details", 
-      icon: <MapPin size={isTablet ? 18 : 22} />
+      title: "Location Details",
+      icon: <MapPin size={isTablet ? 18 : 22} />,
     },
-    { 
+    {
       id: 3,
-      title: "Supporting Documents", 
-      icon: <File size={isTablet ? 18 : 22} />
+      title: "Supporting Documents",
+      icon: <File size={isTablet ? 18 : 22} />,
     },
   ];
 
@@ -127,7 +135,7 @@ const DeviceUploadStepper = ({ open, onClose }) => {
       shortLabel: "SF-02 Form",
       required: true,
       accept: ".pdf",
-      description: "Official registration form"
+      description: "Official registration form",
     },
     {
       id: "sf02c",
@@ -135,7 +143,7 @@ const DeviceUploadStepper = ({ open, onClose }) => {
       shortLabel: "SF-02C Form",
       required: true,
       accept: ".pdf,.doc,.docx",
-      description: "Declaration of ownership"
+      description: "Declaration of ownership",
     },
     {
       id: "metering",
@@ -143,7 +151,7 @@ const DeviceUploadStepper = ({ open, onClose }) => {
       shortLabel: "Metering",
       required: true,
       accept: ".pdf,.xls,.xlsx",
-      description: "Electricity metering confirmation"
+      description: "Electricity metering confirmation",
     },
     {
       id: "diagram",
@@ -151,7 +159,7 @@ const DeviceUploadStepper = ({ open, onClose }) => {
       shortLabel: "Diagram",
       required: true,
       accept: ".pdf,.dwg,.dxf",
-      description: "Electrical system diagram"
+      description: "Electrical system diagram",
     },
     {
       id: "photos",
@@ -159,26 +167,26 @@ const DeviceUploadStepper = ({ open, onClose }) => {
       shortLabel: "Photos",
       required: true,
       accept: "image/*",
-      description: "Photos of installation"
+      description: "Photos of installation",
     },
   ];
 
   const fuelTechnologyMap = {
-    ES100: ["TC110", "TC120", "TC130", "TC140"],
-    ES200: ["TC210", "TC220"],
-    ES300: ["TC310", "TC320", "TC330"],
-    ES400: ["TC410", "TC411", "TC421", "TC422", "TC423", "TC424"],
-    ES500: ["TC510", "TC520", "TC530"],
+    Solar: ["TC110", "TC120", "TC130", "TC140"],
+    Wind: ["TC210", "TC220"],
+    Hydro: ["TC310", "TC320", "TC330"],
+    Biomas: ["TC410", "TC411", "TC421", "TC422", "TC423", "TC424"],
+    Geothermal: ["TC510", "TC520", "TC530"],
   };
 
   const handleNext = () => {
     setActiveStep((prev) => prev + 1);
     // Scroll to top when changing steps
-    if (document.querySelector('.MuiDialogContent-root')) {
-      document.querySelector('.MuiDialogContent-root').scrollTop = 0;
+    if (document.querySelector(".MuiDialogContent-root")) {
+      document.querySelector(".MuiDialogContent-root").scrollTop = 0;
     }
   };
-  
+
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
   const handleInputChange = (e) => {
@@ -187,22 +195,25 @@ const DeviceUploadStepper = ({ open, onClose }) => {
       ...prev,
       [name]: value,
     }));
-    
+
     // Clear error when user edits a field
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: "",
       }));
     }
   };
 
   const handleFileUpload = (docType, file) => {
-    if (file && file.size > 10 * 1024 * 1024) { // 10MB limit
-      enqueueSnackbar(`File too large. Maximum size is 10MB.`, { variant: "error" });
+    if (file && file.size > 10 * 1024 * 1024) {
+      // 10MB limit
+      enqueueSnackbar(`File too large. Maximum size is 10MB.`, {
+        variant: "error",
+      });
       return;
     }
-    
+
     setFormData((prev) => ({
       ...prev,
       documents: {
@@ -210,12 +221,12 @@ const DeviceUploadStepper = ({ open, onClose }) => {
         [docType]: file,
       },
     }));
-    
+
     // Clear document error when user uploads a file
     if (errors.documents) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        documents: ''
+        documents: "",
       }));
     }
   };
@@ -225,10 +236,12 @@ const DeviceUploadStepper = ({ open, onClose }) => {
 
     setErrors((prev) => ({
       ...prev,
-      [name]: isValid ? '' : `Maximum ${before} digits before and ${after} after decimal point`
+      [name]: isValid
+        ? ""
+        : `Maximum ${before} digits before and ${after} after decimal point`,
     }));
 
-    if (isValid || value === '') {
+    if (isValid || value === "") {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
@@ -267,13 +280,19 @@ const DeviceUploadStepper = ({ open, onClose }) => {
   const getStepFields = (stepIndex) => {
     switch (stepIndex) {
       case 0:
-        return ['device_name', 'issuer_organisation', 'default_account_code'];
+        return ["device_name", "issuer_organisation", "default_account_code"];
       case 1:
-        return ['fuel_type', 'technology_type', 'capacity', 'commissioning_date', 'effective_date'];
+        return [
+          "fuel_type",
+          "technology_type",
+          "capacity",
+          "commissioning_date",
+          "effective_date",
+        ];
       case 2:
-        return ['address', 'country', 'latitude', 'longitude', 'postcode'];
+        return ["address", "country", "latitude", "longitude", "postcode"];
       case 3:
-        return ['documents', 'additional_notes'];
+        return ["documents", "additional_notes"];
       default:
         return [];
     }
@@ -283,71 +302,86 @@ const DeviceUploadStepper = ({ open, onClose }) => {
     // Validate all fields first
     let newErrors = {};
     let hasErrors = false;
-    
+
     // Basic required field validation
     const requiredFields = [
-      'device_name', 'issuer_organisation', 'fuel_type', 'technology_type', 
-      'capacity', 'commissioning_date', 'effective_date', 'address', 
-      'country', 'latitude', 'longitude', 'postcode'
+      "device_name",
+      "issuer_organisation",
+      "fuel_type",
+      "technology_type",
+      "capacity",
+      "commissioning_date",
+      "effective_date",
+      "address",
+      "country",
+      "latitude",
+      "longitude",
+      "postcode",
     ];
-    
-    requiredFields.forEach(field => {
+
+    requiredFields.forEach((field) => {
       if (!formData[field]) {
-        newErrors[field] = 'This field is required';
+        newErrors[field] = "This field is required";
         hasErrors = true;
       }
     });
-    
+
     // Special validations
     if (formData.latitude && !validateLatitude(formData.latitude)) {
-      newErrors.latitude = 'Must be between -90 and 90';
+      newErrors.latitude = "Must be between -90 and 90";
       hasErrors = true;
     }
-    
+
     if (formData.longitude && !validateLongitude(formData.longitude)) {
-      newErrors.longitude = 'Must be between -180 and 180';
+      newErrors.longitude = "Must be between -180 and 180";
       hasErrors = true;
     }
-    
+
     // Document validation
-    const requiredDocuments = DOCUMENT_TYPES.filter(doc => doc.required).map(doc => doc.id);
-    const missingDocuments = requiredDocuments.filter(doc => !formData.documents[doc]);
-    
+    const requiredDocuments = DOCUMENT_TYPES.filter((doc) => doc.required).map(
+      (doc) => doc.id
+    );
+    const missingDocuments = requiredDocuments.filter(
+      (doc) => !formData.documents[doc]
+    );
+
     if (missingDocuments.length > 0) {
       const missingLabels = missingDocuments.map(
-        doc => DOCUMENT_TYPES.find(d => d.id === doc).shortLabel
+        (doc) => DOCUMENT_TYPES.find((d) => d.id === doc).shortLabel
       );
-      
+
       newErrors.documents = `Missing: ${missingLabels.join(", ")}`;
       hasErrors = true;
-      
+
       enqueueSnackbar(
         `Missing required documents: ${missingLabels.join(", ")}`,
         { variant: "error" }
       );
-      
-      setErrors(prev => ({
+
+      setErrors((prev) => ({
         ...prev,
-        ...newErrors
+        ...newErrors,
       }));
-      
+
       setActiveStep(3); // Jump to documents step
       return;
     }
-    
+
     if (hasErrors) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        ...newErrors
+        ...newErrors,
       }));
-      
+
       // Find the first step with errors
       for (let i = 0; i < steps.length; i++) {
         const stepFields = getStepFields(i);
-        const hasStepError = stepFields.some(field => newErrors[field]);
+        const hasStepError = stepFields.some((field) => newErrors[field]);
         if (hasStepError) {
           setActiveStep(i);
-          enqueueSnackbar('Please correct the errors before submitting', { variant: 'error' });
+          enqueueSnackbar("Please correct the errors before submitting", {
+            variant: "error",
+          });
           return;
         }
       }
@@ -355,7 +389,7 @@ const DeviceUploadStepper = ({ open, onClose }) => {
     }
 
     setIsSubmitting(true);
-    
+
     try {
       const formDataToSend = new FormData();
 
@@ -411,42 +445,52 @@ const DeviceUploadStepper = ({ open, onClose }) => {
       await deviceAPI.submit(response.data.id);
 
       // Handle success
-      enqueueSnackbar('Device registered successfully!', { variant: 'success' });
+      setSnackbar({
+        open: true,
+        message: "Device Upload Successful.",
+        severity: "success",
+      });
+      enqueueSnackbar("Device registered successfully!", {
+        variant: "success",
+      });
       onClose();
     } catch (error) {
       console.error("Submission error:", error);
-      
+
       // Handle validation errors
       if (error.response?.data) {
         // Handle field-specific errors
         const apiErrors = error.response.data;
         const fieldErrors = {};
-        
+
         // Map API errors to form fields
         Object.keys(apiErrors).forEach((key) => {
-          fieldErrors[key] = apiErrors[key].join(', ');
+          fieldErrors[key] = apiErrors[key].join(", ");
         });
-  
+
         // Update form errors state
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          ...fieldErrors
+          ...fieldErrors,
         }));
-  
+
         // Show first error in snackbar
         const firstError = Object.values(apiErrors)[0]?.[0];
         if (firstError) {
-          enqueueSnackbar(firstError, { variant: 'error' });
+          enqueueSnackbar(firstError, { variant: "error" });
         }
-        
+
         // Jump to first error step
-        const errorStep = steps.findIndex(step =>
-          Object.keys(apiErrors).some(field =>
+        const errorStep = steps.findIndex((step) =>
+          Object.keys(apiErrors).some((field) =>
             getStepFields(step.id).includes(field)
-          ));
+          )
+        );
         if (errorStep >= 0) setActiveStep(errorStep);
       } else {
-        enqueueSnackbar('Submission failed. Please try again.', { variant: 'error' });
+        enqueueSnackbar("Submission failed. Please try again.", {
+          variant: "error",
+        });
       }
     } finally {
       setIsSubmitting(false);
@@ -462,7 +506,9 @@ const DeviceUploadStepper = ({ open, onClose }) => {
         })
         .catch((error) => {
           console.error("Error fetching technology options:", error);
-          enqueueSnackbar('Failed to fetch technology options', { variant: 'error' });
+          enqueueSnackbar("Failed to fetch technology options", {
+            variant: "error",
+          });
         });
     }
   }, [formData.fuel_type, enqueueSnackbar]);
@@ -502,13 +548,13 @@ const DeviceUploadStepper = ({ open, onClose }) => {
         <Paper
           square
           elevation={0}
-          sx={{ 
-            p: 2, 
+          sx={{
+            p: 2,
             borderBottom: `1px solid ${theme.palette.divider}`,
-            background: theme.palette.background.default
+            background: theme.palette.background.default,
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
             {steps[activeStep].icon}
             <Typography variant="h6" sx={{ ml: 1 }}>
               {steps[activeStep].title}
@@ -533,26 +579,30 @@ const DeviceUploadStepper = ({ open, onClose }) => {
             <StepLabel
               StepIconProps={{
                 icon: isTablet ? (
-                  <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center', 
-                    width: 24, 
-                    height: 24 
-                  }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 24,
+                      height: 24,
+                    }}
+                  >
                     {step.id + 1}
                   </Box>
                 ) : (
-                  <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center', 
-                    width: 24, 
-                    height: 24 
-                  }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 24,
+                      height: 24,
+                    }}
+                  >
                     {step.icon}
                   </Box>
-                )
+                ),
               }}
             >
               {step.title}
@@ -570,19 +620,19 @@ const DeviceUploadStepper = ({ open, onClose }) => {
           <Fade in={activeStep === 0}>
             <Card variant="outlined" sx={{ mb: 2 }}>
               <CardContent>
-                <Typography 
-                  variant="subtitle1" 
-                  sx={{ 
-                    mb: 2, 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    color: theme.palette.primary.main 
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    mb: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    color: theme.palette.primary.main,
                   }}
                 >
                   <Info size={18} style={{ marginRight: 8 }} />
                   Device Information
                 </Typography>
-                
+
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <TextField
@@ -634,24 +684,24 @@ const DeviceUploadStepper = ({ open, onClose }) => {
           <Fade in={activeStep === 1}>
             <Card variant="outlined" sx={{ mb: 2 }}>
               <CardContent>
-                <Typography 
-                  variant="subtitle1" 
-                  sx={{ 
-                    mb: 2, 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    color: theme.palette.primary.main 
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    mb: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    color: theme.palette.primary.main,
                   }}
                 >
                   <Zap size={18} style={{ marginRight: 8 }} />
                   Technical Specifications
                 </Typography>
-                
+
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
-                    <FormControl 
-                      fullWidth 
-                      size={isMobile ? "small" : "medium"} 
+                    <FormControl
+                      fullWidth
+                      size={isMobile ? "small" : "medium"}
                       error={!!errors.fuel_type}
                     >
                       <InputLabel>Fuel Type</InputLabel>
@@ -669,7 +719,11 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                         ))}
                       </Select>
                       {errors.fuel_type && (
-                        <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.5 }}>
+                        <Typography
+                          variant="caption"
+                          color="error"
+                          sx={{ mt: 0.5, ml: 1.5 }}
+                        >
                           {errors.fuel_type}
                         </Typography>
                       )}
@@ -696,17 +750,21 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                         ))}
                       </Select>
                       {errors.technology_type && (
-                        <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.5 }}>
+                        <Typography
+                          variant="caption"
+                          color="error"
+                          sx={{ mt: 0.5, ml: 1.5 }}
+                        >
                           {errors.technology_type}
                         </Typography>
                       )}
                     </FormControl>
                   </Grid>
-                  
+
                   <Grid item xs={12}>
                     <Divider sx={{ my: 1 }} />
                   </Grid>
-                  
+
                   <Grid item xs={12} sm={4}>
                     <TextField
                       fullWidth
@@ -715,10 +773,13 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                       type="number"
                       value={formData.capacity}
                       onChange={
-                        (e) => handleDecimalChange("capacity", e.target.value, 4, 6) // 4 digits before, 6 after
+                        (e) =>
+                          handleDecimalChange("capacity", e.target.value, 4, 6) // 4 digits before, 6 after
                       }
                       error={!!errors.capacity}
-                      helperText={errors.capacity || "Max 4 digits before decimal"}
+                      helperText={
+                        errors.capacity || "Max 4 digits before decimal"
+                      }
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">MW</InputAdornment>
@@ -769,19 +830,19 @@ const DeviceUploadStepper = ({ open, onClose }) => {
           <Fade in={activeStep === 2}>
             <Card variant="outlined" sx={{ mb: 2 }}>
               <CardContent>
-                <Typography 
-                  variant="subtitle1" 
-                  sx={{ 
-                    mb: 2, 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    color: theme.palette.primary.main 
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    mb: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    color: theme.palette.primary.main,
                   }}
                 >
                   <MapPin size={18} style={{ marginRight: 8 }} />
                   Location Information
                 </Typography>
-                
+
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <TextField
@@ -798,7 +859,7 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                       helperText={errors.address}
                     />
                   </Grid>
-                  
+
                   <Grid item xs={12} sm={4}>
                     <TextField
                       fullWidth
@@ -825,14 +886,18 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                       helperText={errors.postcode}
                     />
                   </Grid>
-                  
+
                   <Grid item xs={12}>
                     <Divider sx={{ my: 1 }} />
-                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ display: "block", mb: 1 }}
+                    >
                       Geographical Coordinates
                     </Typography>
                   </Grid>
-                  
+
                   <Grid item xs={12} sm={6}>
                     <TextField
                       fullWidth
@@ -852,7 +917,9 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                         }
                       }}
                       error={!!errors.latitude}
-                      helperText={errors.latitude || "Range: -90.000000 to 90.000000"}
+                      helperText={
+                        errors.latitude || "Range: -90.000000 to 90.000000"
+                      }
                       size={isMobile ? "small" : "medium"}
                       required
                     />
@@ -876,7 +943,9 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                         }
                       }}
                       error={!!errors.longitude}
-                      helperText={errors.longitude || "Range: -180.000000 to 180.000000"}
+                      helperText={
+                        errors.longitude || "Range: -180.000000 to 180.000000"
+                      }
                       size={isMobile ? "small" : "medium"}
                       required
                     />
@@ -893,55 +962,66 @@ const DeviceUploadStepper = ({ open, onClose }) => {
             <Box>
               <Card variant="outlined" sx={{ mb: 3 }}>
                 <CardContent>
-                  <Typography 
-                    variant="subtitle1" 
-                    sx={{ 
-                      mb: 2, 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      color: theme.palette.primary.main 
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      mb: 2,
+                      display: "flex",
+                      alignItems: "center",
+                      color: theme.palette.primary.main,
                     }}
                   >
                     <File size={18} style={{ marginRight: 8 }} />
                     Required Documentation
                   </Typography>
-                  
+
                   {errors.documents && (
                     <Typography variant="body2" color="error" sx={{ mb: 2 }}>
                       {errors.documents}
                     </Typography>
                   )}
-                  
+
                   <Grid container spacing={2}>
                     {DOCUMENT_TYPES.map((doc) => (
                       <Grid item xs={12} key={doc.id}>
-                        <Card 
-                          variant="outlined" 
-                          sx={{ 
-                            p: 0, 
-                            borderColor: formData.documents[doc.id] 
-                              ? theme.palette.success.light 
-                              : (errors.documents && errors.documents.includes(doc.shortLabel))
-                                ? theme.palette.error.light
-                                : theme.palette.divider,
-                            transition: 'all 0.3s',
-                            '&:hover': {
+                        <Card
+                          variant="outlined"
+                          sx={{
+                            p: 0,
+                            borderColor: formData.documents[doc.id]
+                              ? theme.palette.success.light
+                              : errors.documents &&
+                                errors.documents.includes(doc.shortLabel)
+                              ? theme.palette.error.light
+                              : theme.palette.divider,
+                            transition: "all 0.3s",
+                            "&:hover": {
                               borderColor: theme.palette.primary.light,
-                              boxShadow: `0 0 0 1px ${alpha(theme.palette.primary.main, 0.2)}`
-                            }
+                              boxShadow: `0 0 0 1px ${alpha(
+                                theme.palette.primary.main,
+                                0.2
+                              )}`,
+                            },
                           }}
                         >
-                          <Box sx={{
-                            display: 'flex',
-                            flexDirection: isMobile ? 'column' : 'row',
-                            alignItems: isMobile ? 'stretch' : 'center',
-                            p: isMobile ? 1.5 : 2
-                          }}>
-                            <Box sx={{ 
-                              flex: 1, 
-                              mb: isMobile ? 1 : 0 
-                            }}>
-                              <Typography variant={isMobile ? "body2" : "body1"} sx={{ fontWeight: 500 }}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              flexDirection: isMobile ? "column" : "row",
+                              alignItems: isMobile ? "stretch" : "center",
+                              p: isMobile ? 1.5 : 2,
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                flex: 1,
+                                mb: isMobile ? 1 : 0,
+                              }}
+                            >
+                              <Typography
+                                variant={isMobile ? "body2" : "body1"}
+                                sx={{ fontWeight: 500 }}
+                              >
                                 {isMobile ? doc.shortLabel : doc.label}
                                 {doc.required && (
                                   <Typography
@@ -951,37 +1031,48 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                                     sx={{ ml: 0.5 }}
                                   >
                                     *
-                                    </Typography>
+                                  </Typography>
                                 )}
                               </Typography>
-                              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                sx={{ display: "block", mt: 0.5 }}
+                              >
                                 {doc.description}
                               </Typography>
                             </Box>
 
-                            <Box sx={{ 
-                              display: 'flex', 
-                              alignItems: 'center',
-                              justifyContent: isMobile ? 'space-between' : 'flex-end',
-                              width: isMobile ? '100%' : 'auto'
-                            }}>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: isMobile
+                                  ? "space-between"
+                                  : "flex-end",
+                                width: isMobile ? "100%" : "auto",
+                              }}
+                            >
                               {formData.documents[doc.id] && (
                                 <Box
                                   sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
+                                    display: "flex",
+                                    alignItems: "center",
                                     mr: 2,
-                                    maxWidth: isMobile ? '60%' : '200px',
+                                    maxWidth: isMobile ? "60%" : "200px",
                                   }}
                                 >
-                                  <FileText size={isMobile ? 16 : 20} color={theme.palette.success.main} />
+                                  <FileText
+                                    size={isMobile ? 16 : 20}
+                                    color={theme.palette.success.main}
+                                  />
                                   <Typography
                                     variant="body2"
                                     sx={{
                                       ml: 0.5,
-                                      overflow: 'hidden',
-                                      textOverflow: 'ellipsis',
-                                      whiteSpace: 'nowrap',
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      whiteSpace: "nowrap",
                                     }}
                                   >
                                     {formData.documents[doc.id].name}
@@ -998,7 +1089,7 @@ const DeviceUploadStepper = ({ open, onClose }) => {
 
                               <input
                                 accept={doc.accept}
-                                style={{ display: 'none' }}
+                                style={{ display: "none" }}
                                 id={doc.id}
                                 type="file"
                                 onChange={(e) =>
@@ -1007,17 +1098,31 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                               />
                               <label htmlFor={doc.id}>
                                 <Button
-                                  variant={formData.documents[doc.id] ? "outlined" : "contained"}
+                                  variant={
+                                    formData.documents[doc.id]
+                                      ? "outlined"
+                                      : "contained"
+                                  }
                                   component="span"
-                                  startIcon={<CloudUpload size={isMobile ? 18 : 20} />}
+                                  startIcon={
+                                    <CloudUpload size={isMobile ? 18 : 20} />
+                                  }
                                   size={isMobile ? "small" : "medium"}
-                                  color={formData.documents[doc.id] ? "primary" : "primary"}
-                                  sx={{ 
-                                    minWidth: formData.documents[doc.id] ? 'auto' : 110,
-                                    ml: 1 
+                                  color={
+                                    formData.documents[doc.id]
+                                      ? "primary"
+                                      : "primary"
+                                  }
+                                  sx={{
+                                    minWidth: formData.documents[doc.id]
+                                      ? "auto"
+                                      : 110,
+                                    ml: 1,
                                   }}
                                 >
-                                  {formData.documents[doc.id] ? "Replace" : "Upload"}
+                                  {formData.documents[doc.id]
+                                    ? "Replace"
+                                    : "Upload"}
                                 </Button>
                               </label>
                             </Box>
@@ -1057,19 +1162,19 @@ const DeviceUploadStepper = ({ open, onClose }) => {
       steps={steps.length}
       position="static"
       activeStep={activeStep}
-      sx={{ 
-        flexGrow: 1, 
+      sx={{
+        flexGrow: 1,
         mt: 2,
         borderRadius: 1,
         backgroundColor: theme.palette.background.paper,
-        '& .MuiMobileStepper-dot': {
+        "& .MuiMobileStepper-dot": {
           width: 8,
           height: 8,
-          margin: '0 4px',
+          margin: "0 4px",
         },
-        '& .MuiMobileStepper-dotActive': {
+        "& .MuiMobileStepper-dotActive": {
           backgroundColor: theme.palette.primary.main,
-        }
+        },
       }}
       nextButton={
         <Button
@@ -1078,15 +1183,19 @@ const DeviceUploadStepper = ({ open, onClose }) => {
           disabled={!isStepComplete(activeStep) || isSubmitting}
           variant={activeStep === steps.length - 1 ? "contained" : "text"}
           color="primary"
-          startIcon={isSubmitting && activeStep === steps.length - 1 ? <CircularProgress size={16} /> : null}
+          startIcon={
+            isSubmitting && activeStep === steps.length - 1 ? (
+              <CircularProgress size={16} />
+            ) : null
+          }
           endIcon={!isSubmitting && <ArrowRight size={16} />}
         >
           {activeStep === steps.length - 1 ? "Submit" : "Next"}
         </Button>
       }
       backButton={
-        <Button 
-          size="small" 
+        <Button
+          size="small"
           onClick={activeStep === 0 ? onClose : handleBack}
           disabled={isSubmitting}
           startIcon={<ArrowLeft size={16} />}
@@ -1098,17 +1207,19 @@ const DeviceUploadStepper = ({ open, onClose }) => {
   );
 
   const renderDesktopButtons = () => (
-    <Box sx={{ 
-      mt: 3, 
-      display: 'flex', 
-      justifyContent: 'space-between',
-      position: 'sticky',
-      bottom: 0,
-      backgroundColor: theme.palette.background.paper,
-      pt: 2,
-      pb: 2,
-      zIndex: 1
-    }}>
+    <Box
+      sx={{
+        mt: 3,
+        display: "flex",
+        justifyContent: "space-between",
+        position: "sticky",
+        bottom: 0,
+        backgroundColor: theme.palette.background.paper,
+        pt: 2,
+        pb: 2,
+        zIndex: 1,
+      }}
+    >
       <Button
         onClick={activeStep === 0 ? onClose : handleBack}
         variant="outlined"
@@ -1123,11 +1234,15 @@ const DeviceUploadStepper = ({ open, onClose }) => {
         variant="contained"
         color="primary"
         disabled={!isStepComplete(activeStep) || isSubmitting}
-        endIcon={activeStep === steps.length - 1 ? (
-          isSubmitting ? <CircularProgress size={20} color="inherit" /> : null
-        ) : (
-          <ArrowRight size={20} />
-        )}
+        endIcon={
+          activeStep === steps.length - 1 ? (
+            isSubmitting ? (
+              <CircularProgress size={20} color="inherit" />
+            ) : null
+          ) : (
+            <ArrowRight size={20} />
+          )
+        }
       >
         {activeStep === steps.length - 1 ? "Submit Device" : "Next"}
       </Button>
@@ -1135,45 +1250,63 @@ const DeviceUploadStepper = ({ open, onClose }) => {
   );
 
   return (
-    <Dialog
-      open={open}
-      onClose={isSubmitting ? undefined : onClose}
-      fullWidth
-      maxWidth={isMobile ? "sm" : "md"}
-      fullScreen={isMobile}
-      scroll="paper"
-      PaperProps={{
-        sx: {
-          borderRadius: isMobile ? 0 : 2,
-          height: isMobile ? '100%' : 'auto',
-          maxHeight: '90vh'
-        }
-      }}
-    >
-      <DialogTitle 
-        sx={{ 
-          p: isMobile ? 0 : 2,
-          backgroundColor: theme.palette.background.paper
+    <>
+      <Dialog
+        open={open}
+        onClose={isSubmitting ? undefined : onClose}
+        fullWidth
+        maxWidth={isMobile ? "sm" : "md"}
+        fullScreen={isMobile}
+        scroll="paper"
+        PaperProps={{
+          sx: {
+            borderRadius: isMobile ? 0 : 2,
+            height: isMobile ? "100%" : "auto",
+            maxHeight: "90vh",
+          },
         }}
       >
-        {renderStepperHeader()}
-      </DialogTitle>
+        <DialogTitle
+          sx={{
+            p: isMobile ? 0 : 2,
+            backgroundColor: theme.palette.background.paper,
+          }}
+        >
+          {renderStepperHeader()}
+        </DialogTitle>
 
-      <DialogContent
-        dividers
-        sx={{
-          p: isMobile ? 1 : 3,
-          height: isMobile ? "calc(100% - 120px)" : "auto",
-          overflowY: "auto",
-          backgroundColor: theme.palette.background.default
-        }}
+        <DialogContent
+          dividers
+          sx={{
+            p: isMobile ? 1 : 3,
+            height: isMobile ? "calc(100% - 120px)" : "auto",
+            overflowY: "auto",
+            backgroundColor: theme.palette.background.default,
+          }}
+        >
+          <Box sx={{ p: isMobile ? 1 : 0 }}>
+            {getStepContent(activeStep)}
+            {isMobile ? renderMobileStepper() : renderDesktopButtons()}
+          </Box>
+        </DialogContent>
+      </Dialog>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
       >
-        <Box sx={{ p: isMobile ? 1 : 0 }}>
-          {getStepContent(activeStep)}
-          {isMobile ? renderMobileStepper() : renderDesktopButtons()}
-        </Box>
-      </DialogContent>
-    </Dialog>
+        <Alert
+          severity={snackbar.severity}
+          className="!items-center"
+          iconMapping={{
+            error: <AlertCircle className="w-5 h-5" />,
+          }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 
