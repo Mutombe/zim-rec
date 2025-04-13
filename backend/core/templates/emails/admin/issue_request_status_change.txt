@@ -1,0 +1,21 @@
+Issue Request Status Update
+
+Dear {{ user.username }},
+
+Your issue request for {{ issue_request.device.device_name }} has been updated to: {{ status|upper }}
+
+Request Details:
+- Request ID: #{{ issue_request.id }}
+- Production Period: {{ issue_request.start_date|date }} - {{ issue_request.end_date|date }}
+- Amount: {{ issue_request.production_amount }} MWh
+- Last Updated: {{ issue_request.updated_at|date:"DATETIME_FORMAT" }}
+
+{% if status == 'rejected' %}
+Note: Please review the submission requirements and contact our support team if you need assistance.
+{% endif %}
+
+View in Dashboard: {{ dashboard_url }}
+
+---
+Best regards,
+{{ app_name }} Team

@@ -19,19 +19,19 @@ class Profile(models.Model):
 
 class Device(models.Model):
     STATUS_CHOICES = [
-        ('draft', 'Draft'),
-        ('submitted', 'Submitted'),
-        ('approved', 'Approved'),
-        ('rejected', 'Rejected'),
+        ('Draft', 'Draft'),
+        ('Submitted', 'Submitted'),
+        ('Approved', 'Approved'),
+        ('Rejected', 'Rejected'),
     ]
 
     FUEL_TECHNOLOGY_MAP = {
-        'ES100': ['TC110', 'TC120', 'TC130', 'TC140', 'TC150'],
-        'ES200': ['TC210', 'TC220'],
-        'ES300': ['TC310', 'TC320', 'TC330'],
-        'ES400': ['TC410', 'TC411', 'TC421', 'TC422', 'TC423', 'TC424', 'TC431', 'TC432', 'TC441', 'TC442', 'TC482'],
-        'ES500': ['TC510', 'TC520', 'TC530'],
-        'E5510': ['TC410', 'TC411', 'TC421', 'TC422', 'TC423', 'TC424', 'TC431', 'TC432', 'TC441', 'TC442'],
+        'Solar': ['TC110', 'TC120', 'TC130', 'TC140', 'TC150'],
+        'Wind': ['TC210', 'TC220'],
+        'Hydro': ['TC310', 'TC320', 'TC330'],
+        'Biomas': ['TC410', 'TC411', 'TC421', 'TC422', 'TC423', 'TC424', 'TC431', 'TC432', 'TC441', 'TC442', 'TC482'],
+        'Geothermal': ['TC510', 'TC520', 'TC530'],
+        'Municipal Waste': ['TC410', 'TC411', 'TC421', 'TC422', 'TC423', 'TC424', 'TC431', 'TC432', 'TC441', 'TC442'],
     }
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='devices')
@@ -132,8 +132,11 @@ class IssueRequest(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
     start_date = models.DateField()
     end_date = models.DateField()
+    period_of_production = models.CharField(max_length=255, blank=True)
     production_amount = models.DecimalField(max_digits=15, decimal_places=6)
     recipient_account = models.CharField(max_length=255)
+    notes = models.TextField(blank=True, null=True)
+    upload_file = models.FileField(upload_to='issue-requests/', null=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

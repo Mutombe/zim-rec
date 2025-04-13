@@ -85,17 +85,17 @@ class DeviceSerializer(serializers.ModelSerializer):
 
     def get_fuel_options(self, obj):
         return [
-            {'value': 'ES100', 'label': 'Solar'},
-            {'value': 'ES200', 'label': 'Wind'},
-            {'value': 'ES300', 'label': 'Hydro'},
-            {'value': 'ES400', 'label': 'Biomass'},
-            {'value': 'ES500', 'label': 'Geothermal'},
+            {'value': 'Solar', 'label': 'Solar'},
+            {'value': 'Wind', 'label': 'Wind'},
+            {'value': 'Hydro', 'label': 'Hydro'},
+            {'value': 'Biomass', 'label': 'Biomass'},
+            {'value': 'Geothermal', 'label': 'Geothermal'},
         ]
 
     def get_technology_options(self, obj):
         return {
             # Solar (ES100)
-            'ES100': [
+            'Solar': [
                 {'value': 'TC110', 'label': 'PV Ground mounted'},
                 {'value': 'TC120', 'label': 'PV Roof Mounted (single installation)'},
                 {'value': 'TC130', 'label': 'PV Floating'},
@@ -103,18 +103,18 @@ class DeviceSerializer(serializers.ModelSerializer):
                 {'value': 'TC150', 'label': 'Solar Thermal Concentration'},
             ],
             # Wind (ES200)
-            'ES200': [
+            'Wind': [
                 {'value': 'TC210', 'label': 'Onshore'},
                 {'value': 'TC220', 'label': 'Offshore'},
             ],
             # Hydro (ES300)
-            'ES300': [
+            'Hydro': [
                 {'value': 'TC310', 'label': 'Dam'},
                 {'value': 'TC320', 'label': 'Run of river'},
                 {'value': 'TC330', 'label': 'Pumped Hydro Storage (Natural in-flow only)'},
             ],
             # Biomass (ES400)
-            'ES400': [
+            'Biomass': [
                 {'value': 'TC410', 'label': 'Combined cycle gas turbine with heat recovery: Non CHP'},
                 {'value': 'TC411', 'label': 'Combined cycle gas turbine with heat recovery: CHP'},
                 {'value': 'TC421', 'label': 'Steam turbine with back-pressure turbine (open cycle): Non CHP'},
@@ -128,13 +128,13 @@ class DeviceSerializer(serializers.ModelSerializer):
                 {'value': 'TC482', 'label': 'Steam engine: CHP'},
             ],
             # Geothermal (ES500)
-            'ES500': [
+            'Geothermal': [
                 {'value': 'TC510', 'label': 'Dry Steam Plant'},
                 {'value': 'TC520', 'label': 'Flash Steam Plant'},
                 {'value': 'TC530', 'label': 'Binary Cycle Plant'},
             ],
             # Municipal Waste (E5510 - Special case)
-            'E5510': [
+            'Municipal Waste': [
                 {'value': 'TC410', 'label': 'Combined cycle gas turbine with heat recovery: Non CHP'},
                 {'value': 'TC411', 'label': 'Combined cycle gas turbine with heat recovery: CHP'},
                 {'value': 'TC421', 'label': 'Steam turbine with back-pressure turbine (open cycle): Non CHP'},

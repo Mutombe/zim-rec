@@ -1,0 +1,13 @@
+Subject: {{ subject }}
+
+Hello {{ user.username }},
+
+Your account status has been updated to: {{ status|upper }}
+
+{% if status == 'created' %}
+Thank you for registering with {{ app_name }}! Please go and login zim-rec.co.zw
+{% elif status == 'activated' %}
+Your account has been activated! You can now login.
+{% endif %}
+
+The {{ app_name }} Team
