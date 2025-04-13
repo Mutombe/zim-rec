@@ -59,8 +59,8 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(0);
   const { user } = useSelector((state) => state.auth);
-  const allDevices = useSelector(selectAllDevicesForAdmin);
-  const allIssueRequests = useSelector(selectAllIssueRequestsForAdmin);
+  const allDevices = useSelector(selectAllDevices);
+  const allIssueRequests = useSelector(selectAllIssueRequests) || [];
   const pendingStats = useSelector(selectPendingSubmissions);
   const energyStats = useSelector(selectEnergyTypeStatistics);
   const { loading: devicesLoading, error: devicesError } = useSelector((state) => state.devices);
@@ -93,7 +93,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     // Check if the user is an admin before fetching
-    if (user?.isAdmin) {
+    if (user?.is_superuser) {
       dispatch(fetchDevices());
       dispatch(fetchRequests());
     } else {
@@ -506,7 +506,7 @@ const AdminDashboard = () => {
                             {device.device_name}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                            {device.user?.name || "Unknown"}
+                            {device.user?.username || "Unknown"}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-gray-600">
                             {device.device_fuel}
@@ -833,7 +833,7 @@ const AdminDashboard = () => {
                   <h3 className="text-lg font-medium mb-2">General Information</h3>
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <p className="mb-2"><span className="font-medium">Device Name:</span> {selectedDevice.device_name}</p>
-                    <p className="mb-2"><span className="font-medium">Owner:</span> {selectedDevice.user?.name || "Unknown"}</p>
+                    <p className="mb-2"><span className="font-medium">Owner:</span> {selectedDevice.user?.username || "Unknown"}</p>
                     <p className="mb-2"><span className="font-medium">Status:</span> 
                       <span className={`ml-2 px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeStyle(selectedDevice.status)}`}>
                         {selectedDevice.status}

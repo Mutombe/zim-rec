@@ -14,9 +14,19 @@ export const selectAllDevices = createSelector(
   devicesState => devicesState.devices || []
 );
 
-export const selectAllIssueRequests = createSelector(
+export const selectAllIssueRequests1 = createSelector(
   [selectIssueRequestsState],
   requestsState => requestsState.requests || []
+);
+
+// selectors.js
+export const selectAllIssueRequests = createSelector(
+  [selectIssueRequestsState],
+  (requestsState) => {
+    // Add explicit array validation
+    const requests = requestsState?.requests;
+    return Array.isArray(requests) ? requests : [];
+  }
 );
 
 
@@ -35,15 +45,6 @@ export const selectUserDevices = createSelector(
       String(device.user.id) === String(user.id) ||
       String(device.user) === String(user.id)
     );
-  }
-);
-
-// User-specific selectors
-export const selectUserDevices2 = createSelector(
-  [selectAllDevices, selectCurrentUser],
-  (devices, user) => {
-    if (!user || !devices) return []; // Add null check for devices
-    return devices.filter(device => device.user.id === user.id);
   }
 );
 
