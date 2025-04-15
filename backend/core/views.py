@@ -105,14 +105,29 @@ class DeviceViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def submit(self, request, pk=None):
         device = self.get_object()
-        if device.status != 'draft':
+        if device.status != 'Draft':
             return Response(
                 {'error': 'Only draft devices can be submitted'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        device.status = 'submitted'
+        device.status = 'Submitted'
         device.save()
-        return Response({'status': 'submitted'})
+        return Response({'status': 'Submitted'})
+    
+    def partial_update(self, request, *args, **kwargs):
+        # Handle admin status override
+        if request.user.is_superuser and 'status' in request.data:
+            instance = self.get_object()
+            instance.status = request.data['status']
+            
+            # Handle rejection reason
+            if 'rejection_reason' in request.data:
+                instance.rejection_reason = request.data['rejection_reason']
+            
+            instance.save()
+            return Response(self.get_serializer(instance).data)
+            
+        return super().partial_update(request, *args, **kwargs)
 
 class DeviceDocumentViewSet(viewsets.ModelViewSet):
     serializer_class = DeviceDocumentSerializer

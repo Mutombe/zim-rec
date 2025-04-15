@@ -6,6 +6,7 @@ import {
   Edit, 
   Trash2, 
   BarChart, 
+  AlertCircle,
   X, 
   Search, 
   ChevronDown, 
@@ -27,19 +28,21 @@ import {
 } from "../../redux/selectors";
 import {
   fetchRequests,
+  fetchUserRequests,
   saveRequest,
   deleteIssueRequest,
 } from "../../redux/slices/issueSlice";
 import { fetchDevices } from "../../redux/slices/deviceSlice";
 import { fadeIn, staggerChildren } from "./animations";
 import { useMediaQuery, useTheme } from "@mui/material";
-import { Modal, Box, Backdrop } from "@mui/material";
+import { Modal, Box, Backdrop, Snackbar, Alert } from "@mui/material";
 
 const IssueRequestDashboard = () => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const currentUser = useSelector(selectCurrentUser);
+  console.log("Current User", currentUser)
   const isAdmin = currentUser?.isAdmin;
   
   const [openDialog, setOpenDialog] = useState(false);
@@ -52,9 +55,19 @@ const IssueRequestDashboard = () => {
   const [sortField, setSortField] = useState("id");
   const [sortDirection, setSortDirection] = useState("desc");
   const [filterStatus, setFilterStatus] = useState("");
+  const [snackbar, setSnackbar] = useState({
+      open: false,
+      message: "",
+      severity: "info",
+    });
 
   // Redux selectors
-  const requests = useSelector(isAdmin ? selectAllIssueRequestsForAdmin : selectUserIssueRequests);
+  //const requests = useSelector(isAdmin ? selectAllIssueRequestsForAdmin : selectUserIssueRequests);
+  //const requests = useSelector(selectUserIssueRequests);
+    const { requests } = useSelector(
+      (state) => state.issueRequests
+    );
+  console.log("issue request", requests)
   const devices = useSelector(isAdmin ? selectAllDevicesForAdmin : selectUserDevices);
   const dashboardStats = useSelector(selectDashboardData);
   const recentSubmissions = useSelector((state) => selectRecentSubmissions(state, 7));
@@ -63,6 +76,12 @@ const IssueRequestDashboard = () => {
     dispatch(fetchRequests());
     dispatch(fetchDevices());
   }, [dispatch]);
+
+    useEffect(() => {
+      if (currentUser) {
+        dispatch(fetchUserRequests(currentUser.id));
+      }
+    }, [dispatch, currentUser]);
 
   const handleCreate = () => {
     setCurrentRequest({
@@ -100,7 +119,12 @@ const IssueRequestDashboard = () => {
   
     dispatch(saveRequest(formData))
       .unwrap()
-      .then(() => setOpenDialog(false))
+      .then(() => setOpenDialog(false),
+      setSnackbar({
+        open: true,
+        message: "Issue Request Successful.",
+        severity: "success",
+      }))
       .catch((error) => {
         setErrors(error.errors || {});
       });
@@ -109,7 +133,12 @@ const IssueRequestDashboard = () => {
   const handleDelete = () => {
     dispatch(deleteIssueRequest(currentRequest.id))
       .unwrap()
-      .then(() => setDeleteDialog(false));
+      .then(() => setDeleteDialog(false),
+      setSnackbar({
+        open: true,
+        message: "Deleting successful.",
+        severity: "success",
+      }));
   };
 
   const validateRequestForm = (data) => {
@@ -407,7 +436,7 @@ const IssueRequestDashboard = () => {
                       >
                         <td className="px-6 py-4 whitespace-nowrap text-sm">{request.id}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          {request.device?.device_name || "Unknown Device"}
+                          {request?.device_name || "Unknown Device"}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(request.status)}`}>
@@ -417,8 +446,7 @@ const IssueRequestDashboard = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                           {request.start_date && request.end_date ? (
                             <>
-                              {new Date(request.start_date).toLocaleDateString()} - 
-                              {new Date(request.end_date).toLocaleDateString()}
+                              {new Date(request.start_date).toLocaleDateString()} - {new Date(request.end_date).toLocaleDateString()}
                             </>
                           ) : (
                             "Not specified"
@@ -791,6 +819,22 @@ const IssueRequestDashboard = () => {
           </Box>
         </Modal>
       )}
+
+            <Snackbar
+              open={snackbar.open}
+              autoHideDuration={6000}
+              onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+            >
+              <Alert
+                severity={snackbar.severity}
+                className="!items-center"
+                iconMapping={{
+                  error: <AlertCircle className="w-5 h-5" />,
+                }}
+              >
+                {snackbar.message}
+              </Alert>
+            </Snackbar>
     </motion.div>
   );
 };

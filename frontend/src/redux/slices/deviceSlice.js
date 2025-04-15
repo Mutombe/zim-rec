@@ -25,7 +25,7 @@ export const fetchDeviceById = createAsyncThunk(
 );
 
 export const fetchDevices = createAsyncThunk(
-  'devices/fetchByUser',
+  'devices/fetchAll',
   async (_, { rejectWithValue }) => {
     try {
       const response = await deviceAPI.getAll();
@@ -37,10 +37,10 @@ export const fetchDevices = createAsyncThunk(
 );
 
 export const fetchUserDevices = createAsyncThunk(
-  'devices/fetchAll',
-  async (userId, { rejectWithValue }) => { // Add userId parameter
+  'devices/fetchUserDevices',
+  async (userId, { rejectWithValue }) => { 
     try {
-      const response = await deviceAPI.getUserDevices(userId); // Use new API endpoint
+      const response = await deviceAPI.getUserDevices(userId);// Use new API endpoint
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response.data);
@@ -60,15 +60,27 @@ export const createDevice = createAsyncThunk(
   }
 );
 
+export const updateDevice1 = createAsyncThunk(
+  'devices/update',
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      // Add proper API endpoint formatting
+      const response = await deviceAPI.update(id, { data }); 
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+// In deviceSlice.js
 export const updateDevice = createAsyncThunk(
   'devices/update',
-  async ({ id, data }, { rejectWithValue, getState }) => {
+  async ({ id, data }, { rejectWithValue }) => {
     try {
-      const device = getState().devices.devices.find(d => d.id === id);
-      if (['approved', 'rejected'].includes(device.status)) {
-        throw new Error('Cannot modify approved/rejected devices');
-      }
+      console.log('Sending update:', data)  // Add this
       const response = await deviceAPI.update(id, data);
+      console.log('Update response:', response.data)  // Add this
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);

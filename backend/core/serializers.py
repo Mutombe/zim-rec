@@ -81,7 +81,7 @@ class DeviceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Device
         fields = '__all__'
-        read_only_fields = ['user', 'status', 'created_at', 'updated_at']
+        read_only_fields = ['user', 'created_at', 'updated_at']
 
     def get_fuel_options(self, obj):
         return [
@@ -149,17 +149,40 @@ class DeviceSerializer(serializers.ModelSerializer):
         }
 
     def validate(self, data):
-        # Perform original validation first
         data = super().validate(data)
-        
-        # Add any custom validation here
-        if data['effective_date'] < data['commissioning_date']:
-            raise serializers.ValidationError(
-                "Effective date must be after commissioning date"
-            )
+
+        # Only validate dates if they're present in the update
+        if 'effective_date' in data and 'commissioning_date' in data:
+            if data['effective_date'] < data['commissioning_date']:
+                raise serializers.ValidationError(
+                    "Effective date must be after commissioning date"
+                )
+    
+        # For partial updates, get existing dates from instance
+        elif self.instance and 'effective_date' in data:
+            if data['effective_date'] < self.instance.commissioning_date:
+                raise serializers.ValidationError(
+                    "Effective date must be after commissioning date"
+                )
             
-        # You MUST return the validated data
-        return data  # <-- This line was missing
+        elif self.instance and 'commissioning_date' in data:
+            if self.instance.effective_date < data['commissioning_date']:
+                raise serializers.ValidationError(
+                    "Effective date must be after commissioning date"
+                )
+            
+        if self.context['request'].user.is_superuser:
+            if 'status' in data and data['status'] in ['Approved', 'Rejected']:
+                return data
+            
+        if self.context['request'].user.is_superuser:
+            if 'rejection_reason' in data:
+                if data.get('status') != 'Rejected' and data['rejection_reason']:
+                    raise serializers.ValidationError(
+                        "Rejection reason can only be set when status is Rejected"
+                    )
+            
+        return data
     
     def to_internal_value(self, data):
         try:

@@ -50,8 +50,8 @@ class Device(models.Model):
         decimal_places=6,
          validators=[MinValueValidator(Decimal('0.000001'))]
     )
-    commissioning_date = models.DateField()
-    effective_date = models.DateField()
+    commissioning_date = models.DateField(null=True, blank=True)
+    effective_date = models.DateField(null=True, blank=True)
     
     # Location Information
     address = models.TextField()
@@ -82,6 +82,7 @@ class Device(models.Model):
     single_line_diagram = models.FileField(upload_to='device_documents/single_line_diagram/', null=True)
     project_photos = models.FileField(upload_to='device_documents/project_photos/', null=True)
     additional_notes = models.TextField(blank=True, null=True)
+    rejection_reason = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     _original_status = None

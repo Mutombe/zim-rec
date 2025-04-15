@@ -13,6 +13,18 @@ const initialState = {
   },
 };
 
+export const fetchUserRequests = createAsyncThunk(
+  'devices/fetchUserRequests',
+  async (userId, { rejectWithValue }) => { // Add userId parameter
+    try {
+      const response = await issueRequestAPI.getUserRequests(userId); // Use new API endpoint
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
 export const fetchRequests = createAsyncThunk(
   'requests/fetchAll',
   async () => {
@@ -106,9 +118,18 @@ const issueRequestSlice = createSlice({
     .addCase(fetchRequests.fulfilled, (state, action) => {
       state.status = 'succeeded';
       state.loading = false;
-      state.requests = action.payload;
+      state.requests = action.payload.results;
     })
-    .addCase(saveRequest.fulfilled, (state, action) => {
+    .addCase(fetchUserRequests.pending, (state) => {
+      state.status = 'loading';
+      state.loading = true;
+    })
+    .addCase(fetchUserRequests.fulfilled, (state, action) => {
+      state.status = 'succeeded';
+      state.loading = false;
+      state.requests = action.payload.results;
+    })
+    .addCase(createIssueRequest.fulfilled, (state, action) => {
       const index = state.requests.findIndex(r => r.id === action.payload.id);
       if (index >= 0) {
         state.requests[index] = action.payload;
@@ -116,14 +137,14 @@ const issueRequestSlice = createSlice({
         state.requests.push(action.payload);
       }
     })
-      .addCase(createIssueRequest.pending, (state) => {
+      .addCase(saveRequest.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(createIssueRequest.fulfilled, (state, action) => {
+      .addCase(saveRequest.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.requests.push(action.payload);
       })
-      .addCase(createIssueRequest.rejected, (state, action) => {
+      .addCase(saveRequest.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload?.error || 'Failed to create request';
       })

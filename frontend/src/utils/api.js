@@ -24,7 +24,7 @@ export const refreshTokens = async (refresh) => {
 };
 
 const api = axios.create({
-  baseURL: "https://zim-rec-backend.onrender.com/", //|| import.meta.env.VITE_API_BASE_URL ,
+  baseURL: "http://127.0.0.1:8000/", //|| import.meta.env.VITE_API_BASE_URL ,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -35,7 +35,7 @@ const api = axios.create({
 
 // Add request interceptor for auth token
 api.interceptors.request.use((config) => {
-  const token = JSON.parse(localStorage.getItem("auth"))?.access;
+  const token = JSON.parse(localStorage.getItem("auth"))?.access; 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -64,6 +64,8 @@ export const issueRequestAPI = {
     ...data,
     production_amount: parseFloat(data.production_amount).toFixed(6)
   }),
+  getAll: () => api.get("/issue-requests/"),
+  getUserRequests: (userId) => api.get(`/issue-requests/?user_id=${userId}`),
   submit: (id) => api.post(`/issue-requests/${id}/submit/`),
   update: (id, data) => api.patch(`/issue-requests/${id}/`, {
     ...data,
