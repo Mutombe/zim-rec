@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import DeviceMap from "./deviceMap";
-import { RejectDeviceModal } from "./rejectionModal";
 import {
   selectAllDevices,
   selectAllIssueRequests,
@@ -53,6 +52,82 @@ import {
 import { useNavigate } from "react-router-dom";
 import { fadeIn, staggerChildren } from "./animations";
 
+const RejectDeviceModal = ({ device, onClose, onConfirm }) => {
+  const [reason, setReason] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = () => {
+    if (!reason.trim()) {
+      setError("Rejection reason is required");
+      return;
+    }
+    onConfirm(reason);
+    onClose();
+  };
+
+  return (
+    <Modal
+      open={true}
+      onClose={onClose}
+      aria-labelledby="reject-device-modal"
+    >
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: { xs: "90%", sm: "80%", md: "60%" },
+          maxWidth: "500px",
+          bgcolor: "background.paper",
+          borderRadius: 2,
+          boxShadow: 24,
+          p: 4,
+        }}
+      >
+        <Typography id="reject-device-modal" variant="h6" component="h2" className="mb-4">
+          Reject Device: {device.device_name}
+        </Typography>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Reason for rejection *
+            </label>
+            <textarea
+              value={reason}
+              onChange={(e) => {
+                setReason(e.target.value);
+                setError("");
+              }}
+              className={`w-full p-2 border rounded-md ${
+                error ? "border-red-500" : "border-gray-300"
+              }`}
+              rows="4"
+              placeholder="Provide detailed reason for rejection..."
+            />
+            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+          </div>
+
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-md"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+            >
+              Confirm Rejection
+            </button>
+          </div>
+        </div>
+      </Box>
+    </Modal>
+  );
+};
 // TabPanel component for tab content
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -108,7 +183,8 @@ const AdminDashboard = () => {
   const pendingStats = useSelector(selectPendingSubmissions);
   const energyStats = useSelector(selectEnergyTypeStatistics);
   const [showRejectModal, setShowRejectModal] = useState(false);
-  const [selectedDeviceForRejection, setSelectedDeviceForRejection] = useState(null);
+  const [selectedDeviceForRejection, setSelectedDeviceForRejection] =
+    useState(null);
   const { loading: devicesLoading, error: devicesError } = useSelector(
     (state) => state.devices
   );
@@ -206,21 +282,23 @@ const AdminDashboard = () => {
   };
 
   const handleRejectDevice = (deviceId, reason) => {
-    dispatch(updateDevice({ 
-      id: deviceId,
-      data: {
-        status: "Rejected",
-        rejection_reason: reason // Match backend field name
-      }
-    }))
-    .unwrap()
-    .then(() => {
-      setSnackbar({
-        open: true,
-        message: "Device Rejected",
-        severity: "success",
+    dispatch(
+      updateDevice({
+        id: deviceId,
+        data: {
+          status: "Rejected",
+          rejection_reason: reason, // Match backend field name
+        },
+      })
+    )
+      .unwrap()
+      .then(() => {
+        setSnackbar({
+          open: true,
+          message: "Device Rejected",
+          severity: "success",
+        });
       });
-    });
   };
 
   const handleDeleteDevice = (deviceId) => {
@@ -241,14 +319,15 @@ const AdminDashboard = () => {
           status: "Resolved",
           resolution,
         })
-      ).unwrap()
-      .then(() => {
-        setSnackbar({
-          open: true,
-          message: "Request Resolved",
-          severity: "success",
+      )
+        .unwrap()
+        .then(() => {
+          setSnackbar({
+            open: true,
+            message: "Request Resolved",
+            severity: "success",
+          });
         });
-      });
     }
   };
 
@@ -261,14 +340,15 @@ const AdminDashboard = () => {
           status: "Rejected",
           rejectionReason: reason,
         })
-      ).unwrap()
-      .then(() => {
-        setSnackbar({
-          open: true,
-          message: "Request Rejected",
-          severity: "success",
+      )
+        .unwrap()
+        .then(() => {
+          setSnackbar({
+            open: true,
+            message: "Request Rejected",
+            severity: "success",
+          });
         });
-      });
     }
   };
 
@@ -754,17 +834,17 @@ const AdminDashboard = () => {
                               )}
 
                               {device.status !== "Rejected" && (
- <Tooltip title="Reject Device">
- <button
-   onClick={() => {
-     setSelectedDeviceForRejection(device);
-     setShowRejectModal(true);
-   }}
-   className="text-red-600 hover:text-red-800"
- >
-   <XCircle className="w-5 h-5" />
- </button>
-</Tooltip>
+                                <Tooltip title="Reject Device">
+                                  <button
+                                    onClick={() => {
+                                      setSelectedDeviceForRejection(device);
+                                      setShowRejectModal(true);
+                                    }}
+                                    className="text-red-600 hover:text-red-800"
+                                  >
+                                    <XCircle className="w-5 h-5" />
+                                  </button>
+                                </Tooltip>
                               )}
                             </div>
                           </td>
@@ -1469,17 +1549,17 @@ const AdminDashboard = () => {
       </div>
 
       {showRejectModal && (
-  <RejectDeviceModal
-    device={selectedDeviceForRejection}
-    onClose={() => {
-      setShowRejectModal(false);
-      setSelectedDeviceForRejection(null);
-    }}
-    onConfirm={(reason) => {
-      handleRejectDevice(selectedDeviceForRejection.id, reason);
-    }}
-  />
-)}
+        <RejectDeviceModal
+          device={selectedDeviceForRejection}
+          onClose={() => {
+            setShowRejectModal(false);
+            setSelectedDeviceForRejection(null);
+          }}
+          onConfirm={(reason) => {
+            handleRejectDevice(selectedDeviceForRejection.id, reason);
+          }}
+        />
+      )}
 
       <Snackbar
         open={snackbar.open}

@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { Dialog } from '@headlessui/react';
 
-export const RejectDeviceModal = ({ device, onClose, onConfirm }) => {
+const RejectDeviceModal = ({ device, onClose, onConfirm }) => {
   const [reason, setReason] = useState('');
   const [error, setError] = useState('');
 
@@ -65,3 +65,5 @@ export const RejectDeviceModal = ({ device, onClose, onConfirm }) => {
     </Dialog>
   );
 };
+
+export default RejectDeviceModal;
