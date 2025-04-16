@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useMediaQuery } from "@mui/material";
 import { logout, login, register } from "../../redux/slices/authSlice";
 import {
+  ImageIcon,
   Zap,
   User,
   LogIn,
@@ -346,6 +347,7 @@ export const Navbar = () => {
     { name: "Home", path: "/", icon: <Home size={18} /> },
     { name: "About", path: "/about", icon: <Info size={18} /> },
     { name: "Contact", path: "/contact", icon: <Phone size={18} /> },
+    { name: "Gallery", path: "/gallery", icon: <ImageIcon size={18} /> },
   ];
 
   return (
@@ -374,6 +376,15 @@ export const Navbar = () => {
 
             {isAuthenticated && (
               <>
+              <Link
+                  to="/documentation"
+                  className="text-gray-700 hover:text-green-600 flex items-center px-3 py-2 rounded-md hover:bg-green-50 transition-colors group"
+                >
+                  <span className="text-green-600 mr-2 group-hover:scale-110 transition-transform">
+                    <DocumentFragment size={18} />
+                  </span>
+                  Documentation
+                </Link>
                 <Link
                   to="/issue-requests"
                   className="text-gray-700 hover:text-green-600 flex items-center px-3 py-2 rounded-md hover:bg-green-50 transition-colors group"
@@ -406,12 +417,12 @@ export const Navbar = () => {
               <Menu />
             </IconButton>
 
-            {/* Search Button */}
+            {/* Search Button 
             <Tooltip title="Search">
               <IconButton className="!text-gray-600 hover:!text-green-600 !hidden md:!flex">
                 <Search size={20} />
               </IconButton>
-            </Tooltip>
+            </Tooltip>*/}
 
             {isAuthenticated ? (
               <div className="hidden md:flex items-center gap-3">

@@ -2,7 +2,8 @@ import React from 'react';
 import { useEffect } from 'react';
 import {
   useLocation
- } from 'react-router-dom';
+} from 'react-router-dom';
+import GalleryPage from './components/about/gallery';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './components/home/home';
 import Navbar from './components/nav/nav';
@@ -48,6 +49,7 @@ function App() {
           <Route path="/dashboard" element={<UserDashboard />} />
           <Route path='/profile' element={<ProfilePage />} />
           <Route path="/help" element={<HelpCenter />} />
+          <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/issue-requests" element={<IssueRequestDashboard />} />
