@@ -14,6 +14,7 @@ import UserDashboard from './components/dashboard/userDashboard';
 import IssueRequestDashboard from './components/dashboard/issueDashboard';
 import Settings from './components/settings/settings';
 import HelpCenter from './components/helpcenter/helpcenter';
+import DocumentationPage from './components/about/documentation';
 import ProfilePage from './components/profile/profile';
 import AdminDashboard from './components/dashboard/adminDashboard';
 
@@ -50,6 +51,7 @@ function App() {
           <Route path='/profile' element={<ProfilePage />} />
           <Route path="/help" element={<HelpCenter />} />
           <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/documentation" element={<DocumentationPage />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/issue-requests" element={<IssueRequestDashboard />} />
