@@ -381,7 +381,7 @@ export const Navbar = () => {
                   className="text-gray-700 hover:text-green-600 flex items-center px-3 py-2 rounded-md hover:bg-green-50 transition-colors group"
                 >
                   <span className="text-green-600 mr-2 group-hover:scale-110 transition-transform">
-                    <DocumentFragment size={18} />
+                    <FileText size={18} />
                   </span>
                   Documentation
                 </Link>
@@ -401,7 +401,7 @@ export const Navbar = () => {
                   <span className="text-green-600 mr-2 group-hover:scale-110 transition-transform">
                     <LayoutDashboard size={18} />
                   </span>
-                  Device Registration
+                  Devices
                 </Link>
               </>
             )}
@@ -427,16 +427,6 @@ export const Navbar = () => {
             {isAuthenticated ? (
               <div className="hidden md:flex items-center gap-3">
                 {/* Notifications */}
-                <Tooltip title="Notifications">
-                  <IconButton onClick={handleNotificationClick}>
-                    <Badge badgeContent={3} color="error">
-                      <Bell
-                        className="text-gray-600 hover:text-green-600"
-                        size={20}
-                      />
-                    </Badge>
-                  </IconButton>
-                </Tooltip>
 
                 {/* User Menu */}
                 <div className="flex items-center gap-1">
@@ -577,20 +567,6 @@ export const Navbar = () => {
                       </span>
                       <span className="font-medium">My Profile</span>
                     </Link>
-
-                    <Link
-                      to="/notifications"
-                      className="flex items-center p-3 rounded-lg hover:bg-green-50 text-gray-700"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <span className="bg-green-100 p-2 rounded-lg mr-4 text-green-600 relative">
-                        <Bell size={18} />
-                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                          3
-                        </span>
-                      </span>
-                      <span className="font-medium">Notifications</span>
-                    </Link>
                   </>
                 )}
 
@@ -702,7 +678,7 @@ export const Navbar = () => {
         </MenuItem>
       </MuiMenu>
 
-      {/* Notifications Dropdown */}
+      {/* Notifications Dropdown 
       <MuiMenu
         anchorEl={notificationAnchor}
         open={Boolean(notificationAnchor)}
@@ -749,7 +725,7 @@ export const Navbar = () => {
             View All Notifications
           </Typography>
         </MenuItem>
-      </MuiMenu>
+      </MuiMenu>*/}
 
       <AuthModals openType={authModal} onClose={() => setAuthModal(null)} />
     </nav>

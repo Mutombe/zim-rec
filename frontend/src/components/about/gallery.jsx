@@ -78,16 +78,16 @@ const GalleryPage = () => {
       mediaType: "image"
     },
     {
-      id: 4,
-      title: "REC Launch",
-      type: "event",
-      date: "January 2025",
-      location: "Harare",
-      tags: ["launch", "education"],
-      description: "Workshop providing training on REC certification process and benefits for local energy producers.",
-      imageUrl: "/zimrec2.jpeg",
-      mediaType: "image"
-    },
+        id: 3,
+        title: "REC Launch",
+        type: "event",
+        date: "January 2025",
+        location: "Harare",
+        tags: ["launch", "education"],
+        description: "Workshop providing training on REC certification process and benefits for local energy producers.",
+        imageUrl: "/zimrec.mp4",
+        mediaType: "video"
+      },
     {
       id: 5,
       title: "REC Training Workshop",
@@ -97,50 +97,6 @@ const GalleryPage = () => {
       tags: ["training", "education"],
       description: "Workshop providing training on REC certification process and benefits for local energy producers.",
       imageUrl: "/zimrec4.jpeg",
-      mediaType: "image"
-    },
-    {
-      id: 6,
-      title: "Community Hydro Project",
-      type: "project",
-      date: "December 2024",
-      location: "Victoria Falls",
-      tags: ["hydro", "community"],
-      description: "Small-scale hydro project developed in partnership with local communities near Victoria Falls.",
-      imageUrl: "/api/placeholder/600/400",
-      mediaType: "image"
-    },
-    {
-      id: 7,
-      title: "Corporate Partnership Signing",
-      type: "event",
-      date: "November 2024",
-      location: "Harare",
-      tags: ["corporate", "partnership"],
-      description: "Signing ceremony marking a major corporate partnership to support renewable energy initiatives.",
-      imageUrl: "/api/placeholder/600/350",
-      mediaType: "image"
-    },
-    {
-      id: 8,
-      title: "Solar Farm Inspection",
-      type: "project",
-      date: "October 2024",
-      location: "Gweru",
-      tags: ["solar", "audit"],
-      description: "Third-party auditors performing verification for REC certification of a major solar farm.",
-      imageUrl: "/api/placeholder/600/450",
-      mediaType: "image"
-    },
-    {
-      id: 9,
-      title: "Green Energy Conference",
-      type: "event",
-      date: "September 2024",
-      location: "Victoria Falls",
-      tags: ["conference", "education"],
-      description: "Annual conference bringing together stakeholders in Zimbabwe's renewable energy sector.",
-      imageUrl: "/api/placeholder/600/500",
       mediaType: "image"
     },
   ];
