@@ -32,6 +32,25 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 
+export function AnimatedLogo() {
+  return (
+    <div className="flex justify-center mb-4">
+      <motion.div
+        className="w-20 h-16 rounded-full overflow-hidden"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 20 }}
+      >
+        <img 
+          src="/logo.png" 
+          alt="Zim-REC Logo" 
+          className="w-full h-full"
+        />
+      </motion.div>
+    </div>
+  );
+}
+
 const About = () => {
   // Animation variants
   const fadeIn = {
@@ -94,7 +113,7 @@ const About = () => {
       icon: <Droplet className="text-blue-400" size={28} />,
       name: "Hydropower",
     },
-    { icon: <Leaf className="text-green-500" size={28} />, name: "Biomass" },
+    { icon: <Leaf className="text-emerald-500" size={28} />, name: "Biomass" },
   ];
 
   const faqItems = [
@@ -118,7 +137,7 @@ const About = () => {
   return (
     <div className="min-h-screen bg-white pt-20">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-green-50 to-white py-16 md:py-24">
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-white py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
@@ -126,20 +145,11 @@ const About = () => {
             variants={fadeIn}
             className="text-center mb-12"
           >
-            <div className="flex justify-center mb-4">
-              <motion.div
-                className="bg-gradient-to-r from-green-500 to-green-600 p-3 rounded-full"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 260, damping: 20 }}
-              >
-                <Zap className="w-6 h-6 text-white" />
-              </motion.div>
-            </div>
+            <AnimatedLogo />
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Driving Zimbabwe's
               <br />
-              <span className="text-green-600">Renewable Energy Future</span>
+              <span className="text-emerald-500">Renewable Energy Future</span>
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
               Zimbabwe's premier platform for renewable energy certification and
@@ -152,7 +162,7 @@ const About = () => {
                 size="large"
                 startIcon={<FileText />}
                 onClick={() => navigate("/contact")}
-                className="!bg-green-600 !hover:bg-green-700 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
+                className="!bg-blue-600 !hover:bg-blue-700 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
               >
                 Learn More
               </Button>
@@ -161,7 +171,7 @@ const About = () => {
                 size="large"
                 endIcon={<ArrowRight />}
                 onClick={() => navigate("/dashboard")}
-                className="!border-green-600 !text-green-600 !hover:bg-green-50 !px-6 !py-3 !rounded-full !font-medium"
+                className="!border-emerald-500 !text-emerald-500 !hover:bg-emerald-50 !px-6 !py-3 !rounded-full !font-medium"
               >
                 Register Project
               </Button>
@@ -199,8 +209,8 @@ const About = () => {
         </div>
 
         {/* Decorative elements */}
-        <div className="absolute -top-24 -right-24 w-64 h-64 bg-green-200 rounded-full opacity-20 blur-3xl"></div>
-        <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-green-300 rounded-full opacity-20 blur-3xl"></div>
+        <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-200 rounded-full opacity-20 blur-3xl"></div>
+        <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-emerald-300 rounded-full opacity-20 blur-3xl"></div>
       </section>
 
       {/* About Us Section */}
@@ -216,7 +226,7 @@ const About = () => {
               >
                 <Typography
                   variant="overline"
-                  className="text-green-600 font-medium mb-2 block"
+                  className="text-blue-600 font-medium mb-2 block"
                 >
                   ABOUT ZIM-REC
                 </Typography>
@@ -229,9 +239,7 @@ const About = () => {
                 <Typography variant="body1" className="text-gray-600 mb-6">
                   Zim-REC is a joint initiative by the Africa Institute for
                   Carbon Trading and Sustainability (AICTS) and Silver Carbon,
-                  designed to accelerate Zimbabwe's transition to renewable
-                  energy through transparent certification and trading
-                  mechanisms.
+                  designed to accelerate the expansion and access to renewable energy
                 </Typography>
 
                 <div className="space-y-4 mb-8">
@@ -241,8 +249,8 @@ const About = () => {
                     "Corporate Sustainability",
                   ].map((item, index) => (
                     <div key={index} className="flex items-center">
-                      <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                        <Check className="text-green-600 w-4 h-4" />
+                      <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center mr-3">
+                        <Check className="text-emerald-500 w-4 h-4" />
                       </div>
                       <Typography
                         variant="body1"
@@ -257,7 +265,7 @@ const About = () => {
                 <Button
                   variant="outlined"
                   endIcon={<ChevronRight />}
-                  className="!border-green-600 !text-green-600 !hover:bg-green-50 !px-6 !py-2.5 !rounded-lg !font-medium"
+                  className="!border-blue-600 !text-blue-600 !hover:bg-blue-50 !px-6 !py-2.5 !rounded-lg !font-medium"
                 >
                   Our Mission & Vision
                 </Button>
@@ -273,7 +281,7 @@ const About = () => {
                 className="relative"
               >
                 <div className="aspect-w-16 aspect-h-9 rounded-2xl overflow-hidden shadow-xl">
-                  <div className="bg-gradient-to-br from-green-200 to-green-100 w-full h-full flex items-center justify-center">
+                  <div className="bg-gradient-to-br from-blue-200 to-emerald-100 w-full h-full flex items-center justify-center">
                     <Typography variant="body1" className="text-gray-500">
                       [Image: Renewable Energy Installation]
                     </Typography>
@@ -281,8 +289,8 @@ const About = () => {
                 </div>
                 <div className="absolute -bottom-8 -right-8 md:-bottom-10 md:-right-10 p-4 md:p-6 bg-white rounded-xl shadow-lg">
                   <div className="flex items-center space-x-4">
-                    <div className="rounded-full bg-green-100 p-3">
-                      <Zap className="w-6 h-6 text-green-600" />
+                    <div className="rounded-full bg-emerald-100 p-3">
+                      <Zap className="w-6 h-6 text-emerald-500" />
                     </div>
                     <div>
                       <Typography
@@ -304,7 +312,7 @@ const About = () => {
       </section>
 
       {/* Understanding RECs Section */}
-      <section className="py-16 md:py-24 bg-gradient-to-br from-green-50 to-white relative overflow-hidden">
+      <section className="py-16 md:py-24 bg-gradient-to-br from-blue-50 to-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -315,7 +323,7 @@ const About = () => {
           >
             <Typography
               variant="overline"
-              className="text-green-600 font-medium block"
+              className="text-blue-600 font-medium block"
             >
               UNDERSTANDING RECs
             </Typography>
@@ -344,14 +352,14 @@ const About = () => {
                   viewport={{ once: true }}
                   className="h-full"
                 >
-                  <div className="h-full bg-gradient-to-br from-green-600 to-green-700 p-8 md:p-12 flex flex-col justify-center">
+                  <div className="h-full bg-gradient-to-br from-blue-700 to-emerald-600 p-8 md:p-12 flex flex-col justify-center">
                     <Typography
                       variant="h4"
                       className="text-white font-bold mb-4"
                     >
                       How RECs Work
                     </Typography>
-                    <Typography variant="body1" className="text-green-50 mb-6">
+                    <Typography variant="body1" className="text-blue-50 mb-6">
                       The REC system facilitates the tracking, trading, and
                       retirement of renewable energy claims, ensuring
                       transparency and credibility in sustainability
@@ -366,10 +374,10 @@ const About = () => {
                       ].map((item, index) => (
                         <div key={index} className="flex items-center">
                           <Check
-                            className="text-green-300 mr-2 flex-shrink-0"
+                            className="text-emerald-300 mr-2 flex-shrink-0"
                             size={18}
                           />
-                          <Typography variant="body2" className="text-green-50">
+                          <Typography variant="body2" className="text-blue-50">
                             {item}
                           </Typography>
                         </div>
@@ -419,10 +427,10 @@ const About = () => {
                           },
                         ].map((step, index) => (
                           <div key={index} className="flex">
-                            <div className="mr-4 bg-green-100 h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0">
+                            <div className="mr-4 bg-blue-100 h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0">
                               <Typography
                                 variant="subtitle2"
-                                className="font-bold text-green-600"
+                                className="font-bold text-blue-600"
                               >
                                 {step.number}
                               </Typography>
@@ -453,7 +461,7 @@ const About = () => {
         </div>
 
         {/* Decorative elements */}
-        <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-green-200 rounded-full opacity-20 blur-3xl"></div>
+        <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-emerald-200 rounded-full opacity-20 blur-3xl"></div>
       </section>
 
       {/* Benefits Section */}
@@ -468,7 +476,7 @@ const About = () => {
           >
             <Typography
               variant="overline"
-              className="text-green-600 font-medium block"
+              className="text-emerald-500 font-medium block"
             >
               BENEFITS
             </Typography>
@@ -496,8 +504,8 @@ const About = () => {
               <motion.div key={index} variants={itemAnimation}>
                 <Card className="h-full shadow-md hover:shadow-lg transition-shadow duration-300">
                   <CardContent className="p-6">
-                    <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mb-4">
-                      <div className="text-green-600">{item.icon}</div>
+                    <div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mb-4">
+                      <div className="text-blue-600">{item.icon}</div>
                     </div>
                     <Typography
                       variant="h6"
@@ -517,7 +525,7 @@ const About = () => {
       </section>
 
       {/* Call to Action */}
-      <section className="py-12 md:py-20 bg-gradient-to-br from-green-600 to-green-700 relative overflow-hidden">
+      <section className="py-12 md:py-20 bg-gradient-to-br from-blue-700 to-emerald-600 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
             <defs>
@@ -551,7 +559,7 @@ const About = () => {
             </Typography>
             <Typography
               variant="body1"
-              className="text-green-50 max-w-2xl mx-auto mb-8"
+              className="text-blue-50 max-w-2xl mx-auto mb-8"
             >
               Join Zimbabwe's renewable energy revolution. Register your project
               today and start benefiting from renewable energy certification.
@@ -562,7 +570,7 @@ const About = () => {
                   variant="contained"
                   size="large"
                   onClick={() => navigate("/dashboard")}
-                  className="!bg-white !text-green-700 !hover:bg-green-50 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
+                  className="!bg-emerald-500 !text-blue-900 !hover:bg-emerald-400 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
                 >
                   See Devices
                 </Button>
@@ -571,7 +579,7 @@ const About = () => {
                   variant="contained"
                   size="large"
                   onClick={() => setAuthModal("register")}
-                  className="!bg-white !text-green-700 !hover:bg-green-50 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
+                  className="!bg-emerald-500 !text-blue-900 !hover:bg-emerald-400 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
                 >
                   Register Now
                 </Button>
@@ -580,7 +588,7 @@ const About = () => {
                 variant="outlined"
                 size="large"
                 onClick={() => navigate("/contact")}
-                className="!border-white !text-white !hover:bg-green-600 !px-6 !py-3 !rounded-full !font-medium"
+                className="!border-white !text-white !hover:bg-blue-600 !px-6 !py-3 !rounded-full !font-medium"
               >
                 Contact Us
               </Button>
@@ -601,7 +609,7 @@ const About = () => {
           >
             <Typography
               variant="overline"
-              className="text-green-600 font-medium block"
+              className="text-blue-600 font-medium block"
             >
               FAQ
             </Typography>
@@ -658,7 +666,7 @@ const About = () => {
               <Button
                 variant="outlined"
                 onClick={() => navigate("/contact")}
-                className="!border-green-600 !text-green-600 !hover:bg-green-50 !px-6 !py-2.5 !rounded-lg !font-medium"
+                className="!border-blue-600 !text-blue-600 !hover:bg-blue-50 !px-6 !py-2.5 !rounded-lg !font-medium"
               >
                 Contact Support
               </Button>
@@ -666,44 +674,6 @@ const About = () => {
           </div>
         </div>
       </section>
-
-      {/* Partners Section 
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <Typography variant="overline" className="text-green-600 font-medium block">
-              OUR PARTNERS
-            </Typography>
-            <Typography variant="h4" className="font-bold text-gray-900 mb-4">
-              Backed by Industry Leaders
-            </Typography>
-          </motion.div>
-          
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center"
-          >
-            {[1, 2, 3, 4].map((_, index) => (
-              <motion.div key={index} variants={itemAnimation} className="flex justify-center">
-                <div className="h-12 bg-gray-200 w-full max-w-[180px] rounded-lg flex items-center justify-center">
-                  <Typography variant="body2" className="text-gray-500">
-                    Partner Logo
-                  </Typography>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>*/}
 
       {/* Footer CTA */}
       <section className="bg-white py-12 border-t border-gray-100">
@@ -725,7 +695,7 @@ const About = () => {
                   size="large"
                   startIcon={<Zap />}
                   onClick={() => navigate("/dashboard")}
-                  className="!bg-green-600 !hover:bg-green-700 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
+                  className="!bg-blue-600 !hover:bg-blue-700 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
                 >
                   Upload Devices
                 </Button>
@@ -735,7 +705,7 @@ const About = () => {
                   size="large"
                   startIcon={<Zap />}
                   onClick={() => setAuthModal("register")}
-                  className="!bg-green-600 !hover:bg-green-700 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
+                  className="!bg-blue-600 !hover:bg-blue-700 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
                 >
                   Get Started
                 </Button>

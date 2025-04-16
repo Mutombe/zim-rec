@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { 
   Button, 
@@ -24,6 +24,76 @@ import {
   Calendar,
   Sun
 } from "lucide-react";
+// Import leaflet at the top level
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// Leaflet Map Component
+const MapComponent = () => {
+  const mapRef = useRef(null);
+  const mapInstanceRef = useRef(null);
+
+  useEffect(() => {
+    // Make sure the DOM element exists
+    if (!mapRef.current) return;
+    
+    // Initialize the map if it hasn't been already
+    if (!mapInstanceRef.current) {
+      // Fix for Leaflet's icon paths
+      // This addresses issues with marker icons not appearing
+      delete L.Icon.Default.prototype._getIconUrl;
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png'
+      });
+      
+      // Initialize the map
+      mapInstanceRef.current = L.map(mapRef.current).setView([-17.824858, 31.053028], 13);
+      
+      // Add OpenStreetMap tiles
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(mapInstanceRef.current);
+
+      // Define locations
+      const locations = [
+        {
+          name: 'Jackson Road Office',
+          coords: [-17.824858, 31.053028],
+          address: '8 Jackson Road, Hillside, Harare'
+        },
+        {
+          name: 'NRZ Complex Office',
+          coords: [-17.829750, 31.034970],
+          address: 'NRZ Complex, Seke Road, Harare'
+        }
+      ];
+
+      // Add markers with popups
+      locations.forEach(location => {
+        const marker = L.marker(location.coords).addTo(mapInstanceRef.current);
+        marker.bindPopup(`<b>${location.name}</b><br>${location.address}`);
+      });
+
+      // Fit map to show both markers
+      const bounds = L.latLngBounds(locations.map(loc => loc.coords));
+      mapInstanceRef.current.fitBounds(bounds, { padding: [50, 50] });
+    }
+    
+    // Cleanup function to destroy map when component unmounts
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, []);
+
+  return (
+    <div ref={mapRef} className="w-full h-full rounded-2xl" />
+  );
+};
 
 const Contact = () => {
   const [formData, setState] = useState({
@@ -89,9 +159,28 @@ const Contact = () => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
   };
 
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const itemAnimation = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-green-50 pt-20 pb-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-white to-blue-50 pt-20 pb-16 relative">
+      {/* Decorative elements */}
+      <div className="absolute -top-24 -right-24 w-64 h-64 bg-emerald-200 rounded-full opacity-20 blur-3xl"></div>
+      <div className="absolute bottom-32 -left-32 w-80 h-80 bg-blue-300 rounded-full opacity-20 blur-3xl"></div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header Section */}
         <motion.div 
           initial="hidden"
@@ -101,7 +190,7 @@ const Contact = () => {
         >
           <div className="flex justify-center mb-4">
             <motion.div 
-              className="bg-gradient-to-r from-green-500 to-green-600 p-3 rounded-full"
+              className="bg-gradient-to-r from-blue-600 to-emerald-500 p-3 rounded-full"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 260, damping: 20 }}
@@ -116,20 +205,23 @@ const Contact = () => {
         </motion.div>
 
         {/* Main Content */}
-        <div className="grid lg:grid-cols-5 gap-8">
+        <motion.div 
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+          className="grid lg:grid-cols-5 gap-8"
+        >
           {/* Contact Form */}
           <motion.div 
             className="lg:col-span-3"
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            variants={itemAnimation}
           >
             <Paper elevation={0} className="overflow-hidden rounded-2xl shadow-lg">
-              <div className="bg-gradient-to-r from-green-600 to-green-500 px-6 py-4">
+              <div className="bg-gradient-to-r from-blue-700 to-blue-600 px-6 py-4">
                 <Typography variant="h5" className="text-white font-bold flex items-center">
                   <Mail className="mr-2" /> Send Us a Message
                 </Typography>
-                <Typography variant="body2" className="text-green-50">
+                <Typography variant="body2" className="text-blue-50">
                   We'll get back to you within 24 hours
                 </Typography>
               </div>
@@ -197,7 +289,7 @@ const Contact = () => {
                       type="submit"
                       variant="contained"
                       size="large"
-                      className="!bg-green-600 !hover:bg-green-700 !py-3 !px-8 !rounded-full !shadow-md !transition-all !duration-300 !font-medium"
+                      className="!bg-emerald-500 !hover:bg-emerald-600 !py-3 !px-8 !rounded-full !shadow-md !transition-all !duration-300 !font-medium"
                       startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Send />}
                       disabled={loading}
                     >
@@ -212,9 +304,7 @@ const Contact = () => {
           {/* Contact Information */}
           <motion.div 
             className="lg:col-span-2 space-y-6"
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            variants={itemAnimation}
           >
             {/* Contact Info Card */}
             <Paper elevation={0} className="p-6 rounded-2xl shadow-lg bg-white">
@@ -223,38 +313,44 @@ const Contact = () => {
               </Typography>
               <div className="space-y-4">
                 <div className="flex items-start">
-                  <div className="bg-green-100 p-2 rounded-lg mr-4">
-                    <MapPin className="text-green-600 w-5 h-5" />
+                  <div className="bg-blue-100 p-2 rounded-lg mr-4">
+                    <MapPin className="text-blue-600 w-5 h-5" />
                   </div>
                   <div>
                     <Typography variant="subtitle2" className="font-medium text-gray-700">
                       Office Location
                     </Typography>
+                 
                     <Typography variant="body2" className="text-gray-600">
-                    7 KingsRow Northgate , Borrowdale<br />
+                      8 Jackson Road, Hillside<br />
+                      Harare, Zimbabwe
+                    </Typography>   <br />
+                    <Typography variant="body2" className="text-gray-600">
+                      NRZ Complex, Seke Road<br />
                       Harare, Zimbabwe
                     </Typography>
                   </div>
                 </div>
                 
                 <div className="flex items-start">
-                  <div className="bg-green-100 p-2 rounded-lg mr-4">
-                    <Phone className="text-green-600 w-5 h-5" />
+                  <div className="bg-blue-100 p-2 rounded-lg mr-4">
+                    <Phone className="text-blue-600 w-5 h-5" />
                   </div>
                   <div>
                     <Typography variant="subtitle2" className="font-medium text-gray-700">
                       Phone Numbers
                     </Typography>
                     <Typography variant="body2" className="text-gray-600">
-                    +263 78 004 9196<br />
-                      +263 78 004 9196
+                      +263 78 004 9196<br />
+                      +263 77 770 0465 <br />
+                      +263 71 678 0112
                     </Typography>
                   </div>
                 </div>
                 
                 <div className="flex items-start">
-                  <div className="bg-green-100 p-2 rounded-lg mr-4">
-                    <Mail className="text-green-600 w-5 h-5" />
+                  <div className="bg-blue-100 p-2 rounded-lg mr-4">
+                    <Mail className="text-blue-600 w-5 h-5" />
                   </div>
                   <div>
                     <Typography variant="subtitle2" className="font-medium text-gray-700">
@@ -275,8 +371,8 @@ const Contact = () => {
               </Typography>
               <div className="space-y-3">
                 <div className="flex items-center">
-                  <div className="bg-green-100 p-2 rounded-lg mr-4">
-                    <Clock className="text-green-600 w-5 h-5" />
+                  <div className="bg-blue-100 p-2 rounded-lg mr-4">
+                    <Clock className="text-blue-600 w-5 h-5" />
                   </div>
                   <div className="flex justify-between w-full">
                     <Typography variant="body2" className="font-medium text-gray-700">
@@ -290,8 +386,8 @@ const Contact = () => {
                 <Divider />
                 
                 <div className="flex items-center">
-                  <div className="bg-green-100 p-2 rounded-lg mr-4">
-                    <Calendar className="text-green-600 w-5 h-5" />
+                  <div className="bg-blue-100 p-2 rounded-lg mr-4">
+                    <Calendar className="text-blue-600 w-5 h-5" />
                   </div>
                   <div className="flex justify-between w-full">
                     <Typography variant="body2" className="font-medium text-gray-700">
@@ -305,8 +401,8 @@ const Contact = () => {
                 <Divider />
                 
                 <div className="flex items-center">
-                  <div className="bg-green-100 p-2 rounded-lg mr-4">
-                    <Sun className="text-green-600 w-5 h-5" />
+                  <div className="bg-blue-100 p-2 rounded-lg mr-4">
+                    <Sun className="text-blue-600 w-5 h-5" />
                   </div>
                   <div className="flex justify-between w-full">
                     <Typography variant="body2" className="font-medium text-gray-700">
@@ -319,55 +415,19 @@ const Contact = () => {
                 </div>
               </div>
             </Paper>
-            
-            {/* Quick Links */}
-            <Paper elevation={""} className="p-6 rounded-2xl shadow-lg bg-gradient-to-br from-green-700 to-green-800 text-white">
-              <Typography variant="h6" className="font-bold mb-4">
-                Quick Links
-              </Typography>
-              <div className="space-y-2">
-                <Button 
-                  variant="text" 
-                  fullWidth 
-                  className="!bg-green-500/20 !text-white !justify-start !rounded-lg !py-2 !hover:bg-green-500/30"
-                  startIcon={<Globe size={18} />}
-                >
-                  Visit Our FAQ
-                </Button>
-                <Button 
-                  variant="text" 
-                  fullWidth 
-                  className="!bg-green-500/20 !text-white !justify-start !rounded-lg !py-2 !hover:bg-green-500/30"
-                  startIcon={<Check size={18} />}
-                >
-                  Project Registration
-                </Button>
-                <Button 
-                  variant="text" 
-                  fullWidth 
-                  className="!bg-green-500/20 !text-white !justify-start !rounded-lg !py-2 !hover:bg-green-500/30"
-                  startIcon={<Zap size={18} />}
-                >
-                  Learn About RECs
-                </Button>
-              </div>
-            </Paper>
           </motion.div>
-        </div>
+        </motion.div>
         
-        {/* Map Section */}
+        {/* Map Section - Now with actual Leaflet map */}
         <motion.div 
-          className="mt-12 rounded-2xl overflow-hidden shadow-lg h-64 md:h-80 bg-gray-100"
+          className="mt-12 rounded-2xl overflow-hidden shadow-lg h-64 md:h-80"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <Box className="relative w-full h-full bg-green-200 flex items-center justify-center">
-            <Typography variant="body1" className="text-gray-600">
-              Map placeholder - Integration with Google Maps or similar service
-            </Typography>
-            <Box className="absolute inset-0 bg-gradient-to-t from-green-600/20 to-transparent" />
-          </Box>
+          <div className="w-full h-full bg-white">
+            <MapComponent />
+          </div>
         </motion.div>
       </div>
 
