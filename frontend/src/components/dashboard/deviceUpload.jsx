@@ -40,8 +40,10 @@ import {
   X,
   ArrowLeft,
   ArrowRight,
+  FileCheck,
   Info,
   MapPin,
+  Building,
   Calendar,
   Settings,
   Zap,
@@ -77,6 +79,12 @@ const DeviceUploadStepper = ({ open, onClose }) => {
     longitude: "",
     postcode: "",
     documents: "",
+    number_of_generating_units: "",
+    meter_ids: "",
+    carbon_offset_registration: "",
+    onsite_consumer_details: "",
+    auxiliary_energy_details: "",
+    funding_end_date: "",
   });
 
   const initialFormState = {
@@ -94,6 +102,22 @@ const DeviceUploadStepper = ({ open, onClose }) => {
     longitude: "",
     postcode: "",
     additional_notes: "",
+    number_of_generating_units: 1,
+    meter_ids: "",
+    network_owner: "",
+    connection_voltage: "",
+    grid_connection_details: "",
+    volume_evidence_type: "Metering",
+    volume_evidence_other: "",
+    carbon_offset_registration: "",
+    labelling_scheme: "",
+    public_funding: "No",
+    funding_end_date: null,
+    onsite_consumer: "No",
+    onsite_consumer_details: "",
+    auxiliary_energy: "No",
+    auxiliary_energy_details: "",
+    electricity_import_details: "",
     documents: {
       sf02: null,
       sf02c: null,
@@ -123,6 +147,21 @@ const DeviceUploadStepper = ({ open, onClose }) => {
     },
     {
       id: 3,
+      title: "Grid & Metering",
+      icon: <Zap size={isTablet ? 18 : 22} />,
+    },
+    {
+      id: 4,
+      title: "Business Details",
+      icon: <Building size={isTablet ? 18 : 22} />,
+    },
+    {
+      id: 5,
+      title: "Registration",
+      icon: <FileCheck size={isTablet ? 18 : 22} />,
+    },
+    {
+      id: 6,
       title: "Supporting Documents",
       icon: <File size={isTablet ? 18 : 22} />,
     },
@@ -171,6 +210,28 @@ const DeviceUploadStepper = ({ open, onClose }) => {
     },
   ];
 
+  const VOLUME_EVIDENCE_CHOICES = [
+    ['Metering', 'Metering data'],
+    ['Invoice', 'Contract sales invoice'],
+    ['Other', 'Other'],
+  ];
+  
+  const FUNDING_CHOICES = [
+    ['No', 'No'],
+    ['Investment', 'Investment'],
+    ['Production', 'Production'],
+  ];
+  
+  const ONSITE_CONSUMER_CHOICES = [
+    ['Yes', 'Yes'],
+    ['No', 'No'],
+  ];
+  
+  const AUXILIARY_ENERGY_CHOICES = [
+    ['Yes', 'Yes'],
+    ['No', 'No'],
+  ];
+
   const fuelTechnologyMap = {
     Solar: ["TC110", "TC120", "TC130", "TC140"],
     Wind: ["TC210", "TC220"],
@@ -204,6 +265,34 @@ const DeviceUploadStepper = ({ open, onClose }) => {
       }));
     }
   };
+
+  if (name === 'public_funding' && value === 'No') {
+    setFormData(prev => ({
+      ...prev,
+      funding_end_date: null
+    }));
+  }
+
+  if (name === 'onsite_consumer' && value === 'No') {
+    setFormData(prev => ({
+      ...prev,
+      onsite_consumer_details: ''
+    }));
+  }
+  
+  if (name === 'auxiliary_energy' && value === 'No') {
+    setFormData(prev => ({
+      ...prev,
+      auxiliary_energy_details: ''
+    }));
+  }
+  
+  if (name === 'volume_evidence_type' && value !== 'Other') {
+    setFormData(prev => ({
+      ...prev,
+      volume_evidence_other: ''
+    }));
+  }
 
   const handleFileUpload = (docType, file) => {
     if (file && file.size > 10 * 1024 * 1024) {
@@ -265,6 +354,17 @@ const DeviceUploadStepper = ({ open, onClose }) => {
     return regex.test(value);
   };
 
+  const validateElectricityImport = (value) => {
+    if (!/^\d*\.?\d*$/.test(value)) return false;
+    return parseFloat(value) >= 0;
+  };
+
+  if (name === 'electricity_import_details') {
+    if (validateElectricityImport(value)) {
+      setFormData(prev => ({...prev, [name]: value}));
+    }
+  }
+
   const validateLatitude = (value) => {
     if (value === "") return true;
     const num = parseFloat(value);
@@ -292,6 +392,32 @@ const DeviceUploadStepper = ({ open, onClose }) => {
       case 2:
         return ["address", "country", "latitude", "longitude", "postcode"];
       case 3:
+          return [
+            "meter_ids", 
+            "network_owner", 
+            "connection_voltage", 
+            "grid_connection_details",
+            "volume_evidence_type",
+            "volume_evidence_other",
+
+            ...(formData.volume_evidence_type === 'Other' ? ["volume_evidence_other"] : [])
+          ];
+      case 4: // Business Details
+          return [
+            "onsite_consumer",
+            "auxiliary_energy",
+            ...(formData.onsite_consumer === 'Yes' ? ["onsite_consumer_details"] : []),
+            ...(formData.auxiliary_energy === 'Yes' ? ["auxiliary_energy_details"] : []),
+            "electricity_import_details"
+          ];
+      case 5: // Registration step
+          return [
+            "carbon_offset_registration",
+            "labelling_scheme",
+            "public_funding",
+            ...(formData.public_funding !== 'No' ? ["funding_end_date"] : [])
+          ];
+      case 6:
         return ["documents", "additional_notes"];
       default:
         return [];
@@ -302,6 +428,52 @@ const DeviceUploadStepper = ({ open, onClose }) => {
     // Validate all fields first
     let newErrors = {};
     let hasErrors = false;
+
+    if (activeStep === 3) {
+      if (!formData.meter_ids) {
+        newErrors.meter_ids = "Meter IDs are required";
+        hasErrors = true;
+      }
+      if (!formData.volume_evidence_type) {
+        newErrors.volume_evidence_type = "Evidence type is required";
+        hasErrors = true;
+      }
+      if (formData.volume_evidence_type === 'Other' && !formData.volume_evidence_other) {
+        newErrors.volume_evidence_other = "Please specify evidence type";
+        hasErrors = true;
+      }
+    }
+
+    if (activeStep === 4) {
+      if (!formData.onsite_consumer) {
+        newErrors.onsite_consumer = "On-site consumer selection required";
+        hasErrors = true;
+      }
+      if (formData.onsite_consumer === 'Yes' && !formData.onsite_consumer_details) {
+        newErrors.onsite_consumer_details = "Consumer details required";
+        hasErrors = true;
+      }
+      if (!formData.auxiliary_energy) {
+        newErrors.auxiliary_energy = "Auxiliary energy selection required";
+        hasErrors = true;
+      }
+      if (formData.auxiliary_energy === 'Yes' && !formData.auxiliary_energy_details) {
+        newErrors.auxiliary_energy_details = "Auxiliary details required";
+        hasErrors = true;
+      }
+    }
+
+    if (activeStep === 5) {
+      if (!formData.public_funding) {
+        newErrors.public_funding = "Public funding selection required";
+        hasErrors = true;
+      }
+      if (formData.public_funding !== 'No' && !formData.funding_end_date) {
+        newErrors.funding_end_date = "Funding end date required";
+        hasErrors = true;
+      }
+    }
+    
 
     // Basic required field validation
     const requiredFields = [
@@ -317,6 +489,8 @@ const DeviceUploadStepper = ({ open, onClose }) => {
       "latitude",
       "longitude",
       "postcode",
+      "number_of_generating_units",
+      "meter_ids",
     ];
 
     requiredFields.forEach((field) => {
@@ -334,6 +508,27 @@ const DeviceUploadStepper = ({ open, onClose }) => {
 
     if (formData.longitude && !validateLongitude(formData.longitude)) {
       newErrors.longitude = "Must be between -180 and 180";
+      hasErrors = true;
+    }
+
+    // Conditional validations
+    if (formData.public_funding !== 'No' && !formData.funding_end_date) {
+      newErrors.funding_end_date = "Required when public funding is specified";
+      hasErrors = true;
+    }
+    
+    if (formData.onsite_consumer === 'Yes' && !formData.onsite_consumer_details) {
+      newErrors.onsite_consumer_details = "Required when on-site consumer is present";
+      hasErrors = true;
+    }
+    
+    if (formData.auxiliary_energy === 'Yes' && !formData.auxiliary_energy_details) {
+      newErrors.auxiliary_energy_details = "Required when auxiliary energy is present";
+      hasErrors = true;
+    }
+    
+    if (formData.volume_evidence_type === 'Other' && !formData.volume_evidence_other) {
+      newErrors.volume_evidence_other = "Please specify other evidence type";
       hasErrors = true;
     }
 
@@ -407,6 +602,21 @@ const DeviceUploadStepper = ({ open, onClose }) => {
         "country",
         "postcode",
         "additional_notes",
+        "number_of_generating_units",
+        "meter_ids",
+        "network_owner",
+        "connection_voltage",
+        "grid_connection_details",
+        "volume_evidence_type",
+        "volume_evidence_other",
+        "carbon_offset_registration",
+        "labelling_scheme",
+        "public_funding",
+        "onsite_consumer",
+        "onsite_consumer_details",
+        "auxiliary_energy",
+        "auxiliary_energy_details",
+        "electricity_import_details",
       ];
 
       fields.forEach((field) => {
@@ -449,9 +659,6 @@ const DeviceUploadStepper = ({ open, onClose }) => {
         open: true,
         message: "Device Upload Successful.",
         severity: "success",
-      });
-      enqueueSnackbar("Device registered successfully!", {
-        variant: "success",
       });
       onClose();
     } catch (error) {
@@ -533,7 +740,22 @@ const DeviceUploadStepper = ({ open, onClose }) => {
           formData.longitude &&
           formData.postcode
         );
-      case 3:
+      case 3: // Grid & Metering
+        return [
+          formData.meter_ids,
+          formData.volume_evidence_type,
+          formData.volume_evidence_type !== 'Other' || formData.volume_evidence_other
+        ].every(Boolean);
+      case 4: // Business Details
+        return [
+          formData.onsite_consumer,
+          formData.auxiliary_energy,
+          (formData.onsite_consumer === 'Yes' ? formData.onsite_consumer_details : true),
+          (formData.auxiliary_energy === 'Yes' ? formData.auxiliary_energy_details : true),
+          formData.electricity_import_details
+        ].every(Boolean);
+        
+      case 5:
         return DOCUMENT_TYPES.filter((doc) => doc.required).every(
           (doc) => formData.documents[doc.id]
         );
@@ -956,7 +1178,261 @@ const DeviceUploadStepper = ({ open, onClose }) => {
           </Fade>
         );
 
-      case 3:
+        case 3: // Grid & Metering Step
+        return (
+          <Fade in={activeStep === 3}>
+            <Card variant="outlined" sx={{ mb: 2 }}>
+              <CardContent>
+                <Typography variant="subtitle1" sx={{ mb: 2, display: 'flex', alignItems: 'center', color: theme.palette.primary.main }}>
+                  <Zap size={18} style={{ marginRight: 8 }} />
+                  Grid Connection & Metering
+                </Typography>
+
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      label="Meter/Measurement IDs"
+                      name="meter_ids"
+                      value={formData.meter_ids}
+                      onChange={handleInputChange}
+                      required
+                      multiline
+                      rows={2}
+                      helperText="Comma-separated list of meter IDs"
+                      error={!!errors.meter_ids}
+                    />
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Network Owner"
+                      name="network_owner"
+                      value={formData.network_owner}
+                      onChange={handleInputChange}
+                      error={!!errors.network_owner}
+                    />
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Connection Voltage"
+                      name="connection_voltage"
+                      value={formData.connection_voltage}
+                      onChange={handleInputChange}
+                      error={!!errors.connection_voltage}
+                    />
+                  </Grid>
+                  
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      label="Grid Connection Details"
+                      name="grid_connection_details"
+                      value={formData.grid_connection_details}
+                      onChange={handleInputChange}
+                      multiline
+                      rows={3}
+                      helperText="Describe connection details if not directly connected to grid"
+                      error={!!errors.grid_connection_details}
+                    />
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth>
+                      <InputLabel>Volume Evidence Type</InputLabel>
+                      <Select
+                        name="volume_evidence_type"
+                        value={formData.volume_evidence_type}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        {VOLUME_EVIDENCE_CHOICES.map(([value, label]) => (
+                          <MenuItem key={value} value={value}>{label}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  
+                  {formData.volume_evidence_type === 'Other' && (
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Specify Evidence Type"
+                        name="volume_evidence_other"
+                        value={formData.volume_evidence_other}
+                        onChange={handleInputChange}
+                        required
+                        error={!!errors.volume_evidence_other}
+                      />
+                    </Grid>
+                  )}
+                </Grid>
+              </CardContent>
+            </Card>
+          </Fade>
+        );
+
+      case 4: // Business Details Step
+        return (
+          <Fade in={activeStep === 4}>
+            <Card variant="outlined" sx={{ mb: 2 }}>
+              <CardContent>
+                <Typography variant="subtitle1" sx={{ mb: 2, display: 'flex', alignItems: 'center', color: theme.palette.primary.main }}>
+                  <Building size={18} style={{ marginRight: 8 }} />
+                  Business Operations
+                </Typography>
+
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth>
+                      <InputLabel>On-site Consumer</InputLabel>
+                      <Select
+                        name="onsite_consumer"
+                        value={formData.onsite_consumer}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        {ONSITE_CONSUMER_CHOICES.map(([value, label]) => (
+                          <MenuItem key={value} value={value}>{label}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  
+                  {formData.onsite_consumer === 'Yes' && (
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Consumer Details"
+                        name="onsite_consumer_details"
+                        value={formData.onsite_consumer_details}
+                        onChange={handleInputChange}
+                        required
+                        error={!!errors.onsite_consumer_details}
+                      />
+                    </Grid>
+                  )}
+                  
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth>
+                      <InputLabel>Auxiliary Energy</InputLabel>
+                      <Select
+                        name="auxiliary_energy"
+                        value={formData.auxiliary_energy}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        {AUXILIARY_ENERGY_CHOICES.map(([value, label]) => (
+                          <MenuItem key={value} value={value}>{label}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  
+                  {formData.auxiliary_energy === 'Yes' && (
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Auxiliary Energy Details"
+                        name="auxiliary_energy_details"
+                        value={formData.auxiliary_energy_details}
+                        onChange={handleInputChange}
+                        required
+                        error={!!errors.auxiliary_energy_details}
+                      />
+                    </Grid>
+                  )}
+                  
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      label="Electricity Import Details"
+                      name="electricity_import_details"
+                      value={formData.electricity_import_details}
+                      onChange={handleInputChange}
+                      multiline
+                      rows={3}
+                      helperText="Describe alternative electricity import methods"
+                    />
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          </Fade>
+        );
+
+      case 5: // Registration Step
+        return (
+          <Fade in={activeStep === 5}>
+            <Card variant="outlined" sx={{ mb: 2 }}>
+              <CardContent>
+                <Typography variant="subtitle1" sx={{ mb: 2, display: 'flex', alignItems: 'center', color: theme.palette.primary.main }}>
+                  <FileCheck size={18} style={{ marginRight: 8 }} />
+                  Certifications & Funding
+                </Typography>
+
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Carbon Offset Registration ID"
+                      name="carbon_offset_registration"
+                      value={formData.carbon_offset_registration}
+                      onChange={handleInputChange}
+                    />
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Labelling Scheme"
+                      name="labelling_scheme"
+                      value={formData.labelling_scheme}
+                      onChange={handleInputChange}
+                    />
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth>
+                      <InputLabel>Public Funding</InputLabel>
+                      <Select
+                        name="public_funding"
+                        value={formData.public_funding}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        {FUNDING_CHOICES.map(([value, label]) => (
+                          <MenuItem key={value} value={value}>{label}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  
+                  {formData.public_funding !== 'No' && (
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Funding End Date"
+                        name="funding_end_date"
+                        type="date"
+                        InputLabelProps={{ shrink: true }}
+                        value={formData.funding_end_date}
+                        onChange={handleInputChange}
+                        required
+                        error={!!errors.funding_end_date}
+                      />
+                    </Grid>
+                  )}
+                </Grid>
+              </CardContent>
+            </Card>
+          </Fade>
+        );
+
+      case 6:
         return (
           <Fade in={activeStep === 3}>
             <Box>

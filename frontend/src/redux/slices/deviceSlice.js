@@ -40,7 +40,7 @@ export const fetchUserDevices = createAsyncThunk(
   'devices/fetchUserDevices',
   async (userId, { rejectWithValue }) => { 
     try {
-      const response = await deviceAPI.getUserDevices(userId);// Use new API endpoint
+      const response = await deviceAPI.getUserDevices(userId);
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response.data);
