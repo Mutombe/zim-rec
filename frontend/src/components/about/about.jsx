@@ -152,7 +152,7 @@ const About = () => {
               <span className="text-emerald-500">Renewable Energy Future</span>
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
-              Zimbabwe's premier platform for renewable energy certification and
+              Zimbabwe's premier platform for enabling renewable energy certification and
               trading, accelerating the transition to a sustainable energy
               ecosystem.
             </p>
