@@ -51,7 +51,7 @@ const GalleryPage = () => {
       date: "January 2025",
       location: "Harare",
       tags: ["launch", "education"],
-      description: "Workshop providing training on REC certification process and benefits for local energy producers.",
+      description: "Official Launch of the Zim-Rec platform",
       imageUrl: "/zimrec3.jpeg",
       mediaType: "image"
     },
@@ -62,7 +62,7 @@ const GalleryPage = () => {
       date: "January 2025",
       location: "Harare",
       tags: ["launch", "education"],
-      description: "Workshop providing training on REC certification process and benefits for local energy producers.",
+      description: "Official Launch of the Zim-Rec platform",
       imageUrl: "/zimrec7.mp4",
       mediaType: "video"
     },
