@@ -84,7 +84,7 @@ const GalleryPage = () => {
       date: "January 2025",
       location: "Harare",
       tags: ["launch", "education"],
-      description: "Workshop providing training on REC certification process and benefits for local energy producers.",
+      description: "Zim-REC launch in Harare",
       imageUrl: "/zimrec1.jpeg",
       mediaType: "image"
     },
@@ -95,18 +95,18 @@ const GalleryPage = () => {
         date: "January 2025",
         location: "Harare",
         tags: ["launch", "education"],
-        description: "Workshop providing training on REC certification process and benefits for local energy producers.",
+        description: "NRTV on Zim-REC launch",
         imageUrl: "/zimrec.mp4",
         mediaType: "video"
       },
     {
       id: 5,
-      title: "REC Workshop",
+      title: "REC Launch",
       type: "News",
       date: "January 2025",
-      location: "Mutare",
+      location: "Harare",
       tags: ["training", "education"],
-      description: "Workshop providing training on REC certification process and benefits for local energy producers.",
+      description: "News+ on Zim-REC Launch.",
       imageUrl: "/zimrec4.mp4",
       mediaType: "video"
     },
