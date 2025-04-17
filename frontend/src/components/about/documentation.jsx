@@ -63,8 +63,8 @@ const DocumentationPage = () => {
   const documents = [
     {
       id: 1,
-      title: "Project Registration Process",
-      description: "Step-by-step guide for registering renewable energy projects",
+      title: "Device Registration Process",
+      description: "Step-by-step guide for registering renewable energy devices",
       category: "Procedures",
       dateAdded: "February 18, 2025",
       fileSize: "2.1 MB",
