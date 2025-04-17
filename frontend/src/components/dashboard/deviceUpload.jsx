@@ -61,7 +61,7 @@ const DeviceUploadStepper = ({ open, onClose }) => {
   const [technologyOptions, setTechnologyOptions] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const user = useSelector((state) => state.auth.user);
-  console.log("user", user.id);
+  console.log("user", user?.id);
   const { enqueueSnackbar } = useSnackbar();
   const [snackbar, setSnackbar] = useState({
     open: false,
