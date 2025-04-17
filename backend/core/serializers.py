@@ -24,14 +24,6 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
 
-    #def create(self, validated_data):
-     #   user = User.objects.create_user(
-      #      username=validated_data['username'],
-       #     email=validated_data['email'],
-        #    password=validated_data['password'],
-        #)
-        #return user
-
 class ProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="user.username", required=False)
     email = serializers.EmailField(source="user.email", read_only=True)
@@ -147,6 +139,26 @@ class DeviceSerializer(serializers.ModelSerializer):
                 {'value': 'TC442', 'label': 'Internal combustion engine: CHP'},
             ]
         }
+    
+    def get_volume_evidence_options(self, obj):
+        return [
+            {'value': 'Metering', 'label': 'Metering data'},
+            {'value': 'Invoice', 'label': 'Contract sales invoice'},
+            {'value': 'Other', 'label': 'Other'},
+        ]
+        
+    def get_funding_options(self, obj):
+        return [
+            {'value': 'No', 'label': 'No'},
+            {'value': 'Investment', 'label': 'Investment'},
+            {'value': 'Production', 'label': 'Production'},
+        ]
+        
+    def get_yes_no_options(self, obj):
+        return [
+            {'value': 'Yes', 'label': 'Yes'},
+            {'value': 'No', 'label': 'No'},
+        ]
 
     def validate(self, data):
         data = super().validate(data)
@@ -165,22 +177,31 @@ class DeviceSerializer(serializers.ModelSerializer):
                     "Effective date must be after commissioning date"
                 )
             
-        elif self.instance and 'commissioning_date' in data:
-            if self.instance.effective_date < data['commissioning_date']:
-                raise serializers.ValidationError(
-                    "Effective date must be after commissioning date"
-                )
-            
-        if self.context['request'].user.is_superuser:
-            if 'status' in data and data['status'] in ['Approved', 'Rejected']:
-                return data
-            
         if self.context['request'].user.is_superuser:
             if 'rejection_reason' in data:
                 if data.get('status') != 'Rejected' and data['rejection_reason']:
                     raise serializers.ValidationError(
                         "Rejection reason can only be set when status is Rejected"
                     )
+                
+        # Check funding end date is provided if public funding is not 'No'
+        if data.get('public_funding') in ['Investment', 'Production'] and not data.get('funding_end_date'):
+            raise serializers.ValidationError({
+                'funding_end_date': 'Funding end date is required when public funding is specified'
+            })
+            
+        # Check details are provided for Yes choices
+        if data.get('onsite_consumer') == 'Yes' and not data.get('onsite_consumer_details'):
+            raise serializers.ValidationError({
+                'onsite_consumer_details': 'Please provide details for on-site consumer'
+            })
+            
+        if data.get('auxiliary_energy') == 'Yes' and not data.get('auxiliary_energy_details'):
+            raise serializers.ValidationError({
+                'auxiliary_energy_details': 'Please provide details for auxiliary energy sources'
+            })
+            
+        return data
             
         return data
     
@@ -204,6 +225,7 @@ class DeviceSerializer(serializers.ModelSerializer):
                 "Longitude must be between -180 and 180"
             )
         return value  
+        
 
 class IssueRequestSerializer(serializers.ModelSerializer):
     device_name = serializers.CharField(source='device.device_name', read_only=True)

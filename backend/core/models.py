@@ -25,6 +25,28 @@ class Device(models.Model):
         ('Rejected', 'Rejected'),
     ]
 
+    VOLUME_EVIDENCE_CHOICES = [
+        ('Metering', 'Metering data'),
+        ('Invoice', 'Contract sales invoice'),
+        ('Other', 'Other'),
+    ]
+    
+    FUNDING_CHOICES = [
+        ('No', 'No'),
+        ('Investment', 'Investment'),
+        ('Production', 'Production'),
+    ]
+    
+    ONSITE_CONSUMER_CHOICES = [
+        ('Yes', 'Yes'),
+        ('No', 'No'),
+    ]
+    
+    AUXILIARY_ENERGY_CHOICES = [
+        ('Yes', 'Yes'),
+        ('No', 'No'),
+    ]
+
     FUEL_TECHNOLOGY_MAP = {
         'Solar': ['TC110', 'TC120', 'TC130', 'TC140', 'TC150'],
         'Wind': ['TC210', 'TC220'],
@@ -74,6 +96,31 @@ class Device(models.Model):
         ]
     )
     postcode = models.CharField(max_length=20, default='000000')
+
+    meter_ids = models.TextField(blank=True, null=True, help_text="Meter or Measurement ID(s)")
+    network_owner = models.CharField(max_length=255, blank=True, null=True, 
+                                   help_text="Owner of the network to which the Production Device is connected")
+    connection_voltage = models.CharField(max_length=50, blank=True, null=True)
+    grid_connection_details = models.TextField(blank=True, null=True, 
+                                             help_text="If not connected directly to the grid, specify the circumstances")
+    volume_evidence_type = models.CharField(max_length=20, choices=VOLUME_EVIDENCE_CHOICES, blank=True, null=True)
+    volume_evidence_other = models.CharField(max_length=255, blank=True, null=True)
+    
+    # Registration and Certification
+    carbon_offset_registration = models.CharField(max_length=255, blank=True, null=True, 
+                                                help_text="Carbon offset or energy tracking scheme registration ID")
+    labelling_scheme = models.CharField(max_length=255, blank=True, null=True)
+    public_funding = models.CharField(max_length=20, choices=FUNDING_CHOICES, default='No')
+    funding_end_date = models.DateField(null=True, blank=True)
+    
+    # Business Details
+    onsite_consumer = models.CharField(max_length=3, choices=ONSITE_CONSUMER_CHOICES, default='No')
+    onsite_consumer_details = models.TextField(blank=True, null=True)
+    auxiliary_energy = models.CharField(max_length=3, choices=AUXILIARY_ENERGY_CHOICES, default='No')
+    auxiliary_energy_details = models.TextField(blank=True, null=True)
+    electricity_import_details = models.TextField(blank=True, null=True, 
+                                               help_text="Details of how the site can import electricity by means other than through the meter(s)")
+    
     
     # Audit Fields
     production_facility_registration = models.FileField(upload_to='device_documents/facility_registration/', null=True)

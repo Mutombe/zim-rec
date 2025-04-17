@@ -105,11 +105,6 @@ class DeviceViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def submit(self, request, pk=None):
         device = self.get_object()
-        if device.status != 'Draft':
-            return Response(
-                {'error': 'Only draft devices can be submitted'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
         device.status = 'Submitted'
         device.save()
         return Response({'status': 'Submitted'})
