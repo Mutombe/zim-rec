@@ -3,6 +3,7 @@ import { deviceAPI } from "../../utils/api";
 import { useDispatch } from "react-redux";
 import { useSnackbar } from "notistack";
 import { useTheme } from "@mui/material/styles";
+import { useSelector } from "react-redux";
 import {
   Stepper,
   Step,
@@ -59,6 +60,8 @@ const DeviceUploadStepper = ({ open, onClose }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [technologyOptions, setTechnologyOptions] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const user = useSelector((state) => state.auth.user);
+  console.log("user", user.id);
   const { enqueueSnackbar } = useSnackbar();
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -90,7 +93,7 @@ const DeviceUploadStepper = ({ open, onClose }) => {
   const initialFormState = {
     device_name: "",
     issuer_organisation: "",
-    default_account_code: "",
+    default_account_code: user?.id || "",
     fuel_type: "",
     technology_type: "",
     capacity: "",
@@ -111,8 +114,8 @@ const DeviceUploadStepper = ({ open, onClose }) => {
     volume_evidence_other: "",
     carbon_offset_registration: "",
     labelling_scheme: "",
-    public_funding: "No",
-    funding_end_date: null,
+    public_funding: "None",
+    funding_end_date: "",
     onsite_consumer: "No",
     onsite_consumer_details: "",
     auxiliary_energy: "No",
@@ -157,11 +160,6 @@ const DeviceUploadStepper = ({ open, onClose }) => {
     },
     {
       id: 5,
-      title: "Registration",
-      icon: <FileCheck size={isTablet ? 18 : 22} />,
-    },
-    {
-      id: 6,
       title: "Supporting Documents",
       icon: <File size={isTablet ? 18 : 22} />,
     },
@@ -211,25 +209,25 @@ const DeviceUploadStepper = ({ open, onClose }) => {
   ];
 
   const VOLUME_EVIDENCE_CHOICES = [
-    ['Metering', 'Metering data'],
-    ['Invoice', 'Contract sales invoice'],
-    ['Other', 'Other'],
+    ["Metering", "Metering data"],
+    ["Invoice", "Contract sales invoice"],
+    ["Other", "Other"],
   ];
-  
+
   const FUNDING_CHOICES = [
-    ['No', 'No'],
-    ['Investment', 'Investment'],
-    ['Production', 'Production'],
+    ["No", "No"],
+    ["Investment", "Investment"],
+    ["Production", "Production"],
   ];
-  
+
   const ONSITE_CONSUMER_CHOICES = [
-    ['Yes', 'Yes'],
-    ['No', 'No'],
+    ["Yes", "Yes"],
+    ["No", "No"],
   ];
-  
+
   const AUXILIARY_ENERGY_CHOICES = [
-    ['Yes', 'Yes'],
-    ['No', 'No'],
+    ["Yes", "Yes"],
+    ["No", "No"],
   ];
 
   const fuelTechnologyMap = {
@@ -248,51 +246,77 @@ const DeviceUploadStepper = ({ open, onClose }) => {
     }
   };
 
+  const handleDateChange = (date, field) => {
+    // Always update form data even if invalid
+    setFormData((prev) => ({ ...prev, [field]: date }));
+
+    if (validateFundingDate(date)) {
+      setErrors((prev) => ({ ...prev, [field]: "" }));
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        [field]: date ? "Date must be in the future" : "Required field",
+      }));
+    }
+  };
+
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    // First update the main field
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
 
-    // Clear error when user edits a field
+    // Handle dependent field updates
+    if (name === "public_funding") {
+      if (value === "None") {
+        setFormData((prev) => ({
+          ...prev,
+          funding_end_date: "",
+        }));
+      }
+    } else if (name === "onsite_consumer") {
+      if (value === "No") {
+        setFormData((prev) => ({
+          ...prev,
+          onsite_consumer_details: "",
+        }));
+      }
+    } else if (name === "auxiliary_energy") {
+      if (value === "No") {
+        setFormData((prev) => ({
+          ...prev,
+          auxiliary_energy_details: "",
+        }));
+      }
+    } else if (name === "volume_evidence_type") {
+      if (value !== "Other") {
+        setFormData((prev) => ({
+          ...prev,
+          volume_evidence_other: "",
+        }));
+      }
+    }
+
+    // Clear errors for the changed field
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
         [name]: "",
       }));
     }
+
+    // Special handling for numeric fields
+    if (name === "electricity_import_details") {
+      if (validateElectricityImport(value)) {
+        setFormData((prev) => ({ ...prev, [name]: value }));
+      }
+    }
   };
-
-  if (name === 'public_funding' && value === 'No') {
-    setFormData(prev => ({
-      ...prev,
-      funding_end_date: null
-    }));
-  }
-
-  if (name === 'onsite_consumer' && value === 'No') {
-    setFormData(prev => ({
-      ...prev,
-      onsite_consumer_details: ''
-    }));
-  }
-  
-  if (name === 'auxiliary_energy' && value === 'No') {
-    setFormData(prev => ({
-      ...prev,
-      auxiliary_energy_details: ''
-    }));
-  }
-  
-  if (name === 'volume_evidence_type' && value !== 'Other') {
-    setFormData(prev => ({
-      ...prev,
-      volume_evidence_other: ''
-    }));
-  }
 
   const handleFileUpload = (docType, file) => {
     if (file && file.size > 10 * 1024 * 1024) {
@@ -359,11 +383,19 @@ const DeviceUploadStepper = ({ open, onClose }) => {
     return parseFloat(value) >= 0;
   };
 
-  if (name === 'electricity_import_details') {
+  if (name === "electricity_import_details") {
     if (validateElectricityImport(value)) {
-      setFormData(prev => ({...prev, [name]: value}));
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   }
+
+  const validateFundingDate = (dateString) => {
+    if (!dateString) return false;
+    const selectedDate = new Date(dateString);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Compare dates without time
+    return selectedDate > today;
+  };
 
   const validateLatitude = (value) => {
     if (value === "") return true;
@@ -392,32 +424,35 @@ const DeviceUploadStepper = ({ open, onClose }) => {
       case 2:
         return ["address", "country", "latitude", "longitude", "postcode"];
       case 3:
-          return [
-            "meter_ids", 
-            "network_owner", 
-            "connection_voltage", 
-            "grid_connection_details",
-            "volume_evidence_type",
-            "volume_evidence_other",
+        return [
+          "meter_ids",
+          "network_owner",
+          "connection_voltage",
+          "grid_connection_details",
+          "volume_evidence_type",
+          "volume_evidence_other",
 
-            ...(formData.volume_evidence_type === 'Other' ? ["volume_evidence_other"] : [])
-          ];
+          ...(formData.volume_evidence_type === "Other"
+            ? ["volume_evidence_other"]
+            : []),
+        ];
       case 4: // Business Details
-          return [
-            "onsite_consumer",
-            "auxiliary_energy",
-            ...(formData.onsite_consumer === 'Yes' ? ["onsite_consumer_details"] : []),
-            ...(formData.auxiliary_energy === 'Yes' ? ["auxiliary_energy_details"] : []),
-            "electricity_import_details"
-          ];
-      case 5: // Registration step
-          return [
-            "carbon_offset_registration",
-            "labelling_scheme",
-            "public_funding",
-            ...(formData.public_funding !== 'No' ? ["funding_end_date"] : [])
-          ];
-      case 6:
+        return [
+          "onsite_consumer",
+          "auxiliary_energy",
+          ...(formData.onsite_consumer === "Yes"
+            ? ["onsite_consumer_details"]
+            : []),
+          ...(formData.auxiliary_energy === "Yes"
+            ? ["auxiliary_energy_details"]
+            : []),
+          "electricity_import_details",
+          "carbon_offset_registration",
+          "labelling_scheme",
+          "public_funding",
+          ...(formData.public_funding !== "No" ? ["funding_end_date"] : []),
+        ];
+      case 5:
         return ["documents", "additional_notes"];
       default:
         return [];
@@ -438,7 +473,10 @@ const DeviceUploadStepper = ({ open, onClose }) => {
         newErrors.volume_evidence_type = "Evidence type is required";
         hasErrors = true;
       }
-      if (formData.volume_evidence_type === 'Other' && !formData.volume_evidence_other) {
+      if (
+        formData.volume_evidence_type === "Other" &&
+        !formData.volume_evidence_other
+      ) {
         newErrors.volume_evidence_other = "Please specify evidence type";
         hasErrors = true;
       }
@@ -449,7 +487,10 @@ const DeviceUploadStepper = ({ open, onClose }) => {
         newErrors.onsite_consumer = "On-site consumer selection required";
         hasErrors = true;
       }
-      if (formData.onsite_consumer === 'Yes' && !formData.onsite_consumer_details) {
+      if (
+        formData.onsite_consumer === "Yes" &&
+        !formData.onsite_consumer_details
+      ) {
         newErrors.onsite_consumer_details = "Consumer details required";
         hasErrors = true;
       }
@@ -457,7 +498,10 @@ const DeviceUploadStepper = ({ open, onClose }) => {
         newErrors.auxiliary_energy = "Auxiliary energy selection required";
         hasErrors = true;
       }
-      if (formData.auxiliary_energy === 'Yes' && !formData.auxiliary_energy_details) {
+      if (
+        formData.auxiliary_energy === "Yes" &&
+        !formData.auxiliary_energy_details
+      ) {
         newErrors.auxiliary_energy_details = "Auxiliary details required";
         hasErrors = true;
       }
@@ -468,12 +512,11 @@ const DeviceUploadStepper = ({ open, onClose }) => {
         newErrors.public_funding = "Public funding selection required";
         hasErrors = true;
       }
-      if (formData.public_funding !== 'No' && !formData.funding_end_date) {
+      if (formData.public_funding !== "None" && !formData.funding_end_date) {
         newErrors.funding_end_date = "Funding end date required";
         hasErrors = true;
       }
     }
-    
 
     // Basic required field validation
     const requiredFields = [
@@ -512,22 +555,33 @@ const DeviceUploadStepper = ({ open, onClose }) => {
     }
 
     // Conditional validations
-    if (formData.public_funding !== 'No' && !formData.funding_end_date) {
+    if (formData.public_funding !== "None" && !formData.funding_end_date) {
       newErrors.funding_end_date = "Required when public funding is specified";
       hasErrors = true;
     }
-    
-    if (formData.onsite_consumer === 'Yes' && !formData.onsite_consumer_details) {
-      newErrors.onsite_consumer_details = "Required when on-site consumer is present";
+
+    if (
+      formData.onsite_consumer === "Yes" &&
+      !formData.onsite_consumer_details
+    ) {
+      newErrors.onsite_consumer_details =
+        "Required when on-site consumer is present";
       hasErrors = true;
     }
-    
-    if (formData.auxiliary_energy === 'Yes' && !formData.auxiliary_energy_details) {
-      newErrors.auxiliary_energy_details = "Required when auxiliary energy is present";
+
+    if (
+      formData.auxiliary_energy === "Yes" &&
+      !formData.auxiliary_energy_details
+    ) {
+      newErrors.auxiliary_energy_details =
+        "Required when auxiliary energy is present";
       hasErrors = true;
     }
-    
-    if (formData.volume_evidence_type === 'Other' && !formData.volume_evidence_other) {
+
+    if (
+      formData.volume_evidence_type === "Other" &&
+      !formData.volume_evidence_other
+    ) {
       newErrors.volume_evidence_other = "Please specify other evidence type";
       hasErrors = true;
     }
@@ -744,17 +798,35 @@ const DeviceUploadStepper = ({ open, onClose }) => {
         return [
           formData.meter_ids,
           formData.volume_evidence_type,
-          formData.volume_evidence_type !== 'Other' || formData.volume_evidence_other
+          formData.volume_evidence_type !== "Other" ||
+            formData.volume_evidence_other,
         ].every(Boolean);
       case 4: // Business Details
+        console.log("Checking step 5 completion:", {
+          publicFunding: formData.public_funding,
+          fundingEndDate: formData.funding_end_date,
+          isValid:
+            formData.public_funding &&
+            (formData.public_funding === "None" ||
+              (formData.funding_end_date &&
+                validateFundingDate(formData.funding_end_date))),
+        });
         return [
+          formData.public_funding &&
+            (formData.public_funding === "None" ||
+              (formData.funding_end_date &&
+                validateFundingDate(formData.funding_end_date))),
           formData.onsite_consumer,
           formData.auxiliary_energy,
-          (formData.onsite_consumer === 'Yes' ? formData.onsite_consumer_details : true),
-          (formData.auxiliary_energy === 'Yes' ? formData.auxiliary_energy_details : true),
-          formData.electricity_import_details
+          formData.onsite_consumer === "Yes"
+            ? formData.onsite_consumer_details
+            : true,
+          formData.auxiliary_energy === "Yes"
+            ? formData.auxiliary_energy_details
+            : true,
+          formData.electricity_import_details,
         ].every(Boolean);
-        
+
       case 5:
         return DOCUMENT_TYPES.filter((doc) => doc.required).every(
           (doc) => formData.documents[doc.id]
@@ -873,7 +945,7 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                   <Grid item xs={12} sm={6}>
                     <TextField
                       fullWidth
-                      label="Issuer Organisation"
+                      label="Organisation"
                       name="issuer_organisation"
                       value={formData.issuer_organisation}
                       onChange={handleInputChange}
@@ -886,13 +958,19 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                   <Grid item xs={12} sm={6}>
                     <TextField
                       fullWidth
-                      label="Default Account Code"
+                      label="Account ID"
                       name="default_account_code"
                       value={formData.default_account_code}
-                      onChange={handleInputChange}
+                      disabled // Make field non-editable
                       size={isMobile ? "small" : "medium"}
-                      error={!!errors.default_account_code}
-                      helperText={errors.default_account_code}
+                      helperText="Automatically assigned to your account"
+                      sx={{
+                        "& .MuiInputBase-input": {
+                          cursor: "not-allowed",
+                          backgroundColor:
+                            theme.palette.action.disabledBackground,
+                        },
+                      }}
                     />
                   </Grid>
                 </Grid>
@@ -1178,12 +1256,20 @@ const DeviceUploadStepper = ({ open, onClose }) => {
           </Fade>
         );
 
-        case 3: // Grid & Metering Step
+      case 3: // Grid & Metering Step
         return (
           <Fade in={activeStep === 3}>
             <Card variant="outlined" sx={{ mb: 2 }}>
               <CardContent>
-                <Typography variant="subtitle1" sx={{ mb: 2, display: 'flex', alignItems: 'center', color: theme.palette.primary.main }}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    mb: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    color: theme.palette.primary.main,
+                  }}
+                >
                   <Zap size={18} style={{ marginRight: 8 }} />
                   Grid Connection & Metering
                 </Typography>
@@ -1203,7 +1289,7 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                       error={!!errors.meter_ids}
                     />
                   </Grid>
-                  
+
                   <Grid item xs={12} sm={6}>
                     <TextField
                       fullWidth
@@ -1214,7 +1300,7 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                       error={!!errors.network_owner}
                     />
                   </Grid>
-                  
+
                   <Grid item xs={12} sm={6}>
                     <TextField
                       fullWidth
@@ -1225,7 +1311,7 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                       error={!!errors.connection_voltage}
                     />
                   </Grid>
-                  
+
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
@@ -1239,7 +1325,7 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                       error={!!errors.grid_connection_details}
                     />
                   </Grid>
-                  
+
                   <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
                       <InputLabel>Volume Evidence Type</InputLabel>
@@ -1250,13 +1336,15 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                         required
                       >
                         {VOLUME_EVIDENCE_CHOICES.map(([value, label]) => (
-                          <MenuItem key={value} value={value}>{label}</MenuItem>
+                          <MenuItem key={value} value={value}>
+                            {label}
+                          </MenuItem>
                         ))}
                       </Select>
                     </FormControl>
                   </Grid>
-                  
-                  {formData.volume_evidence_type === 'Other' && (
+
+                  {formData.volume_evidence_type === "Other" && (
                     <Grid item xs={12} sm={6}>
                       <TextField
                         fullWidth
@@ -1280,7 +1368,15 @@ const DeviceUploadStepper = ({ open, onClose }) => {
           <Fade in={activeStep === 4}>
             <Card variant="outlined" sx={{ mb: 2 }}>
               <CardContent>
-                <Typography variant="subtitle1" sx={{ mb: 2, display: 'flex', alignItems: 'center', color: theme.palette.primary.main }}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    mb: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    color: theme.palette.primary.main,
+                  }}
+                >
                   <Building size={18} style={{ marginRight: 8 }} />
                   Business Operations
                 </Typography>
@@ -1296,13 +1392,15 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                         required
                       >
                         {ONSITE_CONSUMER_CHOICES.map(([value, label]) => (
-                          <MenuItem key={value} value={value}>{label}</MenuItem>
+                          <MenuItem key={value} value={value}>
+                            {label}
+                          </MenuItem>
                         ))}
                       </Select>
                     </FormControl>
                   </Grid>
-                  
-                  {formData.onsite_consumer === 'Yes' && (
+
+                  {formData.onsite_consumer === "Yes" && (
                     <Grid item xs={12} sm={6}>
                       <TextField
                         fullWidth
@@ -1315,7 +1413,7 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                       />
                     </Grid>
                   )}
-                  
+
                   <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
                       <InputLabel>Auxiliary Energy</InputLabel>
@@ -1326,13 +1424,15 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                         required
                       >
                         {AUXILIARY_ENERGY_CHOICES.map(([value, label]) => (
-                          <MenuItem key={value} value={value}>{label}</MenuItem>
+                          <MenuItem key={value} value={value}>
+                            {label}
+                          </MenuItem>
                         ))}
                       </Select>
                     </FormControl>
                   </Grid>
-                  
-                  {formData.auxiliary_energy === 'Yes' && (
+
+                  {formData.auxiliary_energy === "Yes" && (
                     <Grid item xs={12} sm={6}>
                       <TextField
                         fullWidth
@@ -1345,7 +1445,7 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                       />
                     </Grid>
                   )}
-                  
+
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
@@ -1359,21 +1459,6 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                     />
                   </Grid>
                 </Grid>
-              </CardContent>
-            </Card>
-          </Fade>
-        );
-
-      case 5: // Registration Step
-        return (
-          <Fade in={activeStep === 5}>
-            <Card variant="outlined" sx={{ mb: 2 }}>
-              <CardContent>
-                <Typography variant="subtitle1" sx={{ mb: 2, display: 'flex', alignItems: 'center', color: theme.palette.primary.main }}>
-                  <FileCheck size={18} style={{ marginRight: 8 }} />
-                  Certifications & Funding
-                </Typography>
-
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
                     <TextField
@@ -1384,7 +1469,6 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                       onChange={handleInputChange}
                     />
                   </Grid>
-                  
                   <Grid item xs={12} sm={6}>
                     <TextField
                       fullWidth
@@ -1394,7 +1478,6 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                       onChange={handleInputChange}
                     />
                   </Grid>
-                  
                   <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
                       <InputLabel>Public Funding</InputLabel>
@@ -1405,13 +1488,15 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                         required
                       >
                         {FUNDING_CHOICES.map(([value, label]) => (
-                          <MenuItem key={value} value={value}>{label}</MenuItem>
+                          <MenuItem key={value} value={value}>
+                            {label}
+                          </MenuItem>
                         ))}
                       </Select>
                     </FormControl>
                   </Grid>
-                  
-                  {formData.public_funding !== 'No' && (
+                  // In the Registration step JSX
+                  {formData.public_funding !== "No" && (
                     <Grid item xs={12} sm={6}>
                       <TextField
                         fullWidth
@@ -1419,10 +1504,23 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                         name="funding_end_date"
                         type="date"
                         InputLabelProps={{ shrink: true }}
-                        value={formData.funding_end_date}
-                        onChange={handleInputChange}
+                        value={formData.funding_end_date || ""}
+                        onChange={(e) => {
+                          handleDateChange(e.target.value, "funding_end_date");
+                          // Immediately validate when changed
+                          if (!validateFundingDate(e.target.value)) {
+                            setErrors((prev) => ({
+                              ...prev,
+                              funding_end_date: "Date must be in the future",
+                            }));
+                          }
+                        }}
                         required
                         error={!!errors.funding_end_date}
+                        helperText={errors.funding_end_date}
+                        inputProps={{
+                          min: new Date().toISOString().split("T")[0], // Disable past dates
+                        }}
                       />
                     </Grid>
                   )}
@@ -1432,9 +1530,9 @@ const DeviceUploadStepper = ({ open, onClose }) => {
           </Fade>
         );
 
-      case 6:
+      case 5:
         return (
-          <Fade in={activeStep === 3}>
+          <Fade in={activeStep === 5}>
             <Box>
               <Card variant="outlined" sx={{ mb: 3 }}>
                 <CardContent>
