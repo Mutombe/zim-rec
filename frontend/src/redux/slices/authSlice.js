@@ -82,8 +82,8 @@ const authSlice = createSlice({
         state.error = null;
         state.user = action.payload.user;
         console.log("User", state.user);
+        state.isAuthenticated = false;
         state.tokens = action.payload;
-        state.isAuthenticated = true;
         localStorage.setItem(
           "auth",
           JSON.stringify({

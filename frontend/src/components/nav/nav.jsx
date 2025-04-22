@@ -127,7 +127,7 @@ export const AuthModals = ({ openType, onClose }) => {
         .then(() => {
           setSnackbar({
             open: true,
-            message: "Registration successful.",
+            message: "Registration successful. You may Sign-In",
             severity: "success",
           });
           onClose();

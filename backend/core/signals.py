@@ -1,13 +1,14 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.conf import settings
 from .models import Device, IssueRequest, Profile
 from django.db import transaction
 from django.contrib.auth.models import User  
 
-ADMIN_EMAILS = ['simbamtombe@gmail.com']
+ADMIN_EMAILS = ['admin@zim-rec.co.zw','simbamtombe@gmail.com','owen@silvercarbon.co.zw']
 
 def send_admin_notification(subject, context, template_base):
 
@@ -32,8 +33,15 @@ def send_admin_notification(subject, context, template_base):
 @receiver(post_save, sender=User)
 def handle_new_user(sender, instance, created, **kwargs):
     if created:
-        # Send user confirmation email
-        send_status_email(instance, 'user', 'created')
+        # Define attachment paths (modify these to your actual files)
+        attachments = [
+            settings.BASE_DIR / 'media/docs/ZIM-RECs Registration Process.pdf',
+            settings.BASE_DIR / 'media/docs/Silver Carbon - Service Level Agreement.docx',
+            settings.BASE_DIR / 'media/docs/ZIM-REC Platform Guide.pdf'
+        ]
+        
+        # Send user confirmation email with attachments
+        send_status_email(instance, 'user', 'created', attachments=attachments)
         
         # Send admin notification
         context = {
@@ -47,7 +55,7 @@ def handle_new_user(sender, instance, created, **kwargs):
             template_base='new_user'
         )
 
-def send_status_email(user, entity_type, status):
+def send_status_emaill(user, entity_type, status):
     subject = f"{entity_type.title()} Status Update"
     context = {
         'user': user,
@@ -67,6 +75,34 @@ def send_status_email(user, entity_type, status):
         html_message=html_message,
         fail_silently=False
     )
+
+def send_status_email(user, entity_type, status, attachments=None):
+    subject = f"{entity_type.title()} Status Update"
+    context = {
+        'user': user,
+        'entity_type': entity_type,
+        'status': status,
+        'app_name': 'Zim-Rec'
+    }
+    
+    text_message = render_to_string(f'emails/user/{entity_type}_status_update.txt', context)
+    html_message = render_to_string(f'emails/user/{entity_type}_status_update.html', context)
+    
+    # Create EmailMultiAlternatives object
+    email = EmailMultiAlternatives(
+        subject=subject,
+        body=text_message,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[user.email],
+    )
+    email.attach_alternative(html_message, "text/html")
+    
+    # Attach files if provided
+    if attachments:
+        for attachment in attachments:
+            email.attach_file(attachment)
+    
+    email.send(fail_silently=False)
 
 @receiver(post_save, sender=Device)
 def handle_device_changes(sender, instance, created, **kwargs):

@@ -5,9 +5,17 @@ Hello {{ user.username }},
 Your account status has been updated to: {{ status|upper }}
 
 {% if status == 'created' %}
-Thank you for registering with {{ app_name }}! Please go and login zim-rec.co.zw
+Please find attached the Registration process, Service Level Agreement and Device registration steps.
+
+May you please populate, sign the service level agreement and email it back in pdf format.
+
+Alternatively, you may request for a physical or virtual meeting through the email below:
+admin@zim-rec.co.zw
+
+Thank you for registering with {{ app_name }}! You can now login zim-rec.co.zw.
 {% elif status == 'activated' %}
-Your account has been activated! You can now login.
+Your account has been activated!
 {% endif %}
 
+Best regards,
 The {{ app_name }} Team

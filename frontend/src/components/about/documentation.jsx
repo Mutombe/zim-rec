@@ -67,6 +67,7 @@ const DocumentationPage = () => {
       description: "Step-by-step guide for registering renewable energy devices",
       category: "Procedures",
       dateAdded: "February 18, 2025",
+      link: "/ZIM-REC Platform Guide.pdf",
       fileSize: "2.1 MB",
       fileType: "PDF",
       downloads: 87,
@@ -75,6 +76,17 @@ const DocumentationPage = () => {
       thumbnailBg: "from-emerald-100 to-blue-100",
     },
   ];
+
+  const handleDownload = (docLink, docTitle) => {
+    // Create an anchor element
+    const link = document.createElement('a');
+    link.href = docLink;
+    link.download = docTitle; // This sets the default filename
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
 
   // Filter and category options
   const categories = ["All", "Guides", "Procedures", "Reports", "Technical"];
@@ -314,6 +326,7 @@ const DocumentationPage = () => {
                               variant="outlined"
                               size="small"
                               startIcon={<Eye size={16} />}
+                              onClick={() => handleDownload(doc.link, doc.title)}
                               className="!border-gray-300 !text-gray-700 !rounded-lg"
                             >
                               Preview
@@ -322,6 +335,7 @@ const DocumentationPage = () => {
                               variant="contained"
                               size="small"
                               startIcon={<Download size={16} />}
+                              onClick={() => handleDownload(doc.link, doc.title)}
                               className="!bg-blue-600 !hover:bg-blue-700 !rounded-lg"
                             >
                               Download

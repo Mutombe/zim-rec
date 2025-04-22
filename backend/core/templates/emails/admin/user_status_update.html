@@ -7,13 +7,18 @@
     <p>Hello <strong>{{ user.username }}</strong>,</p>
     
     <p>Your account status has been updated to: <strong>{{ status|upper }}</strong></p>
-
+    
     {% if status == 'created' %}
-    <p>Thank you for registering with {{ app_name }}! Please go and login zim-rec.co.zw</p>
+    <p>Please find attached the Registration process, Service Level Agreement and Device registration steps.</p>
+    <p>May you please populate, sign the service level agreement and email it back in pdf format.</p>
+    <p>Alternatively, you may request for a physical or virtual meeting through the email below:<br> 
+    admin@zim-rec.co.zw</p>  
+    
+    <p>Thank you for registering with {{ app_name }}! You can now login zim-rec.co.zw.</p>
     {% elif status == 'activated' %}
-    <p>Your account has been activated! You can now login.</p>
+    <p>Your account has been activated!</p>
     {% endif %}
-
+    
     <p>Best regards,<br>
     The {{ app_name }} Team</p>
 </body>

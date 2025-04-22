@@ -194,20 +194,19 @@ AUTHENTICATION_BACKENDS = [
 WSGI_APPLICATION = "backend.wsgi.application"
 
 ADMIN_BASE_URL = 'https://zim-rec.co.zw/'
-ADMINS = [('Zim-Rec Admin', 'simbamtombe@gmail.com')]
-SERVER_EMAIL = 'simbamtombe@gmail.com'
+ADMINS = [('Zim-Rec Admin', 'admin@zim-rec.co.zw')]
 APP_NAME = 'Zim-Rec'
 
-
+# settings.py
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'simbamtombe@gmail.com'
-EMAIL_HOST_PASSWORD = 'itzh jjkc hdmv csih'
-DEFAULT_FROM_EMAIL = 'Zim-Rec Platform <noreply@zim-rec.com>'
-SUPPORT_EMAIL = 'admin@zim-rec.co.zw'
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
+EMAIL_HOST = 'smtp.hostinger.com'  # Hostinger's SMTP server
+EMAIL_PORT = 587  # 465 for SSL
+EMAIL_USE_TLS = True  # Use False if using port 465
+EMAIL_USE_SSL = False  # Use True if using port 465
+EMAIL_HOST_USER = 'admin@zim-rec.co.zw'
+EMAIL_HOST_PASSWORD = 'adminZimrec@2060'  # Password you set in Hostinger email account
+DEFAULT_FROM_EMAIL = 'Zim-Rec <admin@zim-rec.co.zw>'
+SERVER_EMAIL = 'admin@zim-rec.co.zw'  # For error notifications
 
 
 # Database
