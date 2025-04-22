@@ -148,6 +148,8 @@ const Footer = () => {
                       <Phone className="text-white" size={16} />
                     </div>
                     <Typography variant="body2" className="!text-blue-50">
+                    +263 71 678 0112<br />
+                    +263 77 770 0465 <br />
                       +263 78 004 9196
                     </Typography>
                   </motion.div>

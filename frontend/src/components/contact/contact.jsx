@@ -341,9 +341,9 @@ const Contact = () => {
                       Phone Numbers
                     </Typography>
                     <Typography variant="body2" className="text-gray-600">
-                      +263 78 004 9196<br />
+                     +263 71 678 0112<br />
                       +263 77 770 0465 <br />
-                      +263 71 678 0112
+                       +263 78 004 9196
                     </Typography>
                   </div>
                 </div>
