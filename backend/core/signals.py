@@ -8,7 +8,7 @@ from .models import Device, IssueRequest, Profile
 from django.db import transaction
 from django.contrib.auth.models import User  
 
-ADMIN_EMAILS = ['admin@zim-rec.co.zw','simbamtombe@gmail.com','owen@silvercarbon.co.zw']
+ADMIN_EMAILS = ['admin@zim-rec.co.zw','simbamtombe@gmail.com','owen@silvercarbon.co.zw', 'shyline@africacarbontraining.com', 'kuda@africacarbontraining.com']
 
 def send_admin_notification(subject, context, template_base):
 
