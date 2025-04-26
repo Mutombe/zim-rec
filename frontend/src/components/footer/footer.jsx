@@ -7,7 +7,7 @@ import {
   Linkedin, 
   Mail, 
   Phone, 
-  Leaf, 
+  Leaf,     
   MapPin, 
   ChevronRight, 
   Send, 

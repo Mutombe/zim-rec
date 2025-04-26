@@ -410,12 +410,13 @@ export const Navbar = () => {
           {/* Right Section */}
           <div className="flex items-center gap-2 md:gap-4">
             {/* Mobile Menu Button */}
-            <IconButton
-              className="md:hidden text-green-600"
-              onClick={() => setMobileMenuOpen(true)}
-            >
-              <Menu />
-            </IconButton>
+{/* Right Section - Mobile Menu Button */}
+<button
+  className="block md:hidden" // Show on mobile, hide on desktop
+  onClick={() => setMobileMenuOpen(true)}
+>
+  <Menu className="h-6 w-6 text-gray-900" />
+</button>
 
             {/* Search Button 
             <Tooltip title="Search">
