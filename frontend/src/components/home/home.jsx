@@ -291,12 +291,16 @@ const Home = () => {
                 md={5}
                 className="hidden md:flex justify-center items-center"
               >
-                <div className="relative">
-                  <div className="absolute inset-0 bg-emerald-500 rounded-full opacity-20 blur-2xl"></div>
-                  <div className="relative rounded-full bg-white/10 p-6 backdrop-blur-sm border border-white/20">
-                    <Zap className="text-emerald-400 w-16 h-16 lg:w-20 lg:h-20" />
-                  </div>
-                </div>
+          <div className="relative">
+            <div className="absolute inset-0 bg-emerald-500 rounded-full opacity-20 blur-2xl"></div>
+            <div className="relative rounded-full bg-white/10 p-6 backdrop-blur-sm border border-white/20">
+              <img 
+                src="/logo.png" 
+                alt="Company Logo" 
+                className="w-16 h-16 lg:w-20 lg:h-20"
+              />
+            </div>
+          </div>
               </Grid>
             </Grid>
           </motion.div>

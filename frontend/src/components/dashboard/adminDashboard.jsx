@@ -260,27 +260,6 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleRejectDevice1 = (deviceId) => {
-    const reason = window.prompt("Please provide a reason for rejection:");
-    if (reason) {
-      dispatch(
-        updateDevice({
-          id: deviceId,
-          status: "Rejected",
-          rejectionReason: reason,
-        })
-      )
-        .unwrap()
-        .then(() => {
-          setSnackbar({
-            open: true,
-            message: "Device Rejected",
-            severity: "success",
-          });
-        });
-    }
-  };
-
   const handleRejectDevice = (deviceId, reason) => {
     dispatch(
       updateDevice({

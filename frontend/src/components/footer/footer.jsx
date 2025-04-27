@@ -81,9 +81,13 @@ const Footer = () => {
             <Grid item xs={12} md={4}>
               <motion.div variants={itemAnimation}>
                 <Link to="/" className="flex items-center space-x-2 mb-6">
-                  <div className="bg-gradient-to-r from-emerald-400 to-emerald-500 p-2 rounded-full mr-2">
-                    <Zap className="h-6 w-6 text-white" />
-                  </div>
+                <div className="bg-white p-2 rounded-full mr-2">
+        <img 
+          src="/logo.png" 
+          alt="Zim-REC Logo" 
+          className="h-6 w-6"
+        />
+      </div>
                   <Typography variant="h5" className="!font-bold !text-white">
                     Zim-REC
                   </Typography>
