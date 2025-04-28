@@ -60,12 +60,12 @@ const MapComponent = () => {
       const locations = [
         {
           name: 'Jackson Road Office',
-          coords: [-17.824858, 31.053028],
+          coords: [-17.8419276,31.073675,19.34],
           address: '8 Jackson Road, Hillside, Harare'
         },
         {
           name: 'NRZ Complex Office',
-          coords: [-17.829750, 31.034970],
+          coords: [-17.8394377,31.0475358,18.36],
           address: 'NRZ Complex, Seke Road, Harare'
         }
       ];
