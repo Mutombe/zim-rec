@@ -7,7 +7,11 @@ import {
   selectUserIssueRequests,
   selectRecentSubmissions,
 } from "../../redux/selectors";
-import { fetchDevices, fetchUserDevices, deleteDevice } from "../../redux/slices/deviceSlice";
+import {
+  fetchDevices,
+  fetchUserDevices,
+  deleteDevice,
+} from "../../redux/slices/deviceSlice";
 import {
   Edit,
   AlertCircle,
@@ -19,7 +23,7 @@ import {
   ChevronUp,
   RefreshCw,
   SquarePlus,
-  X
+  X,
 } from "lucide-react";
 import { updateDevice } from "../../redux/slices/deviceSlice";
 import { useNavigate } from "react-router-dom";
@@ -27,12 +31,12 @@ import { fadeIn, staggerChildren } from "./animations";
 import DeviceUploadStepper from "./deviceUpload";
 import { Fab, useMediaQuery, useTheme } from "@mui/material";
 import { fetchDeviceById } from "../../redux/slices/deviceSlice";
-import { 
+import {
   Modal, // Add this
   Box, // Optional for styling
-  Backdrop, // Optional for 
+  Backdrop, // Optional for
   Alert,
-  Snackbar
+  Snackbar,
 } from "@mui/material";
 
 const DeviceEditModal = ({ device, open, onClose, onSave }) => {
@@ -109,13 +113,13 @@ const UserDashboard = () => {
   const { user } = useSelector((state) => state.auth);
   const { loading, error } = useSelector((state) => state.devices);
   const devices = useSelector(selectUserDevices);
-  console.log(devices)
+  console.log(devices);
   const dashboardData = useSelector(selectDashboardData);
-    const [snackbar, setSnackbar] = useState({
-      open: false,
-      message: "",
-      severity: "info",
-    });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "info",
+  });
 
   // Device list state
   const [searchTerm, setSearchTerm] = useState("");
@@ -139,27 +143,29 @@ const UserDashboard = () => {
         "Are you sure you want to delete this device? This action cannot be undone."
       )
     ) {
-      dispatch(deleteDevice(deviceId)).unwrap()
+      dispatch(deleteDevice(deviceId))
+        .unwrap()
         .then(() => {
           setSnackbar({
             open: true,
             message: "Delete Successful.",
             severity: "success",
           });
-        })
+        });
     }
   };
 
   const handleRefresh = () => {
     if (user) {
-      dispatch(fetchDevices(user.id)).unwrap()
+      dispatch(fetchDevices(user.id))
+        .unwrap()
         .then(() => {
           setSnackbar({
             open: true,
             message: "Refresh Successful.",
             severity: "success",
           });
-        })
+        });
     }
   };
 
@@ -516,21 +522,21 @@ const UserDashboard = () => {
         }}
       />
 
-                  <Snackbar
-                    open={snackbar.open}
-                    autoHideDuration={6000}
-                    onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-                  >
-                    <Alert
-                      severity={snackbar.severity}
-                      className="!items-center"
-                      iconMapping={{
-                        error: <AlertCircle className="w-5 h-5" />,
-                      }}
-                    >
-                      {snackbar.message}
-                    </Alert>
-                  </Snackbar>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+      >
+        <Alert
+          severity={snackbar.severity}
+          className="!items-center"
+          iconMapping={{
+            error: <AlertCircle className="w-5 h-5" />,
+          }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </motion.div>
   );
 };

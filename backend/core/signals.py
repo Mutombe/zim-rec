@@ -8,7 +8,7 @@ from .models import Device, IssueRequest, Profile
 from django.db import transaction
 from django.contrib.auth.models import User  
 
-ADMIN_EMAILS = ['admin@zim-rec.co.zw','simbamtombe@gmail.com','owen@silvercarbon.co.zw', 'shyline@africacarbontraining.com', 'kuda@africacarbontraining.com']
+ADMIN_EMAILS = ['admin@zim-rec.co.zw','simbamtombe@gmail.com','owen@silvercarbon.co.zw', 'shyline@africarbontraining.com', 'kuda@africarbontraining.com']
 
 def send_admin_notification(subject, context, template_base):
 
@@ -36,7 +36,7 @@ def handle_new_user(sender, instance, created, **kwargs):
         # Define attachment paths (modify these to your actual files)
         attachments = [
             settings.BASE_DIR / 'media/docs/ZIM-RECs Registration Process.pdf',
-            settings.BASE_DIR / 'media/docs/Silver Carbon - Service Level Agreement.docx',
+            settings.BASE_DIR / 'media/docs/Service Level Agreement- Silver Carbon.docx',
             settings.BASE_DIR / 'media/docs/ZIM-REC Platform Guide.pdf'
         ]
         

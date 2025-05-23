@@ -55,9 +55,9 @@ export function AuthHeader({ view }) {
   return (
     <div className="text-center">
       <div className="mx-auto w-16 h-16 mb-4">
-        <img 
-          src="/logo.png" 
-          alt="Zim-REC Logo" 
+        <img
+          src="/logo.png"
+          alt="Zim-REC Logo"
           className="rounded-2xl w-full h-full"
         />
       </div>
@@ -169,22 +169,22 @@ export const AuthModals = ({ openType, onClose }) => {
           className="p-6 space-y-6 space-x-4"
         >
           <div className="text-center">
-      <div className="mx-auto w-20 h-16 mb-4">
-        <img 
-          src="/logo.png" 
-          alt="Zim-REC Logo" 
-          className="rounded-2xl w-full h-full"
-        />
-      </div>
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">
-        {view === "login" ? "Welcome Back!" : "Join Zim-Rec"}
-      </h2>
-      <p className="text-gray-600">
-        {view === "login"
-          ? "Sign in to continue to your account"
-          : "Create your free REC trading account"}
-      </p>
-    </div>
+            <div className="mx-auto w-20 h-16 mb-4">
+              <img
+                src="/logo.png"
+                alt="Zim-REC Logo"
+                className="rounded-2xl w-full h-full"
+              />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              {view === "login" ? "Welcome Back!" : "Join Zim-Rec"}
+            </h2>
+            <p className="text-gray-600">
+              {view === "login"
+                ? "Sign in to continue to your account"
+                : "Create your free REC trading account"}
+            </p>
+          </div>
 
           {error && (
             <motion.div
@@ -306,11 +306,7 @@ export function Logo() {
     <div className="flex items-center">
       <Link to="/" className="flex-shrink-0 flex items-center">
         <div className="w-15 h-15 mr-2 mt-2">
-          <img 
-            src="/logo.png" 
-            alt="Zim-REC Logo" 
-            className="rounded-full"
-          />
+          <img src="/logo.png" alt="Zim-REC Logo" className="rounded-full" />
         </div>
       </Link>
     </div>
@@ -376,7 +372,7 @@ export const Navbar = () => {
 
             {isAuthenticated && (
               <>
-              <Link
+                <Link
                   to="/documentation"
                   className="text-gray-700 hover:text-green-600 flex items-center px-3 py-2 rounded-md hover:bg-green-50 transition-colors group"
                 >
@@ -410,13 +406,13 @@ export const Navbar = () => {
           {/* Right Section */}
           <div className="flex items-center gap-2 md:gap-4">
             {/* Mobile Menu Button */}
-{/* Right Section - Mobile Menu Button */}
-<button
-  className="block md:hidden" // Show on mobile, hide on desktop
-  onClick={() => setMobileMenuOpen(true)}
->
-  <Menu className="h-6 w-6 text-gray-900" />
-</button>
+            {/* Right Section - Mobile Menu Button */}
+            <button
+              className="block md:hidden" // Show on mobile, hide on desktop
+              onClick={() => setMobileMenuOpen(true)}
+            >
+              <Menu className="h-6 w-6 text-gray-900" />
+            </button>
 
             {/* Search Button 
             <Tooltip title="Search">
@@ -547,16 +543,16 @@ export const Navbar = () => {
                       <span className="font-medium">Issue Request</span>
                     </Link>
                     {isAdmin && (
-                    <Link
-                      to="/admin"
-                      className="flex items-center p-3 rounded-lg hover:bg-green-50 text-gray-700"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <span className="bg-green-100 p-2 rounded-lg mr-4 text-green-600">
-                        <LayoutDashboard size={18} />
-                      </span>
-                      <span className="font-medium">Admin Dashboard</span>
-                    </Link>
+                      <Link
+                        to="/admin"
+                        className="flex items-center p-3 rounded-lg hover:bg-green-50 text-gray-700"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <span className="bg-green-100 p-2 rounded-lg mr-4 text-green-600">
+                          <LayoutDashboard size={18} />
+                        </span>
+                        <span className="font-medium">Admin Dashboard</span>
+                      </Link>
                     )}
                     <Link
                       to="/settings"

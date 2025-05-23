@@ -66,11 +66,7 @@ const RejectDeviceModal = ({ device, onClose, onConfirm }) => {
   };
 
   return (
-    <Modal
-      open={true}
-      onClose={onClose}
-      aria-labelledby="reject-device-modal"
-    >
+    <Modal open={true} onClose={onClose} aria-labelledby="reject-device-modal">
       <Box
         sx={{
           position: "absolute",
@@ -85,7 +81,12 @@ const RejectDeviceModal = ({ device, onClose, onConfirm }) => {
           p: 4,
         }}
       >
-        <Typography id="reject-device-modal" variant="h6" component="h2" className="mb-4">
+        <Typography
+          id="reject-device-modal"
+          variant="h6"
+          component="h2"
+          className="mb-4"
+        >
           Reject Device: {device.device_name}
         </Typography>
 
