@@ -2,12 +2,119 @@
 <html>
 <head>
     <title>Device Status Update</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #1e3a8a;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #10b981 100%);
+            padding: 2px;
+        }
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            background: linear-gradient(135deg, #1e3a8a, #10b981);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #1e3a8a;
+            font-size: 24px;
+            margin: 0 0 10px 0;
+        }
+        .status-info {
+            background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+            border-left: 4px solid #10b981;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .status-badge {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 16px;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+            color: #64748b;
+        }
+        .footer .brand {
+            color: #1e3a8a;
+            font-weight: bold;
+        }
+        .greeting {
+            font-size: 18px;
+            color: #1e3a8a;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h2>Dear {{ user.username }},</h2>
-    <p>Your device registration status has been updated to: <strong>{{ status|upper }}</strong></p>
-    <p>Visit your dashboard to view details: {{ app_name }} Dashboard</p>
-    <hr>
-    <p>Best regards,<br>{{ app_name }} Team</p>
+    <div class="container">
+        <div class="content">
+            <div class="header">
+                <div class="logo">{{ app_name }}</div>
+                <h2>Device Status Update</h2>
+            </div>
+            
+            <div class="greeting">Dear {{ user.username }},</div>
+            
+            <p>Your device registration status has been updated:</p>
+            
+            <div class="status-info">
+                <p style="margin: 0 0 10px 0; color: #64748b;">New Status:</p>
+                <div class="status-badge">{{ status|upper }}</div>
+            </div>
+            
+            <p>Visit your dashboard to view complete details and manage your device registration.</p>
+            
+            <div style="text-align: center;">
+                <a href="#" class="btn">Visit {{ app_name }} Dashboard</a>
+            </div>
+            
+            <div class="footer">
+                <p>Best regards,<br><span class="brand">{{ app_name }} Team</span></p>
+                <p style="font-size: 12px; color: #94a3b8;">Powering Zimbabwe's Renewable Energy Future</p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -1,0 +1,33 @@
+DEVICE UPDATED NOTIFICATION
+===========================
+
+APP: {{ app_name }}
+
+UPDATE NOTICE
+-------------
+Notice: A device has been updated in the system.
+
+DEVICE INFORMATION:
+-------------------
+Device Name: {{ device.device_name }}
+Owner: {{ user.get_full_name }} ({{ user.email }})
+Current Status: {{ device.status }}
+Last Updated: {{ device.updated_at|date:"DATETIME_FORMAT" }}
+
+UPDATE DETAILS:
+---------------
+{% if moderator %}
+Updated by: {{ moderator.get_full_name|default:moderator.username }}
+Date: {{ action_date|date:"DATETIME_FORMAT" }}
+{% if changes %}Changes: {{ changes }}{% endif %}
+{% endif %}
+
+SIGNATURE:
+----------
+Best regards,
+{{ app_name }} Team
+
+Powering Zimbabwe's Renewable Energy Future
+
+===========================
+End of Notification

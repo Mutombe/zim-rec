@@ -151,8 +151,7 @@ class Device(models.Model):
         if self.technology_type not in self.FUEL_TECHNOLOGY_MAP.get(self.fuel_type, []):
             raise ValidationError("Invalid technology for selected fuel type")
         
-
-
+        
 class DeviceDocument(models.Model):
     DOCUMENT_TYPES = [
         ('SF02', 'SF-02 Production Facility Registration'),

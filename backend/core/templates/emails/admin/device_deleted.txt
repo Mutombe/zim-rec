@@ -1,0 +1,33 @@
+DEVICE DELETED NOTIFICATION
+============================
+
+APP: {{ app_name }}
+
+ALERT: DEVICE DELETED
+---------------------
+Notice: A device has been deleted from the system.
+
+DEVICE INFORMATION:
+-------------------
+Device Name: {{ device.device_name }}
+Owner: {{ user.get_full_name }} ({{ user.email }})
+Fuel Type: {{ device.fuel_type }}
+Technology: {{ device.technology_type }}
+
+DELETION DETAILS:
+-----------------
+{% if moderator %}
+Deleted by: {{ moderator.get_full_name|default:moderator.username }}
+Date: {{ action_date|date:"DATETIME_FORMAT" }}
+{% if reason %}Reason: {{ reason }}{% endif %}
+{% endif %}
+
+SIGNATURE:
+----------
+Best regards,
+{{ app_name }} Team
+
+Powering Zimbabwe's Renewable Energy Future
+
+============================
+End of Notification

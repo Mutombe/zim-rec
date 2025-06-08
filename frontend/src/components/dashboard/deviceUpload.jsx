@@ -114,8 +114,6 @@ const DeviceUploadStepper = ({ open, onClose }) => {
     volume_evidence_other: "",
     carbon_offset_registration: "",
     labelling_scheme: "",
-    public_funding: "None",
-    funding_end_date: "",
     onsite_consumer: "No",
     onsite_consumer_details: "",
     auxiliary_energy: "No",
@@ -449,8 +447,6 @@ const DeviceUploadStepper = ({ open, onClose }) => {
           "electricity_import_details",
           "carbon_offset_registration",
           "labelling_scheme",
-          "public_funding",
-          ...(formData.public_funding !== "No" ? ["funding_end_date"] : []),
         ];
       case 5:
         return ["documents", "additional_notes"];
@@ -507,17 +503,6 @@ const DeviceUploadStepper = ({ open, onClose }) => {
       }
     }
 
-    if (activeStep === 5) {
-      if (!formData.public_funding) {
-        newErrors.public_funding = "Public funding selection required";
-        hasErrors = true;
-      }
-      if (formData.public_funding !== "None" && !formData.funding_end_date) {
-        newErrors.funding_end_date = "Funding end date required";
-        hasErrors = true;
-      }
-    }
-
     // Basic required field validation
     const requiredFields = [
       "device_name",
@@ -551,12 +536,6 @@ const DeviceUploadStepper = ({ open, onClose }) => {
 
     if (formData.longitude && !validateLongitude(formData.longitude)) {
       newErrors.longitude = "Must be between -180 and 180";
-      hasErrors = true;
-    }
-
-    // Conditional validations
-    if (formData.public_funding !== "None" && !formData.funding_end_date) {
-      newErrors.funding_end_date = "Required when public funding is specified";
       hasErrors = true;
     }
 
@@ -665,7 +644,6 @@ const DeviceUploadStepper = ({ open, onClose }) => {
         "volume_evidence_other",
         "carbon_offset_registration",
         "labelling_scheme",
-        "public_funding",
         "onsite_consumer",
         "onsite_consumer_details",
         "auxiliary_energy",
@@ -802,20 +780,7 @@ const DeviceUploadStepper = ({ open, onClose }) => {
             formData.volume_evidence_other,
         ].every(Boolean);
       case 4: // Business Details
-        console.log("Checking step 5 completion:", {
-          publicFunding: formData.public_funding,
-          fundingEndDate: formData.funding_end_date,
-          isValid:
-            formData.public_funding &&
-            (formData.public_funding === "None" ||
-              (formData.funding_end_date &&
-                validateFundingDate(formData.funding_end_date))),
-        });
         return [
-          formData.public_funding &&
-            (formData.public_funding === "None" ||
-              (formData.funding_end_date &&
-                validateFundingDate(formData.funding_end_date))),
           formData.onsite_consumer,
           formData.auxiliary_energy,
           formData.onsite_consumer === "Yes"
@@ -1478,52 +1443,6 @@ const DeviceUploadStepper = ({ open, onClose }) => {
                       onChange={handleInputChange}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth>
-                      <InputLabel>Public Funding</InputLabel>
-                      <Select
-                        name="public_funding"
-                        value={formData.public_funding}
-                        onChange={handleInputChange}
-                        required
-                      >
-                        {FUNDING_CHOICES.map(([value, label]) => (
-                          <MenuItem key={value} value={value}>
-                            {label}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  // In the Registration step JSX
-                  {formData.public_funding !== "No" && (
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        fullWidth
-                        label="Funding End Date"
-                        name="funding_end_date"
-                        type="date"
-                        InputLabelProps={{ shrink: true }}
-                        value={formData.funding_end_date || ""}
-                        onChange={(e) => {
-                          handleDateChange(e.target.value, "funding_end_date");
-                          // Immediately validate when changed
-                          if (!validateFundingDate(e.target.value)) {
-                            setErrors((prev) => ({
-                              ...prev,
-                              funding_end_date: "Date must be in the future",
-                            }));
-                          }
-                        }}
-                        required
-                        error={!!errors.funding_end_date}
-                        helperText={errors.funding_end_date}
-                        inputProps={{
-                          min: new Date().toISOString().split("T")[0], // Disable past dates
-                        }}
-                      />
-                    </Grid>
-                  )}
                 </Grid>
               </CardContent>
             </Card>

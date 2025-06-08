@@ -66,6 +66,7 @@ class DeviceDocumentSerializer(serializers.ModelSerializer):
         read_only_fields = ['uploaded_at']
 
 class DeviceSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
     documents = DeviceDocumentSerializer(many=True, required=False)
     fuel_options = serializers.SerializerMethodField()
     technology_options = serializers.SerializerMethodField()

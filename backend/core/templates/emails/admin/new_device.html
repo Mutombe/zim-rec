@@ -2,22 +2,119 @@
 <html>
 <head>
     <title>New Device Submission</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #1e3a8a;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #10b981 100%);
+            padding: 2px;
+        }
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            background: linear-gradient(135deg, #1e3a8a, #10b981);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #1e3a8a;
+            font-size: 24px;
+            margin: 0 0 10px 0;
+        }
+        .device-info {
+            background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+            border-left: 4px solid #10b981;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .device-info ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .device-info li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .device-info li:last-child {
+            border-bottom: none;
+        }
+        .device-info strong {
+            color: #1e3a8a;
+            display: inline-block;
+            width: 120px;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+            color: #64748b;
+        }
+        .footer .brand {
+            color: #1e3a8a;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h2>New Device Submitted</h2>
-    <p>A new device has been submitted for approval:</p>
-    
-    <ul>
-        <li>Device Name: {{ device.device_name }}</li>
-        <li>User: {{ user.get_full_name }} ({{ user.email }})</li>
-        <li>Fuel Type: {{ device.get_fuel_type_display }}</li>
-        <li>Technology: {{ device.get_technology_type_display }}</li>
-        <li>Submitted: {{ device.created_at|date:"DATETIME_FORMAT" }}</li>
-    </ul>
-    
-    <p>Please review the submission in the admin panel.</p>
-    
-    <hr>
-    <p>Best regards,<br>{{ app_name }} Team</p>
+    <div class="container">
+        <div class="content">
+            <div class="header">
+                <div class="logo">{{ app_name }}</div>
+                <h2>New Device Submitted</h2>
+            </div>
+            
+            <p>A new device has been submitted for approval:</p>
+            
+            <div class="device-info">
+                <ul>
+                    <li><strong>Device Name:</strong> {{ device.device_name }}</li>
+                    <li><strong>User:</strong> {{ user.get_full_name }} ({{ user.email }})</li>
+                    <li><strong>Fuel Type:</strong> {{ device.fuel_type }}</li>
+                    <li><strong>Technology:</strong> {{ device.technology_type }}</li>
+                    <li><strong>Submitted:</strong> {{ device.created_at|date:"DATETIME_FORMAT" }}</li>
+                </ul>
+            </div>
+            
+            <p>Please review the submission in the admin panel.</p>
+            
+            <div class="footer">
+                <p>Best regards,<br><span class="brand">{{ app_name }} Team</span></p>
+                <p style="font-size: 12px; color: #94a3b8;">Powering Zimbabwe's Renewable Energy Future</p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

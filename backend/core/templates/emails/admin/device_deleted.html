@@ -1,8 +1,7 @@
-# new_user.html
 <!DOCTYPE html>
 <html>
 <head>
-    <title>New User Registration</title>
+    <title>Device Deleted</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -38,43 +37,30 @@
             margin-bottom: 20px;
         }
         h2 {
-            color: #1e3a8a;
+            color: #ef4444;
             font-size: 24px;
             margin: 0 0 10px 0;
         }
-        .user-info {
-            background: linear-gradient(135deg, #eff6ff, #f0fdf4);
-            border-left: 4px solid #10b981;
+        .alert {
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+            border-left: 4px solid #ef4444;
             padding: 20px;
             margin: 20px 0;
             border-radius: 8px;
         }
-        .user-info ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        .device-info {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
         }
-        .user-info li {
-            padding: 8px 0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .user-info li:last-child {
-            border-bottom: none;
-        }
-        .user-info strong {
-            color: #1e3a8a;
-            display: inline-block;
-            width: 140px;
-        }
-        .btn {
-            display: inline-block;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 12px 24px;
-            text-decoration: none;
-            border-radius: 25px;
-            font-weight: bold;
-            margin: 20px 0;
+        .moderator-info {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 14px;
+            color: #475569;
         }
         .footer {
             text-align: center;
@@ -90,21 +76,27 @@
         <div class="content">
             <div class="header">
                 <div class="logo">{{ app_name }}</div>
-                <h2>New User Registered</h2>
+                <h2>Device Deleted</h2>
             </div>
             
-            <p>A new user has joined the platform:</p>
-            
-            <div class="user-info">
-                <ul>
-                    <li><strong>Name:</strong> {{ user.username }}</li>
-                    <li><strong>Email:</strong> {{ user.email }}</li>
-                    <li><strong>Registration Date:</strong> {{ user.date_joined|date:"DATETIME_FORMAT" }}</li>
-                    <li><strong>Account Type:</strong> {% if user.is_staff %}Admin{% else %}Registrant{% endif %}</li>
-                </ul>
+            <div class="alert">
+                <p><strong>Notice:</strong> A device has been deleted from the system.</p>
             </div>
             
-            <p>Review user in admin panel: <a href="{{ admin_url }}users/user/{{ user.id }}/" class="btn">View User</a></p>
+            <div class="device-info">
+                <p><strong>Device Name:</strong> {{ device.device_name }}</p>
+                <p><strong>Owner:</strong> {{ user.get_full_name }} ({{ user.email }})</p>
+                <p><strong>Fuel Type:</strong> {{ device.fuel_type }}</p>
+                <p><strong>Technology:</strong> {{ device.technology_type }}</p>
+            </div>
+            
+            {% if moderator %}
+            <div class="moderator-info">
+                <strong>Deleted by:</strong> {{ moderator.get_full_name|default:moderator.username }}<br>
+                <strong>Date:</strong> {{ action_date|date:"DATETIME_FORMAT" }}
+                {% if reason %}<br><strong>Reason:</strong> {{ reason }}{% endif %}
+            </div>
+            {% endif %}
             
             <div class="footer">
                 <p>Best regards,<br><span style="color: #1e3a8a; font-weight: bold;">{{ app_name }} Team</span></p>
