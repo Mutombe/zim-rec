@@ -1,4 +1,3 @@
-# src/templates/emails/new_device_status.txt
 Subject: Device Status Update - {{ device_name }}
 
 Dear {{ username }},
