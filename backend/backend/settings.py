@@ -215,11 +215,15 @@ SERVER_EMAIL = 'admin@zim-rec.co.zw'  # For error notifications
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'bzotuqo0khnb1zpfbaov',
-        'USER': 'uodas4jqktivae3abowk',
-        'PASSWORD': 'uPAOcFBMDgTMOhlc1Qen',
-        'HOST': 'bzotuqo0khnb1zpfbaov-postgresql.services.clever-cloud.com',
-        'PORT': '7120',
+        'NAME': 'zimrec_indicatego',
+        'USER': 'zimrec_indicatego',
+        'PASSWORD': '228a7207587c732e52eb18a2bb7753395e70ed00',  # Replace with actual password
+        'HOST': 'gxis3.h.filess.io',
+        'PORT': '5434',
+        'OPTIONS': {
+            'options': '-c search_path=public,django_schema',
+            'connect_timeout': 5,
+        },
     }
 }
 
