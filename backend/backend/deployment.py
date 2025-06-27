@@ -16,7 +16,7 @@ SECRET_KEY = SECRET_KEY
 CORS_ALLOWED_ORIGINS = [
     'https://zim-rec.co.zw',
     'https://www.zim-rec.co.zw',
-    'http://localhost:5173',
+    'http://localhost:5174',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
