@@ -215,18 +215,18 @@ SERVER_EMAIL = 'admin@zim-rec.co.zw'  # For error notifications
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'zimrec_indicatego',
-        'USER': 'zimrec_indicatego',
-        'PASSWORD': '228a7207587c732e52eb18a2bb7753395e70ed00',  # Replace with actual password
-        'HOST': 'gxis3.h.filess.io',
-        'PORT': '5434',
+        'NAME': 'zimrec_slightkill',
+        'USER': 'zimrec_slightkill',
+        'PASSWORD': 'af70fdb2754ab2a5f92610a210c640ec93db6ec0',
+        'HOST': 'bcph5u.h.filess.io',
+        'PORT': '61008',  # Note the different port: 61008
         'OPTIONS': {
-            'options': '-c search_path=public,django_schema',
+            'options': '-c search_path=django_schema,public',
             'connect_timeout': 5,
         },
+        'CONN_MAX_AGE': 300,  # Persistent connections
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
