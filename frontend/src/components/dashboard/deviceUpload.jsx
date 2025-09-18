@@ -31,6 +31,100 @@ import {
 // Import Owen's signature image (you'll need to add this to your assets)
 import owensig from '../../assets/owensig.png';
 
+// Move Input component outside the main component
+const Input = ({ label, name, type = "text", required = false, error, helperText, multiline, rows, placeholder, disabled, ...props }) => (
+  <div className="space-y-1">
+    <label className="block text-sm font-medium text-gray-700">
+      {label}
+      {required && <span className="text-red-500 ml-1">*</span>}
+    </label>
+    {multiline ? (
+      <textarea
+        name={name}
+        rows={rows || 3}
+        className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+          error ? 'border-red-300' : 'border-gray-300'
+        } ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}`}
+        placeholder={placeholder}
+        disabled={disabled}
+        {...props}
+      />
+    ) : (
+      <input
+        name={name}
+        type={type}
+        className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+          error ? 'border-red-300' : 'border-gray-300'
+        } ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}`}
+        placeholder={placeholder}
+        disabled={disabled}
+        {...props}
+      />
+    )}
+    {(error || helperText) && (
+      <p className={`text-xs ${error ? 'text-red-600' : 'text-gray-500'}`}>
+        {error || helperText}
+      </p>
+    )}
+  </div>
+);
+
+// Move Select component outside the main component
+const Select = ({ label, name, options, value, onChange, required = false, error, disabled = false }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  return (
+    <div className="space-y-1">
+      <label className="block text-sm font-medium text-gray-700">
+        {label}
+        {required && <span className="text-red-500 ml-1">*</span>}
+      </label>
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => !disabled && setIsOpen(!isOpen)}
+          className={`w-full px-3 py-2 text-left bg-white border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors flex items-center justify-between ${
+            error ? 'border-red-300' : 'border-gray-300'
+          } ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'cursor-pointer hover:border-gray-400'}`}
+          disabled={disabled}
+        >
+          <span className={value ? 'text-gray-900' : 'text-gray-500'}>
+            {value ? options.find(opt => opt[0] === value)?.[1] || value : `Select ${label.toLowerCase()}`}
+          </span>
+          <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </button>
+        
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+            >
+              {options.map(([optValue, optLabel]) => (
+                <button
+                  key={optValue}
+                  type="button"
+                  onClick={() => {
+                    onChange(name, optValue);
+                    setIsOpen(false);
+                  }}
+                  className="w-full px-3 py-2 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none transition-colors"
+                >
+                  {optLabel}
+                </button>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+      {error && <p className="text-xs text-red-600">{error}</p>}
+    </div>
+  );
+};
+
 const DeviceUploadStepper = ({ open, onClose }) => {
   const dispatch = useDispatch();
   const [activeStep, setActiveStep] = useState(0);
@@ -908,100 +1002,6 @@ By accessing or using the Platform, you confirm that you have read, understood, 
         });
     }
   }, [formData.fuel_type]);
-
-  // Input component
-  const Input = ({ label, name, type = "text", required = false, error, helperText, multiline, rows, placeholder, disabled, ...props }) => (
-    <div className="space-y-1">
-      <label className="block text-sm font-medium text-gray-700">
-        {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
-      </label>
-      {multiline ? (
-        <textarea
-          name={name}
-          rows={rows || 3}
-          className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-            error ? 'border-red-300' : 'border-gray-300'
-          } ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}`}
-          placeholder={placeholder}
-          disabled={disabled}
-          {...props}
-        />
-      ) : (
-        <input
-          name={name}
-          type={type}
-          className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-            error ? 'border-red-300' : 'border-gray-300'
-          } ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}`}
-          placeholder={placeholder}
-          disabled={disabled}
-          {...props}
-        />
-      )}
-      {(error || helperText) && (
-        <p className={`text-xs ${error ? 'text-red-600' : 'text-gray-500'}`}>
-          {error || helperText}
-        </p>
-      )}
-    </div>
-  );
-
-  // Select component
-  const Select = ({ label, name, options, value, onChange, required = false, error, disabled = false }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    
-    return (
-      <div className="space-y-1">
-        <label className="block text-sm font-medium text-gray-700">
-          {label}
-          {required && <span className="text-red-500 ml-1">*</span>}
-        </label>
-        <div className="relative">
-          <button
-            type="button"
-            onClick={() => !disabled && setIsOpen(!isOpen)}
-            className={`w-full px-3 py-2 text-left bg-white border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors flex items-center justify-between ${
-              error ? 'border-red-300' : 'border-gray-300'
-            } ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'cursor-pointer hover:border-gray-400'}`}
-            disabled={disabled}
-          >
-            <span className={value ? 'text-gray-900' : 'text-gray-500'}>
-              {value ? options.find(opt => opt[0] === value)?.[1] || value : `Select ${label.toLowerCase()}`}
-            </span>
-            <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-          </button>
-          
-          <AnimatePresence>
-            {isOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-                className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
-              >
-                {options.map(([optValue, optLabel]) => (
-                  <button
-                    key={optValue}
-                    type="button"
-                    onClick={() => {
-                      onChange(name, optValue);
-                      setIsOpen(false);
-                    }}
-                    className="w-full px-3 py-2 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none transition-colors"
-                  >
-                    {optLabel}
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-        {error && <p className="text-xs text-red-600">{error}</p>}
-      </div>
-    );
-  };
 
   // Step content components
   const renderStepContent = () => {
