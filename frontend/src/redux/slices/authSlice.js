@@ -1,6 +1,30 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../utils/api";
 
+
+// Helper function to get stored auth data
+const getStoredAuthData = () => {
+  try {
+    const authData = JSON.parse(localStorage.getItem("auth"));
+    if (authData) {
+      return {
+        tokens: {
+          access: authData.access,
+          refresh: authData.refresh,
+        },
+        user: authData.user,
+      };
+    }
+    return { tokens: null, user: null };
+  } catch (error) {
+    console.error("Error parsing auth data from localStorage:", error);
+    return { tokens: null, user: null };
+  }
+};
+
+// Get initial state from localStorage
+const storedAuth = getStoredAuthData();
+
 export const login = createAsyncThunk(
   "auth/login",
   async (credentials, { rejectWithValue }) => {
@@ -56,10 +80,10 @@ export const resendVerificationEmail = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: null,
-    tokens: JSON.parse(localStorage.getItem("auth")),
-    isAuthenticated: !!JSON.parse(localStorage.getItem("auth"))?.access,
-
+    user: storedAuth.user,
+    tokens: storedAuth.tokens,
+    isAuthenticated: !!storedAuth.tokens?.access,
+    loading: false,
     status: "idle",
     error: null,
   },
@@ -70,16 +94,29 @@ const authSlice = createSlice({
       state.tokens = null;
       state.isAuthenticated = false;
     },
+    updateUser: (state, action) => {
+      state.user = {
+        ...state.user,
+        ...action.payload,
+      };
+      
+      // Update localStorage with new user data
+      const authData = JSON.parse(localStorage.getItem("auth")) || {};
+      authData.user = state.user;
+      localStorage.setItem("auth", JSON.stringify(authData));
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(register.pending, (state) => {
         state.status = "loading";
+        state.loading = true;
         state.error = null;
       })
       .addCase(register.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.error = null;
+        state.loading = false;
         state.user = action.payload.user;
         console.log("User", state.user);
         state.isAuthenticated = false;
@@ -96,17 +133,25 @@ const authSlice = createSlice({
       .addCase(register.rejected, (state, action) => {
         state.status = "failed";
         state.isAuthenticated = false;
+        state.loading = false;
         state.error = action.payload || { detail: "Registration failed" };
       })
       .addCase(login.pending, (state) => {
         state.status = "loading";
+        state.loading = true;
+        state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.tokens = action.payload;
+        state.loading = false;
+        state.tokens = {
+          access: action.payload.access,
+          refresh: action.payload.refresh,
+        };
         state.user = action.payload.user;
-        console.log("User", state.user);
         state.isAuthenticated = true;
+
+        // Store in localStorage
         localStorage.setItem(
           "auth",
           JSON.stringify({
@@ -119,6 +164,7 @@ const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
+        state.loading = false;
         state.isAuthenticated = false;
       })
       .addCase(resendVerificationEmail.fulfilled, (state) => {
@@ -128,5 +174,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, updateUser } = authSlice.actions;
 export default authSlice.reducer;
