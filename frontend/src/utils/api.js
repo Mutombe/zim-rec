@@ -24,7 +24,7 @@ export const refreshTokens = async (refresh) => {
 };
 
 const api = axios.create({
-  baseURL: "https://zim-rec-backend.onrender.com/", //|| import.meta.env.VITE_API_BASE_URL ,
+  baseURL: "https://zim-rec-backend.onrender.com/",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
