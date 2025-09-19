@@ -255,7 +255,7 @@ const Home = () => {
                   variant="h5"
                   className="text-blue-100 text-lg sm:text-xl mb-6 sm:mb-8 max-w-2xl leading-relaxed"
                 >
-                  Join the revolution in clean energy trading. Buy, sell, and track renewable energy certificates with blockchain transparency and government compliance.
+                  Join the revolution in clean energy trading. Buy, sell, and track renewable energy certificates.
                 </Typography>
 
                 <div className="flex flex-wrap gap-3 sm:gap-4">
