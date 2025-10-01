@@ -87,11 +87,11 @@ DATABASES = {
         'PASSWORD': 'af70fdb2754ab2a5f92610a210c640ec93db6ec0',
         'HOST': 'bcph5u.h.filess.io',
         'PORT': '61008',  # Note the different port: 61008
+        'CONN_MAX_AGE': 0,
         'OPTIONS': {
             'options': '-c search_path=django_schema,public',
             'connect_timeout': 5,
         },
-        'CONN_MAX_AGE': 300,  # Persistent connections
     }
 }
 
