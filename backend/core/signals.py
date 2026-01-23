@@ -7,8 +7,11 @@ from django.utils import timezone
 from django.conf import settings
 from .models import Device, IssueRequest, Profile
 from django.db import transaction
-from django.contrib.auth.models import User  
+from django.contrib.auth.models import User
 import threading
+import logging
+
+logger = logging.getLogger(__name__)
 
 ADMIN_EMAILS = ['admin@zim-rec.co.zw','simbamtombe@gmail.com','owen@silvercarbon.co.zw', 'shyline@africarbontraining.com', 'kuda@africarbontraining.com']
 
@@ -42,7 +45,7 @@ def send_admin_notification(subject, context, template_base):
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=ADMIN_EMAILS,
         html_message=html_message,
-        fail_silently=False
+        fail_silently=True
     )
 
 def send_user_notification(user, subject, context, template_base, attachments=None):
@@ -71,7 +74,8 @@ def send_user_notification(user, subject, context, template_base, attachments=No
         for attachment in attachments:
             email.attach_file(attachment)
     
-    email.send(fail_silently=False)
+    email.send(fail_silently=True)
+
 # User registration signal
 @receiver(post_save, sender=User)
 def handle_new_user(sender, instance, created, **kwargs):
@@ -83,21 +87,28 @@ def handle_new_user(sender, instance, created, **kwargs):
             settings.BASE_DIR / 'media/docs/ZIM-RECs Platform Guide.pdf',
             settings.BASE_DIR / 'media/docs/ZIMREC - MERITS.pdf'
         ]
-        
-        # Send user confirmation email with attachments
-        send_status_email(instance, 'user', 'created', attachments=attachments)
-        
-        # Send admin notification
-        context = {
-            'user': instance,
-            'event_type': 'New User Registration',
-            'app_name': 'Zim-Rec'
-        }
-        send_admin_notification(
-            subject="New User Registration",
-            context=context,
-            template_base='new_user'
-        )
+
+        # Send emails in a non-blocking way - don't fail registration if email fails
+        try:
+            # Send user confirmation email with attachments
+            send_status_email(instance, 'user', 'created', attachments=attachments)
+        except Exception as e:
+            logger.error(f"Failed to send welcome email to {instance.email}: {e}")
+
+        try:
+            # Send admin notification
+            context = {
+                'user': instance,
+                'event_type': 'New User Registration',
+                'app_name': 'Zim-Rec'
+            }
+            send_admin_notification(
+                subject="New User Registration",
+                context=context,
+                template_base='new_user'
+            )
+        except Exception as e:
+            logger.error(f"Failed to send admin notification for new user {instance.email}: {e}")
 
 def send_status_emaill(user, entity_type, status):
     subject = f"{entity_type.title()} Status Update"
@@ -117,7 +128,7 @@ def send_status_emaill(user, entity_type, status):
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[user.email],
         html_message=html_message,
-        fail_silently=False
+        fail_silently=True
     )
 
 def send_status_email(user, entity_type, status, attachments=None):
@@ -146,7 +157,7 @@ def send_status_email(user, entity_type, status, attachments=None):
         for attachment in attachments:
             email.attach_file(attachment)
     
-    email.send(fail_silently=False)
+    email.send(fail_silently=True)
 
 @receiver(post_save, sender=Device)
 def handle_device_changes(sender, instance, created, **kwargs):
