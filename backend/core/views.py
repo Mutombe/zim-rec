@@ -54,41 +54,31 @@ class ProfileView(APIView):
     def get(self, request):
         try:
             profile = request.user.profile
-            serializer = ProfileSerializer(profile)
-            return Response(serializer.data, status=status.HTTP_200_OK)
         except Profile.DoesNotExist:
-            return Response(
-                {"detail": "Profile not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            profile = Profile.objects.create(user=request.user)
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data)
 
     def put(self, request):
         try:
             profile = request.user.profile
-            serializer = ProfileSerializer(profile, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Profile.DoesNotExist:
-            return Response(
-                {"detail": "Profile not found"}, status=status.HTTP_404_NOT_FOUND
-            )
-        
-    def get(self, request):
-        try:
-            profile = request.user.profile
-        except Profile.DoesNotExist:
-        # Temporary fix until signals work
             profile = Profile.objects.create(user=request.user)
-        
-        serializer = ProfileSerializer(profile)
-        return Response(serializer.data)
+        serializer = ProfileSerializer(profile, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class FuelOptionsView(APIView):
+    permission_classes = [AllowAny]
+
     def get(self, request):
         return Response(DeviceSerializer().get_fuel_options(None))
 
 class TechnologyOptionsView(APIView):
+    permission_classes = [AllowAny]
+
     def get(self, request):
         fuel_type = request.query_params.get('fuel_type')
         tech_options = DeviceSerializer().get_technology_options(None).get(fuel_type, [])

@@ -17,6 +17,7 @@ import HelpCenter from './components/helpcenter/helpcenter';
 import DocumentationPage from './components/about/documentation';
 import ProfilePage from './components/profile/profile';
 import AdminDashboard from './components/dashboard/adminDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -47,14 +48,14 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/dashboard" element={<UserDashboard />} />
-          <Route path='/profile' element={<ProfilePage />} />
+          <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
+          <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
           <Route path="/help" element={<HelpCenter />} />
           <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/documentation" element={<DocumentationPage />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/issue-requests" element={<IssueRequestDashboard />} />
+          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/issue-requests" element={<ProtectedRoute><IssueRequestDashboard /></ProtectedRoute>} />
         </Routes>
       </Layout>
     </BrowserRouter>

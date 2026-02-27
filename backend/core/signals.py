@@ -110,27 +110,6 @@ def handle_new_user(sender, instance, created, **kwargs):
         except Exception as e:
             logger.error(f"Failed to send admin notification for new user {instance.email}: {e}")
 
-def send_status_emaill(user, entity_type, status):
-    subject = f"{entity_type.title()} Status Update"
-    context = {
-        'user': user,
-        'entity_type': entity_type,
-        'status': status,
-        'app_name': 'Zim-Rec'
-    }
-    
-    text_message = render_to_string(f'emails/user/{entity_type}_status_update.txt', context)
-    html_message = render_to_string(f'emails/user/{entity_type}_status_update.html', context)
-    
-    send_mail(
-        subject=subject,
-        message=text_message,
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[user.email],
-        html_message=html_message,
-        fail_silently=True
-    )
-
 def send_status_email(user, entity_type, status, attachments=None):
     subject = f"{entity_type.title()} Status Update"
     context = {
@@ -229,40 +208,6 @@ def handle_device_changes(sender, instance, created, **kwargs):
                     template_base='device_edited'
                 )
 
-@receiver(post_save, sender=Device)
-def handle_device_changess(sender, instance, created, **kwargs):
-    # Notify admin about new device submission
-    if created:
-        context = {
-            'device': instance,
-            'user': instance.user,
-            'event_type': 'New Device Submission',
-            'app_name': 'Zim-Rec'
-        }
-        send_admin_notification(
-            subject=f"New Device Submitted: {instance.device_name}",
-            context=context,
-            template_base='new_device'
-        )
-    
-    # Status change notifications
-    if hasattr(instance, 'status_changed') and instance.status_changed:
-        send_status_email(instance.user, 'device', instance.status)
-        
-        # Notify admin about status change
-        context = {
-            'device': instance,
-            'user': instance.user,
-            'old_status': instance._original_status,
-            'new_status': instance.status,
-            'event_type': 'Device Status Change',
-            'app_name': 'Zim-Rec'
-        }
-        send_admin_notification(
-            subject=f"Device Status Changed: {instance.device_name}",
-            context=context,
-            template_base='device_status_change'
-        )
 
 @receiver(post_save, sender=IssueRequest)
 def handle_issue_request_changes(sender, instance, created, **kwargs):
@@ -324,15 +269,6 @@ def handle_device_deletion(sender, instance, **kwargs):
         template_base='device_deleted'
     )
 
-@receiver(post_save, sender=Device)
-def handle_device_status_change(sender, instance, **kwargs):
-    if instance.status_changed:
-        send_status_email(instance.user, 'device', instance.status)
-
-@receiver(post_save, sender=IssueRequest)
-def handle_issue_request_status_change(sender, instance, **kwargs):
-    if instance.status_changed:
-        send_status_email(instance.user, 'issue_request', instance.status)
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

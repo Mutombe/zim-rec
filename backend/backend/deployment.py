@@ -10,7 +10,7 @@ ALLOWED_HOSTS = [
 ]
 
 DEBUG = False
-SECRET_KEY = SECRET_KEY
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # CORS SETTINGS
 CORS_ALLOWED_ORIGINS = [
@@ -82,11 +82,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'zimrec_slightkill',
-        'USER': 'zimrec_slightkill',
-        'PASSWORD': 'af70fdb2754ab2a5f92610a210c640ec93db6ec0',
-        'HOST': 'bcph5u.h.filess.io',
-        'PORT': '61008',  # Note the different port: 61008
+        'NAME': os.environ.get('DATABASE_NAME', 'zimrec'),
+        'USER': os.environ.get('DATABASE_USER', 'zimrec'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', ''),
+        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
+        'PORT': os.environ.get('DATABASE_PORT', '5432'),
         'CONN_MAX_AGE': 0,
         'OPTIONS': {
             'options': '-c search_path=django_schema,public',

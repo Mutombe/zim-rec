@@ -1,7 +1,7 @@
 // store.js
 import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
-import { persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
+import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import deviceReducer from '../slices/deviceSlice';
 import issueRequestReducer from '../slices/issueSlice';
@@ -66,4 +66,4 @@ export const store = configureStore({
   devTools: process.env.NODE_ENV !== 'production',
 });
 
-// Optional: Hot Module Replacement for development
+export const persistor = persistStore(store);

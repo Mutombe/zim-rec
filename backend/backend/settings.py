@@ -1,16 +1,14 @@
 from datetime import timedelta
 from pathlib import Path
-from celery.schedules import crontab 
+from celery.schedules import crontab
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-igp4zng9i5t1zk@ry$7r964mw45rj#+*f#@)&5u#$d3ngh^w7$"
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-dev-fallback-key-do-not-use-in-production')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
     'zim-rec-backend.onrender.com',
@@ -57,8 +55,6 @@ CORS_ALLOW_HEADERS = [
 ]
 
 CORS_EXPOSE_HEADERS = ['content-type', 'authorization']
-CORS_ALLOW_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
@@ -160,16 +156,16 @@ CELERY_TASK_RETRY_DELAY = 60  # Initial retry delay
 
 # Monitoring & Flower
 CELERY_FLOWER_PORT = 5555
-CELERY_FLOWER_BASIC_AUTH = ['admin:StrongPassword123!']
+CELERY_FLOWER_BASIC_AUTH = [f"admin:{os.environ.get('CELERY_FLOWER_PASSWORD', 'changeme')}"]
 
 # Periodic Tasks (Celery Beat)
 CELERY_BEAT_SCHEDULE = {
     'clean-expired-devices': {
-        'task': 'devices.tasks.clean_expired_devices',
+        'task': 'core.tasks.clean_expired_devices',
         'schedule': crontab(hour=3, minute=30),  # Daily at 3:30 AM
     },
     'generate-energy-reports': {
-        'task': 'analytics.tasks.generate_daily_reports',
+        'task': 'core.tasks.generate_daily_reports',
         'schedule': crontab(hour=4, minute=0, day_of_week=1),  # Weekly on Mondays 4 AM
     },
 }
@@ -178,9 +174,7 @@ CELERY_BEAT_SCHEDULE = {
 CELERY_TASK_DEFAULT_QUEUE = 'default'
 CELERY_TASK_CREATE_MISSING_QUEUES = True
 CELERY_TASK_ROUTES = {
-    'devices.tasks.*': {'queue': 'devices'},
-    'analytics.tasks.*': {'queue': 'analytics'},
-    'notifications.tasks.*': {'queue': 'notifications'},
+    'core.tasks.*': {'queue': 'default'},
 }
 
 # Important: Add to bottom of settings.py
@@ -204,7 +198,7 @@ EMAIL_PORT = 587  # 465 for SSL
 EMAIL_USE_TLS = True  # Use False if using port 465
 EMAIL_USE_SSL = False  # Use True if using port 465
 EMAIL_HOST_USER = 'admin@zim-rec.co.zw'
-EMAIL_HOST_PASSWORD = 'adminZimrec@2060'  # Password you set in Hostinger email account
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 DEFAULT_FROM_EMAIL = 'Zim-Rec <admin@zim-rec.co.zw>'
 SERVER_EMAIL = 'admin@zim-rec.co.zw'  # For error notifications
 
@@ -215,11 +209,11 @@ SERVER_EMAIL = 'admin@zim-rec.co.zw'  # For error notifications
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'zimrec_slightkill',
-        'USER': 'zimrec_slightkill',
-        'PASSWORD': 'af70fdb2754ab2a5f92610a210c640ec93db6ec0',
-        'HOST': 'bcph5u.h.filess.io',
-        'PORT': '61008', 
+        'NAME': os.environ.get('DATABASE_NAME', 'zimrec'),
+        'USER': os.environ.get('DATABASE_USER', 'zimrec'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', ''),
+        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
+        'PORT': os.environ.get('DATABASE_PORT', '5432'),
         'CONN_MAX_AGE': 0,
         'OPTIONS': {
             'options': '-c search_path=django_schema,public',
@@ -235,7 +229,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',
     ),
         'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
     'DEFAULT_RENDERER_CLASSES': [

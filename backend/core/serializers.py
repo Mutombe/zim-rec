@@ -203,8 +203,6 @@ class DeviceSerializer(serializers.ModelSerializer):
             })
             
         return data
-            
-        return data
     
     def to_internal_value(self, data):
         try:

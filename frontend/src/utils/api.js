@@ -1,27 +1,5 @@
 import axios from "axios";
 
-// Centralized token refresh function
-export const refreshTokens = async (refresh) => {
-  try {
-    const { data } = await axios.post(
-      "http://127.0.0.1:8000/core/auth/refresh/",
-      { refresh },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return {
-      access: data.access,
-      refresh: data.refresh || refresh,
-    };
-  } catch (error) {
-    console.error("Token Refresh Error:", error);
-    throw error;
-  }
-};
-
 const api = axios.create({
   baseURL: "https://zim-rec-backend.onrender.com/",
   headers: {
@@ -34,7 +12,7 @@ const api = axios.create({
 
 // Add request interceptor for auth token
 api.interceptors.request.use((config) => {
-  const token = JSON.parse(localStorage.getItem("auth"))?.access; 
+  const token = JSON.parse(localStorage.getItem("auth"))?.access;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -44,6 +22,20 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Centralized token refresh function
+export const refreshTokens = async (refresh) => {
+  try {
+    const { data } = await api.post("core/auth/refresh/", { refresh });
+    return {
+      access: data.access,
+      refresh: data.refresh || refresh,
+    };
+  } catch (error) {
+    console.error("Token Refresh Error:", error);
+    throw error;
+  }
+};
 
 export const deviceAPI = {
   getFuelOptions: () => api.get("/fuel-options/"),
@@ -68,7 +60,7 @@ export const issueRequestAPI = {
   submit: (id) => api.post(`/issue-requests/${id}/submit/`),
   update: (id, data) => api.patch(`/issue-requests/${id}/`, {
     ...data,
-    production_amount: data.production_amount ? 
+    production_amount: data.production_amount ?
       parseFloat(data.production_amount).toFixed(6) : undefined
   }),
 };
