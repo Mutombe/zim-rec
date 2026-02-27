@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfile, updateProfile, clearProfileError } from '../../redux/slices/profileSlice';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ProfileSkeleton } from '../skeletons/Skeletons';
 import {
   Avatar,
   Button,
@@ -394,7 +395,7 @@ const ProfilePage = () => {
   );
 
   return (
-    <div className="max-w-6xl mx-auto p-4 md:p-6">
+    <div className="max-w-6xl mx-auto p-4 md:p-6 pt-20">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <Typography variant="h4" className="font-bold">
@@ -437,9 +438,7 @@ const ProfilePage = () => {
       {/* Content */}
       <Paper className="p-4 md:p-6 rounded-2xl shadow-sm">
         {loading && !profileData ? (
-          <div className="flex justify-center py-12">
-            <CircularProgress />
-          </div>
+          <ProfileSkeleton />
         ) : error ? (
           <Alert severity="error" className="mb-4">
             {error.detail || 'Failed to load profile'}

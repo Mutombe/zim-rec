@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
+import { UserDashboardSkeleton } from "../skeletons/Skeletons";
 import {
   selectDashboardData,
   selectUserDevices,
@@ -113,7 +114,6 @@ const UserDashboard = () => {
   const { user } = useSelector((state) => state.auth);
   const { loading, error } = useSelector((state) => state.devices);
   const devices = useSelector(selectUserDevices);
-  console.log(devices);
   const dashboardData = useSelector(selectDashboardData);
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -215,28 +215,25 @@ const UserDashboard = () => {
     return colors[status] || colors.Draft;
   };
 
-  if (loading)
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span className="ml-3">Loading devices...</span>
-      </div>
-    );
+  if (loading) return <UserDashboardSkeleton />;
 
   if (error)
     return (
-      <div className="bg-red-50 border-l-4 border-red-500 p-4 my-4">
-        <div className="flex">
-          <div className="flex-1">
-            <h3 className="text-red-800 font-medium">Error Loading Devices</h3>
-            <p className="text-red-700">{error}</p>
+      <div className="pt-20 min-h-screen bg-gray-50 p-4 md:p-8">
+        <div className="max-w-xl mx-auto mt-12">
+          <div className="bg-white border border-red-200 rounded-xl p-6 shadow-sm text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mb-4">
+              <AlertCircle className="w-6 h-6 text-red-600" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">Error Loading Devices</h3>
+            <p className="text-gray-500 mb-6 text-sm">{typeof error === 'string' ? error : 'Something went wrong. Please try again.'}</p>
+            <button
+              onClick={handleRefresh}
+              className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-400 to-blue-400 text-white rounded-md hover:from-green-500 hover:to-blue-500 transition-colors"
+            >
+              <RefreshCw className="w-4 h-4 mr-2" /> Try Again
+            </button>
           </div>
-          <button
-            onClick={handleRefresh}
-            className="inline-flex items-center px-3 py-2 border border-red-600 text-red-600 rounded-md hover:bg-red-50"
-          >
-            <RefreshCw className="w-4 h-4 mr-2" /> Retry
-          </button>
         </div>
       </div>
     );
@@ -320,7 +317,61 @@ const UserDashboard = () => {
                 </div>
               </div>
 
-              <div className="overflow-x-auto">
+              {/* Mobile card view */}
+              <div className="md:hidden space-y-3 px-4">
+                <AnimatePresence>
+                  {sortedAndFilteredDevices.map((device) => (
+                    <motion.div
+                      key={device.id}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <h3 className="font-semibold text-gray-900">{device.device_name}</h3>
+                          <p className="text-sm text-gray-500">{device.fuel_type} &middot; {device.technology_type}</p>
+                        </div>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(device.status)}`}>
+                          {device.status || "Draft"}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm text-gray-600">
+                        <span>{Number(device.capacity || 0).toLocaleString()} MW</span>
+                        <span>{device.effective_date || "—"}</span>
+                      </div>
+                      <div className="flex justify-end gap-3 mt-3 pt-3 border-t border-gray-100">
+                        <button
+                          onClick={async () => {
+                            try {
+                              const result = await dispatch(fetchDeviceById(device.id));
+                              if (result.payload) {
+                                setSelectedDevice(result.payload);
+                                setEditModalOpen(true);
+                              }
+                            } catch (error) {
+                              console.error("Error fetching device:", error);
+                            }
+                          }}
+                          className="inline-flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                        >
+                          <Edit className="w-4 h-4" /> Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(device.id)}
+                          className="inline-flex items-center gap-1.5 text-sm text-red-600 hover:text-red-800 font-medium"
+                        >
+                          <Trash2 className="w-4 h-4" /> Delete
+                        </button>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+
+              {/* Desktop table view */}
+              <div className="hidden md:block overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
@@ -337,7 +388,7 @@ const UserDashboard = () => {
                           onClick={() =>
                             handleSort(header.toLowerCase().replace(/ /g, "_"))
                           }
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                         >
                           <div className="flex items-center gap-2">
                             {header}
@@ -364,19 +415,19 @@ const UserDashboard = () => {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
-                          className="hover:bg-gray-50"
+                          className="hover:bg-gray-50 transition-colors"
                         >
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
                             {device.device_name}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-6 py-4 whitespace-nowrap text-gray-600">
                             {device.fuel_type}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-6 py-4 whitespace-nowrap text-gray-600">
                             {device.technology_type}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {Number(device.capacity).toLocaleString()}
+                          <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                            {Number(device.capacity || 0).toLocaleString()}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span
@@ -387,8 +438,8 @@ const UserDashboard = () => {
                               {device.status || "Draft"}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {device.effective_date}
+                          <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                            {device.effective_date || "—"}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-center">
                             <div className="flex justify-center gap-2">
@@ -411,7 +462,8 @@ const UserDashboard = () => {
                                     );
                                   }
                                 }}
-                                className="text-blue-600 hover:text-blue-900"
+                                className="p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-md transition-colors"
+                                title="Edit device"
                               >
                                 <Edit className="w-4 h-4" />
                               </motion.button>
@@ -419,7 +471,8 @@ const UserDashboard = () => {
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                                 onClick={() => handleDelete(device.id)}
-                                className="text-red-600 hover:text-red-900"
+                                className="p-1.5 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-md transition-colors"
+                                title="Delete device"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </motion.button>

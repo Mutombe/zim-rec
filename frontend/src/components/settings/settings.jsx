@@ -1,11 +1,11 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; 
-import { 
-  TextField, 
-  Button, 
-  Switch, 
-  Typography, 
+import { Link } from 'react-router-dom';
+import {
+  TextField,
+  Button,
+  Switch,
+  Typography,
   Divider,
   Alert,
   CircularProgress,
@@ -15,6 +15,7 @@ import { motion } from 'framer-motion';
 import { Lock, Bell, User, Mail, Shield } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfile, updateProfile, clearProfileError } from '../../redux/slices/profileSlice';
+import { SettingsSkeleton } from '../skeletons/Skeletons';
 
 const Settings = () => {
   const dispatch = useDispatch();
@@ -75,10 +76,12 @@ const Settings = () => {
     dispatch(updateProfile(profileUpdate));
   };
 
+  if (loading && !profileData) return <SettingsSkeleton />;
+
   return (
-    <div className="pt-20 min-h-screen bg-gray-50 p-8">
+    <div className="pt-20 min-h-screen bg-gray-50 p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"

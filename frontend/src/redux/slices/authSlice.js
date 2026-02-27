@@ -29,9 +29,7 @@ export const login = createAsyncThunk(
   "auth/login",
   async (credentials, { rejectWithValue }) => {
     try {
-      console.log("Login Credentials:", credentials);
       const response = await api.post("login/", credentials);
-      console.log("Login Response:", response.data);
       return {
         access: response.data.access,
         refresh: response.data.refresh,
@@ -118,7 +116,6 @@ const authSlice = createSlice({
         state.error = null;
         state.loading = false;
         state.user = action.payload.user;
-        console.log("User", state.user);
         state.isAuthenticated = false;
         state.tokens = action.payload;
         localStorage.setItem(

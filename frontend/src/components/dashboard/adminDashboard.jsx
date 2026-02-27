@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
+import { AdminDashboardSkeleton } from "../skeletons/Skeletons";
 import DeviceMap from "./deviceMap";
 import {
   selectAllDevices,
@@ -455,12 +456,7 @@ const AdminDashboard = () => {
 
   // Loading state
   if (devicesLoading || requestsLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span className="ml-3">Loading admin dashboard...</span>
-      </div>
-    );
+    return <AdminDashboardSkeleton />;
   }
 
   // Error state

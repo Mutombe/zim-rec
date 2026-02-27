@@ -78,9 +78,7 @@ export const updateDevice = createAsyncThunk(
   'devices/update',
   async ({ id, data }, { rejectWithValue }) => {
     try {
-      console.log('Sending update:', data)  // Add this
       const response = await deviceAPI.update(id, data);
-      console.log('Update response:', response.data)  // Add this
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);

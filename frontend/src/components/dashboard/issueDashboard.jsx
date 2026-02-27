@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from "framer-motion";
+import { IssueDashboardSkeleton } from "../skeletons/Skeletons";
 import { 
   PlusCircle, 
   Edit, 
@@ -42,7 +43,6 @@ const IssueRequestDashboard = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const currentUser = useSelector(selectCurrentUser);
-  console.log("Current User", currentUser)
   const isAdmin = currentUser?.isAdmin;
   
   const [openDialog, setOpenDialog] = useState(false);
@@ -67,7 +67,6 @@ const IssueRequestDashboard = () => {
     const { requests } = useSelector(
       (state) => state.issueRequests
     );
-  console.log("issue request", requests)
   const devices = useSelector(isAdmin ? selectAllDevicesForAdmin : selectUserDevices);
   const dashboardStats = useSelector(selectDashboardData);
   const recentSubmissions = useSelector((state) => selectRecentSubmissions(state, 7));
@@ -242,14 +241,8 @@ const IssueRequestDashboard = () => {
     }
   ];
 
-  if (requests.loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span className="ml-3">Loading requests...</span>
-      </div>
-    );
-  }
+  const isLoading = useSelector((state) => state.issueRequests.loading);
+  if (isLoading) return <IssueDashboardSkeleton />;
 
   return (
     <motion.div
@@ -340,7 +333,53 @@ const IssueRequestDashboard = () => {
 
           {/* Requests Table */}
           <div className="bg-white rounded-lg shadow mb-8">
-            <div className="overflow-x-auto">
+            {/* Mobile card view */}
+            <div className="md:hidden space-y-3 p-4">
+              <AnimatePresence>
+                {paginatedRequests.map((request) => (
+                  <motion.div
+                    key={request.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <p className="text-xs text-gray-400">#{request.id}</p>
+                        <h3 className="font-semibold text-gray-900">{request?.device_name || "Unknown Device"}</h3>
+                      </div>
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(request.status)}`}>
+                        {request.status?.charAt(0).toUpperCase() + request.status?.slice(1) || "Draft"}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-600 space-y-1 mb-3">
+                      <p>{request.start_date && request.end_date
+                        ? `${new Date(request.start_date).toLocaleDateString()} – ${new Date(request.end_date).toLocaleDateString()}`
+                        : "Dates not specified"}</p>
+                      <p className="font-medium">{request.production_amount} MW</p>
+                    </div>
+                    <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
+                      <button
+                        onClick={() => { setCurrentRequest(request); setOpenDialog(true); }}
+                        className="inline-flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                      >
+                        <Edit className="w-4 h-4" /> Edit
+                      </button>
+                      <button
+                        onClick={() => { setCurrentRequest(request); setDeleteDialog(true); }}
+                        className="inline-flex items-center gap-1.5 text-sm text-red-600 hover:text-red-800 font-medium"
+                      >
+                        <Trash2 className="w-4 h-4" /> Delete
+                      </button>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+
+            {/* Desktop table view */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
@@ -432,7 +471,7 @@ const IssueRequestDashboard = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="hover:bg-gray-50"
+                        className="hover:bg-gray-50 transition-colors"
                       >
                         <td className="px-6 py-4 whitespace-nowrap text-sm">{request.id}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
