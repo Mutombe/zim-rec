@@ -6,9 +6,9 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-dev-fallback-key-do-not-use-in-production')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-igp4zng9i5t1zk@ry$7r964mw45rj#+*f#@)&5u#$d3ngh^w7$')
 
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = [
     'zim-rec-backend.onrender.com',
@@ -156,7 +156,7 @@ CELERY_TASK_RETRY_DELAY = 60  # Initial retry delay
 
 # Monitoring & Flower
 CELERY_FLOWER_PORT = 5555
-CELERY_FLOWER_BASIC_AUTH = [f"admin:{os.environ.get('CELERY_FLOWER_PASSWORD', 'changeme')}"]
+CELERY_FLOWER_BASIC_AUTH = [f"admin:{os.environ.get('CELERY_FLOWER_PASSWORD', 'StrongPassword123!')}"]
 
 # Periodic Tasks (Celery Beat)
 CELERY_BEAT_SCHEDULE = {
@@ -198,7 +198,7 @@ EMAIL_PORT = 587  # 465 for SSL
 EMAIL_USE_TLS = True  # Use False if using port 465
 EMAIL_USE_SSL = False  # Use True if using port 465
 EMAIL_HOST_USER = 'admin@zim-rec.co.zw'
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'adminZimrec@2060')
 DEFAULT_FROM_EMAIL = 'Zim-Rec <admin@zim-rec.co.zw>'
 SERVER_EMAIL = 'admin@zim-rec.co.zw'  # For error notifications
 
@@ -209,11 +209,11 @@ SERVER_EMAIL = 'admin@zim-rec.co.zw'  # For error notifications
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DATABASE_NAME', 'zimrec'),
-        'USER': os.environ.get('DATABASE_USER', 'zimrec'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', ''),
-        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
-        'PORT': os.environ.get('DATABASE_PORT', '5432'),
+        'NAME': os.environ.get('DATABASE_NAME', 'zimrec_slightkill'),
+        'USER': os.environ.get('DATABASE_USER', 'zimrec_slightkill'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'af70fdb2754ab2a5f92610a210c640ec93db6ec0'),
+        'HOST': os.environ.get('DATABASE_HOST', 'bcph5u.h.filess.io'),
+        'PORT': os.environ.get('DATABASE_PORT', '61008'),
         'CONN_MAX_AGE': 0,
         'OPTIONS': {
             'options': '-c search_path=django_schema,public',
