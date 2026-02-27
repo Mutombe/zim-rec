@@ -39,12 +39,11 @@ export const selectCurrentUser = createSelector(
 export const selectUserDevices = createSelector(
   [selectAllDevices, selectCurrentUser],
   (devices, user) => {
-    if (!user || !devices) return [];
-    // Handle both numeric and string IDs
-    return devices.filter(device => 
-      String(device.user.id) === String(user.id) ||
-      String(device.user) === String(user.id)
-    );
+    if (!user || !Array.isArray(devices)) return [];
+    return devices.filter(device => {
+      if (!device?.user) return false;
+      return String(device.user?.id ?? device.user) === String(user.id);
+    });
   }
 );
 

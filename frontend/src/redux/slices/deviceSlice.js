@@ -19,7 +19,7 @@ export const fetchDeviceById = createAsyncThunk(
       const response = await deviceAPI.getById(deviceId);
       return response.data;
     } catch (err) {
-      return rejectWithValue(err.response.data);
+      return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
@@ -31,19 +31,19 @@ export const fetchDevices = createAsyncThunk(
       const response = await deviceAPI.getAll();
       return response.data;
     } catch (err) {
-      return rejectWithValue(err.response.data);
+      return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
 
 export const fetchUserDevices = createAsyncThunk(
   'devices/fetchUserDevices',
-  async (userId, { rejectWithValue }) => { 
+  async (userId, { rejectWithValue }) => {
     try {
       const response = await deviceAPI.getUserDevices(userId);
       return response.data;
     } catch (err) {
-      return rejectWithValue(err.response.data);
+      return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
@@ -92,8 +92,8 @@ export const deleteDevice = createAsyncThunk(
   'devices/delete',
   async (id, { rejectWithValue, getState }) => {
     try {
-      const device = getState().devices.devices.find(d => d.id === id);
-      if (['approved', 'rejected'].includes(device.status)) {
+      const device = getState().devices.devices?.find(d => d.id === id);
+      if (device && ['approved', 'rejected'].includes(device.status)) {
         throw new Error('Cannot delete approved/rejected devices');
       }
       await deviceAPI.delete(id);
@@ -125,7 +125,7 @@ const deviceSlice = createSlice({
       .addCase(fetchDevices.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.loading = false;
-        state.devices = action.payload.results;
+        state.devices = action.payload?.results ?? action.payload ?? [];
       })
       .addCase(fetchDevices.rejected, (state, action) => {
         state.status = 'failed';
@@ -139,7 +139,7 @@ const deviceSlice = createSlice({
       .addCase(fetchUserDevices.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.loading = false;
-        state.devices = action.payload.results;
+        state.devices = action.payload?.results ?? action.payload ?? [];
       })
       .addCase(fetchUserDevices.rejected, (state, action) => {
         state.status = 'failed';
