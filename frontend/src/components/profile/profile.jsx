@@ -22,7 +22,7 @@ import {
   Paper
 } from '@mui/material';
 import {
-  User,
+  CircleUserRound,
   Edit,
   Check,
   X,
@@ -189,7 +189,7 @@ const ProfilePage = () => {
                 error={formik.touched.username && Boolean(formik.errors.username)}
                 helperText={formik.touched.username && formik.errors.username}
                 InputProps={{
-                  startAdornment: <User className="text-gray-400 mr-2" />
+                  startAdornment: <CircleUserRound className="text-gray-400 mr-2" />
                 }}
               />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -246,7 +246,7 @@ const ProfilePage = () => {
 
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  <User className="w-5 h-5 text-gray-400" />
+                  <CircleUserRound className="w-5 h-5 text-gray-400" />
                   <Typography>{profileData?.username || user?.username}</Typography>
                 </div>
                 <div className="flex items-center gap-3">
@@ -367,7 +367,7 @@ const ProfilePage = () => {
             fullWidth
             variant="outlined"
             className="!justify-start !py-3"
-            startIcon={<User className="w-5 h-5" />}
+            startIcon={<CircleUserRound className="w-5 h-5" />}
           >
             Privacy Settings
           </Button>
@@ -404,7 +404,7 @@ const ProfilePage = () => {
         <Chip
           label={user?.is_superuser ? 'Admin' : 'Standard User'}
           color={user?.is_superuser ? 'primary' : 'default'}
-          icon={user?.is_superuser ? <Shield className="w-4 h-4" /> : <User className="w-4 h-4" />}
+          icon={user?.is_superuser ? <Shield className="w-4 h-4" /> : <CircleUserRound className="w-4 h-4" />}
         />
       </div>
 
@@ -418,7 +418,7 @@ const ProfilePage = () => {
         <Tab
           label="Profile"
           value="profile"
-          icon={<User className="w-5 h-5" />}
+          icon={<CircleUserRound className="w-5 h-5" />}
           iconPosition="start"
         />
         <Tab

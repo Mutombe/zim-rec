@@ -8,7 +8,7 @@ import { logout, login, register, googleLogin } from "../../redux/slices/authSli
 import {
   ImageIcon,
   Zap,
-  User,
+  CircleUserRound,
   LogIn,
   UserPlus,
   LogOut,
@@ -201,7 +201,7 @@ export const AuthModals = ({ openType, onClose }) => {
               <label className="block text-sm font-medium text-gray-700 mb-1.5">Username</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="text-gray-400" size={18} />
+                  <CircleUserRound className="text-gray-400" size={18} />
                 </div>
                 <input
                   type="text"
@@ -296,7 +296,7 @@ export function Logo() {
   return (
     <div className="flex items-center">
       <Link to="/" className="flex-shrink-0 flex items-center gap-2.5 group">
-        <div className="w-9 h-9  overflow-hidden transition-all">
+        <div className="w-15 h-15  overflow-hidden transition-all">
           <img src="/logo.png" alt="Zim-REC Logo" className="w-full h-full object-contain" />
         </div>
       </Link>
@@ -542,7 +542,7 @@ export const Navbar = () => {
                         { to: "/dashboard", icon: <LayoutDashboard size={18} />, label: "Devices" },
                         { to: "/issue-requests", icon: <FileText size={18} />, label: "Issue Requests" },
                         ...(isAdmin ? [{ to: "/admin", icon: <Shield size={18} />, label: "Admin Dashboard" }] : []),
-                        { to: "/settings", icon: <User size={18} />, label: "My Profile" },
+                        { to: "/settings", icon: <CircleUserRound size={18} />, label: "My Profile" },
                       ].map((item) => {
                         const isActive = location.pathname === item.to;
                         return (
@@ -618,7 +618,7 @@ export const Navbar = () => {
       >
         <MenuItem onClick={handleUserMenuClose} component={Link} to="/settings">
           <ListItemIcon>
-            <User size={18} className="text-green-600" />
+            <CircleUserRound size={18} className="text-green-600" />
           </ListItemIcon>
           <ListItemText>My Profile</ListItemText>
         </MenuItem>

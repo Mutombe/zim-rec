@@ -12,7 +12,7 @@ import {
   Avatar
 } from '@mui/material';
 import { motion } from 'framer-motion';
-import { Lock, Bell, User, Mail, Shield } from 'lucide-react';
+import { Lock, Bell, CircleUserRound, Mail, Shield } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfile, updateProfile, clearProfileError } from '../../redux/slices/profileSlice';
 import { SettingsSkeleton } from '../skeletons/Skeletons';
@@ -128,7 +128,7 @@ const Settings = () => {
             {/* Profile Information */}
             <div>
               <Typography variant="h6" className="!mb-4 !flex !items-center">
-                <User className="mr-2 text-green-600" /> Profile Information
+                <CircleUserRound className="mr-2 text-green-600" /> Profile Information
               </Typography>
               <TextField
                 fullWidth

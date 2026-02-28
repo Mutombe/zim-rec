@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Facebook,
-  Twitter,
   Linkedin,
   Mail,
   Phone,
@@ -14,6 +13,7 @@ import {
   Zap,
   Loader2,
 } from 'lucide-react';
+import { RiTwitterXFill } from 'react-icons/ri';
 import { Typography, Grid } from '@mui/material';
 import { toast } from 'sonner';
 import api from '../../utils/api';
@@ -62,7 +62,7 @@ const Footer = () => {
   };
 
   const socialLinks = [
-    { icon: <Twitter size={20} />, url: 'https://twitter.com/zimrec', label: 'Twitter' },
+    { icon: <RiTwitterXFill size={20} />, url: 'https://x.com/zimrec', label: 'X' },
     { icon: <Linkedin size={20} />, url: 'https://linkedin.com/company/zimrec', label: 'LinkedIn' },
     { icon: <Facebook size={20} />, url: 'https://facebook.com/zimrec', label: 'Facebook' },
   ];
@@ -112,7 +112,7 @@ const Footer = () => {
                     <img
                       src="/logo.png"
                       alt="Zim-REC Logo"
-                      className="h-7 w-7"
+                      className="h-15 w-15"
                     />
                   </div>
                 </Link>
