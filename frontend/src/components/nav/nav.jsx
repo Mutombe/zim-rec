@@ -159,7 +159,14 @@ export const AuthModals = ({ openType, onClose }) => {
       >
         <div className="h-1.5 bg-gradient-to-r from-emerald-500 via-blue-500 to-emerald-500" />
 
-        <div className="p-7 space-y-6">
+        <div className="relative p-7 space-y-6">
+          <button
+            onClick={onClose}
+            className="absolute top-3 right-3 p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+            aria-label="Close"
+          >
+            <X size={20} />
+          </button>
           {/* Header */}
           <div className="text-center">
             <div className="mx-auto w-14 h-14 mb-4  overflow-hidden">

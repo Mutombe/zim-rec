@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { LogIn, Home } from 'lucide-react';
+import { LogIn, Home, X } from 'lucide-react';
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -11,7 +11,14 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
       <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/50 backdrop-blur-sm">
         <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden">
           <div className="h-1.5 bg-gradient-to-r from-emerald-500 via-blue-500 to-emerald-500" />
-          <div className="p-8 text-center space-y-6">
+          <div className="relative p-8 text-center space-y-6">
+            <button
+              onClick={() => navigate('/')}
+              className="absolute top-3 right-3 p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+              aria-label="Close"
+            >
+              <X size={20} />
+            </button>
             <div className="mx-auto w-14 h-14 overflow-hidden">
               <img src="/logo.png" alt="Zim-REC Logo" className="w-full h-full object-contain" />
             </div>
