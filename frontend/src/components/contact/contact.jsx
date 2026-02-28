@@ -1,87 +1,72 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { 
-  Button, 
-  TextField, 
-  Snackbar, 
-  Alert, 
-  Paper, 
-  Grid,
-  Typography,
-  Box,
-  Divider,
-  CircularProgress
-} from "@mui/material";
-import { 
-  Phone, 
-  Mail, 
-  MapPin, 
-  Clock, 
-  Send, 
-  Check,
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
+  Send,
   Zap,
-  Globe,
   Calendar,
-  Sun
+  Sun,
 } from "lucide-react";
-// Import leaflet at the top level
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import { toast } from "sonner";
+import api from "../../utils/api";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
-// Leaflet Map Component
 const MapComponent = () => {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
 
   useEffect(() => {
-    // Make sure the DOM element exists
     if (!mapRef.current) return;
-    
-    // Initialize the map if it hasn't been already
+
     if (!mapInstanceRef.current) {
-      // Fix for Leaflet's icon paths
-      // This addresses issues with marker icons not appearing
       delete L.Icon.Default.prototype._getIconUrl;
       L.Icon.Default.mergeOptions({
-        iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png'
+        iconRetinaUrl:
+          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+        iconUrl:
+          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+        shadowUrl:
+          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
       });
-      
-      // Initialize the map
-      mapInstanceRef.current = L.map(mapRef.current).setView([-17.824858, 31.053028], 13);
-      
-      // Add OpenStreetMap tiles
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+
+      mapInstanceRef.current = L.map(mapRef.current).setView(
+        [-17.824858, 31.053028],
+        13
+      );
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(mapInstanceRef.current);
 
-      // Define locations
       const locations = [
         {
-          name: 'Jackson Road Office',
-          coords: [-17.8419276,31.073675,19.34],
-          address: '8 Jackson Road, Hillside, Harare'
+          name: "Jackson Road Office",
+          coords: [-17.8419276, 31.073675],
+          address: "8 Jackson Road, Hillside, Harare",
         },
         {
-          name: 'NRZ Complex Office',
-          coords: [-17.8394377,31.0475358,18.36],
-          address: 'NRZ Complex, Seke Road, Harare'
-        }
+          name: "NRZ Complex Office",
+          coords: [-17.8394377, 31.0475358],
+          address: "NRZ Complex, Seke Road, Harare",
+        },
       ];
 
-      // Add markers with popups
-      locations.forEach(location => {
+      locations.forEach((location) => {
         const marker = L.marker(location.coords).addTo(mapInstanceRef.current);
-        marker.bindPopup(`<b>${location.name}</b><br>${location.address}`);
+        marker.bindPopup(
+          `<b>${location.name}</b><br>${location.address}`
+        );
       });
 
-      // Fit map to show both markers
-      const bounds = L.latLngBounds(locations.map(loc => loc.coords));
+      const bounds = L.latLngBounds(locations.map((loc) => loc.coords));
       mapInstanceRef.current.fitBounds(bounds, { padding: [50, 50] });
     }
-    
-    // Cleanup function to destroy map when component unmounts
+
     return () => {
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
@@ -90,82 +75,66 @@ const MapComponent = () => {
     };
   }, []);
 
-  return (
-    <div ref={mapRef} className="w-full h-full rounded-2xl" />
-  );
+  return <div ref={mapRef} className="w-full h-full rounded-2xl" />;
 };
 
 const Contact = () => {
-  const [formData, setState] = useState({
+  const [formData, setFormData] = useState({
     name: "",
     email: "",
     subject: "",
-    message: ""
+    message: "",
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: "",
-    severity: "success"
-  });
 
   const validate = () => {
-    let tempErrors = {};
-    tempErrors.name = formData.name ? "" : "Name is required";
-    tempErrors.email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) ? "" : "Email is not valid";
-    tempErrors.message = formData.message ? "" : "Message is required";
-    
+    const tempErrors = {};
+    if (!formData.name.trim()) tempErrors.name = "Name is required";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+      tempErrors.email = "Email is not valid";
+    if (!formData.message.trim()) tempErrors.message = "Message is required";
+
     setErrors(tempErrors);
-    return Object.values(tempErrors).every(x => x === "");
+    return Object.keys(tempErrors).length === 0;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setState(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validate()) {
-      setLoading(true);
-      // Simulate API call
-      setTimeout(() => {
-        setLoading(false);
-        setSnackbar({
-          open: true,
-          message: "Your message has been sent successfully!",
-          severity: "success"
-        });
-        setState({
-          name: "",
-          email: "",
-          subject: "",
-          message: ""
-        });
-      }, 1500);
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
-  const closeSnackbar = () => {
-    setSnackbar(prev => ({ ...prev, open: false }));
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    setLoading(true);
+    try {
+      await api.post("contact/", formData);
+      toast.success("Your message has been sent successfully!");
+      setFormData({ name: "", email: "", subject: "", message: "" });
+    } catch (err) {
+      const detail =
+        err.response?.data?.detail || "Failed to send message. Please try again.";
+      toast.error(detail);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
   };
 
   const staggerContainer = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
+      transition: { staggerChildren: 0.2 },
     },
   };
 
@@ -174,22 +143,25 @@ const Contact = () => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
+  const inputClass =
+    "w-full px-4 py-3 border border-gray-300 rounded-xl text-sm text-gray-900 placeholder-gray-400 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all";
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-blue-50 pt-20 pb-16 relative">
       {/* Decorative elements */}
-      <div className="absolute -top-24 -right-24 w-64 h-64 bg-emerald-200 rounded-full opacity-20 blur-3xl"></div>
-      <div className="absolute bottom-32 -left-32 w-80 h-80 bg-blue-300 rounded-full opacity-20 blur-3xl"></div>
-      
+      <div className="absolute -top-24 -right-24 w-64 h-64 bg-emerald-200 rounded-full opacity-20 blur-3xl" />
+      <div className="absolute bottom-32 -left-32 w-80 h-80 bg-blue-300 rounded-full opacity-20 blur-3xl" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header Section */}
-        <motion.div 
+        <motion.div
           initial="hidden"
           animate="visible"
           variants={fadeIn}
           className="text-center mb-12 md:mb-16"
         >
           <div className="flex justify-center mb-4">
-            <motion.div 
+            <motion.div
               className="bg-gradient-to-r from-blue-600 to-emerald-500 p-3 rounded-full"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -198,229 +170,242 @@ const Contact = () => {
               <Zap className="w-6 h-6 text-white" />
             </motion.div>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Get in Touch</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Get in Touch
+          </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Have questions about renewable energy certificates or want to learn more about our platform? Our team is here to help.
+            Have questions about renewable energy certificates or want to learn
+            more about our platform? Our team is here to help.
           </p>
         </motion.div>
 
         {/* Main Content */}
-        <motion.div 
+        <motion.div
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
           className="grid lg:grid-cols-5 gap-8"
         >
           {/* Contact Form */}
-          <motion.div 
-            className="lg:col-span-3"
-            variants={itemAnimation}
-          >
-            <Paper elevation={0} className="overflow-hidden rounded-2xl shadow-lg">
+          <motion.div className="lg:col-span-3" variants={itemAnimation}>
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
               <div className="bg-gradient-to-r from-blue-700 to-blue-600 px-6 py-4">
-                <Typography variant="h5" className="text-white font-bold flex items-center">
-                  <Mail className="mr-2" /> Send Us a Message
-                </Typography>
-                <Typography variant="body2" className="text-blue-50">
+                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                  <Mail className="w-5 h-5" /> Send Us a Message
+                </h2>
+                <p className="text-blue-50 text-sm mt-0.5">
                   We'll get back to you within 24 hours
-                </Typography>
+                </p>
               </div>
-              
+
               <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-5">
-                <Grid container spacing={3}>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Full Name"
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                      Full Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
                       name="name"
+                      placeholder="John Doe"
                       value={formData.name}
                       onChange={handleChange}
-                      variant="outlined"
-                      error={Boolean(errors.name)}
-                      helperText={errors.name}
-                      className="bg-white"
-                      required
+                      className={`${inputClass} ${errors.name ? "!border-red-400 !ring-red-200" : ""}`}
                     />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Email Address"
-                      name="email"
+                    {errors.name && (
+                      <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                      Email Address <span className="text-red-500">*</span>
+                    </label>
+                    <input
                       type="email"
+                      name="email"
+                      placeholder="you@example.com"
                       value={formData.email}
                       onChange={handleChange}
-                      variant="outlined"
-                      error={Boolean(errors.email)}
-                      helperText={errors.email}
-                      className="bg-white"
-                      required
+                      className={`${inputClass} ${errors.email ? "!border-red-400 !ring-red-200" : ""}`}
                     />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Subject"
-                      name="subject"
-                      value={formData.subject}
-                      onChange={handleChange}
-                      variant="outlined"
-                      className="bg-white"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Your Message"
-                      name="message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      variant="outlined"
-                      multiline
-                      rows={5}
-                      error={Boolean(errors.message)}
-                      helperText={errors.message}
-                      className="bg-white"
-                      required
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      size="large"
-                      fullWidth
-                      className="!bg-emerald-500 hover:!bg-emerald-600 !py-3 !rounded-xl !shadow-md !transition-all !duration-300 !font-medium"
-                      startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Send />}
-                      disabled={loading}
-                    >
-                      {loading ? "Sending..." : "Send Message"}
-                    </Button>
-                  </Grid>
-                </Grid>
+                    {errors.email && (
+                      <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Subject
+                  </label>
+                  <input
+                    type="text"
+                    name="subject"
+                    placeholder="What is this about?"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    className={inputClass}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Your Message <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    name="message"
+                    placeholder="Tell us how we can help..."
+                    rows={5}
+                    value={formData.message}
+                    onChange={handleChange}
+                    className={`${inputClass} resize-none ${errors.message ? "!border-red-400 !ring-red-200" : ""}`}
+                  />
+                  {errors.message && (
+                    <p className="text-red-500 text-xs mt-1">{errors.message}</p>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white rounded-xl py-3 text-sm font-semibold shadow-sm transition-colors"
+                >
+                  {loading ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      Send Message
+                    </>
+                  )}
+                </button>
               </form>
-            </Paper>
+            </div>
           </motion.div>
 
           {/* Contact Information */}
-          <motion.div 
+          <motion.div
             className="lg:col-span-2 space-y-6"
             variants={itemAnimation}
           >
             {/* Contact Info Card */}
-            <Paper elevation={0} className="p-6 rounded-2xl shadow-lg bg-white">
-              <Typography variant="h6" className="font-bold mb-4 text-gray-800">
+            <div className="bg-white p-6 rounded-2xl shadow-lg">
+              <h3 className="font-bold text-gray-800 mb-4 text-lg">
                 Contact Information
-              </Typography>
+              </h3>
               <div className="space-y-4">
                 <div className="flex items-start">
-                  <div className="bg-blue-100 p-2 rounded-lg mr-4">
+                  <div className="bg-blue-100 p-2 rounded-lg mr-4 flex-shrink-0">
                     <MapPin className="text-blue-600 w-5 h-5" />
                   </div>
                   <div>
-                    <Typography variant="subtitle2" className="font-medium text-gray-700">
-                      Office Location
-                    </Typography>
-                 
-                    <Typography variant="body2" className="text-gray-600">
-                      8 Jackson Road, Hillside<br />
+                    <p className="font-medium text-gray-700 text-sm">
+                      Office Locations
+                    </p>
+                    <p className="text-gray-600 text-sm mt-0.5">
+                      8 Jackson Road, Hillside
+                      <br />
                       Harare, Zimbabwe
-                    </Typography>
-                    <Typography variant="body2" className="text-gray-600 mt-2">
-                      NRZ Complex, Seke Road<br />
+                    </p>
+                    <p className="text-gray-600 text-sm mt-2">
+                      NRZ Complex, Seke Road
+                      <br />
                       Harare, Zimbabwe
-                    </Typography>
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start">
-                  <div className="bg-blue-100 p-2 rounded-lg mr-4">
+                  <div className="bg-blue-100 p-2 rounded-lg mr-4 flex-shrink-0">
                     <Phone className="text-blue-600 w-5 h-5" />
                   </div>
                   <div>
-                    <Typography variant="subtitle2" className="font-medium text-gray-700">
+                    <p className="font-medium text-gray-700 text-sm">
                       Phone Numbers
-                    </Typography>
-                    <Typography variant="body2" className="text-gray-600">
-                     +263 71 678 0112<br />
-                      +263 77 770 0465 <br />
-                       +263 78 004 9196
-                    </Typography>
+                    </p>
+                    <p className="text-gray-600 text-sm mt-0.5">
+                      +263 71 678 0112
+                      <br />
+                      +263 77 770 0465
+                      <br />
+                      +263 78 004 9196
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start">
-                  <div className="bg-blue-100 p-2 rounded-lg mr-4">
+                  <div className="bg-blue-100 p-2 rounded-lg mr-4 flex-shrink-0">
                     <Mail className="text-blue-600 w-5 h-5" />
                   </div>
                   <div>
-                    <Typography variant="subtitle2" className="font-medium text-gray-700">
-                      Email Addresses
-                    </Typography>
-                    <Typography variant="body2" className="text-gray-600">
-                      admin@zimrec.co.zw<br />
-                    </Typography>
+                    <p className="font-medium text-gray-700 text-sm">
+                      Email Address
+                    </p>
+                    <p className="text-gray-600 text-sm mt-0.5">
+                      admin@zim-rec.co.zw
+                    </p>
                   </div>
                 </div>
               </div>
-            </Paper>
-            
+            </div>
+
             {/* Business Hours Card */}
-            <Paper elevation={0} className="p-6 rounded-2xl shadow-lg bg-white">
-              <Typography variant="h6" className="font-bold mb-4 text-gray-800">
+            <div className="bg-white p-6 rounded-2xl shadow-lg">
+              <h3 className="font-bold text-gray-800 mb-4 text-lg">
                 Business Hours
-              </Typography>
+              </h3>
               <div className="space-y-3">
                 <div className="flex items-center">
-                  <div className="bg-blue-100 p-2 rounded-lg mr-4">
+                  <div className="bg-blue-100 p-2 rounded-lg mr-4 flex-shrink-0">
                     <Clock className="text-blue-600 w-5 h-5" />
                   </div>
                   <div className="flex justify-between w-full">
-                    <Typography variant="body2" className="font-medium text-gray-700">
+                    <span className="font-medium text-gray-700 text-sm">
                       Monday - Friday
-                    </Typography>
-                    <Typography variant="body2" className="text-gray-600">
+                    </span>
+                    <span className="text-gray-600 text-sm">
                       8:00 AM - 5:00 PM
-                    </Typography>
+                    </span>
                   </div>
                 </div>
-                <Divider />
-                
+                <div className="border-t border-gray-100" />
+
                 <div className="flex items-center">
-                  <div className="bg-blue-100 p-2 rounded-lg mr-4">
+                  <div className="bg-blue-100 p-2 rounded-lg mr-4 flex-shrink-0">
                     <Calendar className="text-blue-600 w-5 h-5" />
                   </div>
                   <div className="flex justify-between w-full">
-                    <Typography variant="body2" className="font-medium text-gray-700">
+                    <span className="font-medium text-gray-700 text-sm">
                       Saturday
-                    </Typography>
-                    <Typography variant="body2" className="text-gray-600">
+                    </span>
+                    <span className="text-gray-600 text-sm">
                       9:00 AM - 1:00 PM
-                    </Typography>
+                    </span>
                   </div>
                 </div>
-                <Divider />
-                
+                <div className="border-t border-gray-100" />
+
                 <div className="flex items-center">
-                  <div className="bg-blue-100 p-2 rounded-lg mr-4">
+                  <div className="bg-blue-100 p-2 rounded-lg mr-4 flex-shrink-0">
                     <Sun className="text-blue-600 w-5 h-5" />
                   </div>
                   <div className="flex justify-between w-full">
-                    <Typography variant="body2" className="font-medium text-gray-700">
+                    <span className="font-medium text-gray-700 text-sm">
                       Sunday
-                    </Typography>
-                    <Typography variant="body2" className="text-gray-600">
-                      Closed
-                    </Typography>
+                    </span>
+                    <span className="text-gray-600 text-sm">Closed</span>
                   </div>
                 </div>
               </div>
-            </Paper>
+            </div>
           </motion.div>
         </motion.div>
-        
-        {/* Map Section - Now with actual Leaflet map */}
-        <motion.div 
+
+        {/* Map Section */}
+        <motion.div
           className="mt-12 rounded-2xl overflow-hidden shadow-lg h-72 md:h-96"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -431,23 +416,6 @@ const Contact = () => {
           </div>
         </motion.div>
       </div>
-
-      {/* Snackbar for form submission */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={closeSnackbar}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert 
-          onClose={closeSnackbar} 
-          severity={snackbar.severity} 
-          className="!flex !items-center !shadow-lg"
-          icon={snackbar.severity === "success" ? <Check className="w-5 h-5" /> : undefined}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </div>
   );
 };

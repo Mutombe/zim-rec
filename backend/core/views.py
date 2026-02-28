@@ -15,6 +15,11 @@ from django.db import transaction
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.template.loader import render_to_string
+from .serializers import PasswordResetRequestSerializer, PasswordResetConfirmSerializer, ContactSerializer
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 from .models import NewsletterSubscriber
@@ -285,3 +290,133 @@ class NewsletterSubscribeView(APIView):
                     )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PasswordResetRequestView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = PasswordResetRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data['email']
+        response_msg = {"detail": "If an account with that email exists, a reset link has been sent."}
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response(response_msg, status=status.HTTP_200_OK)
+
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:5173')
+        reset_link = f"{frontend_url}/reset-password/{uid}/{token}"
+
+        html_message = render_to_string('emails/user/password_reset.html', {
+            'user': user,
+            'reset_link': reset_link,
+            'app_name': getattr(settings, 'APP_NAME', 'Zim-Rec'),
+        })
+
+        send_mail(
+            subject='Reset Your Password - Zim-Rec',
+            message=f'Click the following link to reset your password: {reset_link}',
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+            html_message=html_message,
+            fail_silently=True,
+        )
+
+        return Response(response_msg, status=status.HTTP_200_OK)
+
+
+class PasswordResetConfirmView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = PasswordResetConfirmSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            uid = force_str(urlsafe_base64_decode(serializer.validated_data['uid']))
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return Response(
+                {"detail": "Invalid reset link."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if not default_token_generator.check_token(user, serializer.validated_data['token']):
+            return Response(
+                {"detail": "Reset link has expired or is invalid."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user.set_password(serializer.validated_data['new_password'])
+        user.save()
+
+        return Response(
+            {"detail": "Password has been reset successfully."},
+            status=status.HTTP_200_OK
+        )
+
+
+class ContactView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = ContactSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        name = serializer.validated_data['name']
+        email = serializer.validated_data['email']
+        subject = serializer.validated_data.get('subject', '') or 'No Subject'
+        message = serializer.validated_data['message']
+
+        admin_email = 'admin@zim-rec.co.zw'
+        app_name = getattr(settings, 'APP_NAME', 'Zim-Rec')
+
+        full_subject = f"[{app_name} Contact] {subject}"
+
+        plain_message = (
+            f"New contact form submission\n\n"
+            f"From: {name} ({email})\n"
+            f"Subject: {subject}\n\n"
+            f"Message:\n{message}"
+        )
+
+        html_message = (
+            f'<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">'
+            f'<div style="background-color: #059669; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">'
+            f'<h2 style="color: white; margin: 0;">{app_name} - New Contact Message</h2>'
+            f'</div>'
+            f'<div style="padding: 24px; background: #ffffff; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">'
+            f'<p style="color: #374151;"><strong>From:</strong> {name}</p>'
+            f'<p style="color: #374151;"><strong>Email:</strong> <a href="mailto:{email}">{email}</a></p>'
+            f'<p style="color: #374151;"><strong>Subject:</strong> {subject}</p>'
+            f'<hr style="border: none; border-top: 1px solid #e5e7eb; margin: 16px 0;">'
+            f'<p style="color: #374151;"><strong>Message:</strong></p>'
+            f'<p style="color: #4b5563; white-space: pre-wrap;">{message}</p>'
+            f'</div>'
+            f'</div>'
+        )
+
+        try:
+            send_mail(
+                subject=full_subject,
+                message=plain_message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[admin_email],
+                html_message=html_message,
+                fail_silently=False,
+            )
+        except Exception:
+            return Response(
+                {"detail": "Failed to send message. Please try again later."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        return Response(
+            {"detail": "Your message has been sent successfully!"},
+            status=status.HTTP_200_OK
+        )

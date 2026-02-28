@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMediaQuery } from "@mui/material";
-import { logout, login, register, googleLogin } from "../../redux/slices/authSlice";
+import { logout, login, register, googleLogin, requestPasswordReset } from "../../redux/slices/authSlice";
 import {
   ImageIcon,
   Zap,
@@ -93,6 +93,17 @@ export const AuthModals = ({ openType, onClose }) => {
   }, [openType]);
 
   const handleSubmit = () => {
+    if (view === "forgot") {
+      dispatch(requestPasswordReset(formData.email))
+        .unwrap()
+        .then(() => {
+          toast.success("Check your email for the reset link");
+          setView("login");
+          setFormData({ email: "", password: "", username: "" });
+        })
+        .catch((err) => console.error("Password reset request failed:", err));
+      return;
+    }
     if (view === "login") {
       dispatch(login({ username: formData.username, password: formData.password }))
         .unwrap()
@@ -152,10 +163,14 @@ export const AuthModals = ({ openType, onClose }) => {
               <img src="/logo.png" alt="Zim-REC Logo" className="w-full h-full object-contain" />
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-1">
-              {view === "login" ? "Welcome back" : "Create your account"}
+              {view === "forgot" ? "Reset your password" : view === "login" ? "Welcome back" : "Create your account"}
             </h2>
             <p className="text-sm text-gray-500">
-              {view === "login" ? "Sign in to continue to your dashboard" : "Get started with free REC trading"}
+              {view === "forgot"
+                ? "Enter your email and we'll send you a reset link"
+                : view === "login"
+                ? "Sign in to continue to your dashboard"
+                : "Get started with free REC trading"}
             </p>
           </div>
 
@@ -179,7 +194,7 @@ export const AuthModals = ({ openType, onClose }) => {
 
           {/* Form Fields */}
           <div className="space-y-5">
-            {view === "register" && (
+            {(view === "register" || view === "forgot") && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
                 <div className="relative">
@@ -197,48 +212,61 @@ export const AuthModals = ({ openType, onClose }) => {
               </div>
             )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Username</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <CircleUserRound className="text-gray-400" size={18} />
+            {view !== "forgot" && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Username</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <CircleUserRound className="text-gray-400" size={18} />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Enter your username"
+                    value={formData.username}
+                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                    className={inputClass}
+                  />
                 </div>
-                <input
-                  type="text"
-                  placeholder="Enter your username"
-                  value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  className={inputClass}
-                />
               </div>
-            </div>
+            )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="text-gray-400" size={18} />
+            {view !== "forgot" && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="text-gray-400" size={18} />
+                  </div>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className="w-full pl-10 pr-11 py-3 border border-gray-300 rounded-xl text-sm text-gray-900 placeholder-gray-400 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="text-gray-400 hover:text-gray-600 transition-colors" size={18} />
+                    ) : (
+                      <Eye className="text-gray-400 hover:text-gray-600 transition-colors" size={18} />
+                    )}
+                  </button>
                 </div>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full pl-10 pr-11 py-3 border border-gray-300 rounded-xl text-sm text-gray-900 placeholder-gray-400 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                >
-                  {showPassword ? (
-                    <EyeOff className="text-gray-400 hover:text-gray-600 transition-colors" size={18} />
-                  ) : (
-                    <Eye className="text-gray-400 hover:text-gray-600 transition-colors" size={18} />
-                  )}
-                </button>
+                {view === "login" && (
+                  <button
+                    type="button"
+                    onClick={() => setView("forgot")}
+                    className="mt-1.5 text-sm text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
+                  >
+                    Forgot password?
+                  </button>
+                )}
               </div>
-            </div>
+            )}
           </div>
 
           {/* Submit Button */}
@@ -252,37 +280,43 @@ export const AuthModals = ({ openType, onClose }) => {
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 Processing...
               </span>
-            ) : view === "login" ? "Sign In" : "Create Account"}
+            ) : view === "forgot" ? "Send Reset Link" : view === "login" ? "Sign In" : "Create Account"}
           </button>
 
-          {/* Divider */}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200" />
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="bg-white px-3 text-gray-400">or</span>
-            </div>
-          </div>
+          {view !== "forgot" && (
+            <>
+              {/* Divider */}
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-200" />
+                </div>
+                <div className="relative flex justify-center text-xs">
+                  <span className="bg-white px-3 text-gray-400">or</span>
+                </div>
+              </div>
 
-          {/* Google Sign-In */}
-          <div className="flex justify-center">
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              theme="outline"
-              size="large"
-              shape="pill"
-              text={view === "login" ? "signin_with" : "signup_with"}
-            />
-          </div>
+              {/* Google Sign-In */}
+              <div className="flex justify-center">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                  theme="outline"
+                  size="large"
+                  shape="pill"
+                  text={view === "login" ? "signin_with" : "signup_with"}
+                />
+              </div>
+            </>
+          )}
 
-          {/* Toggle Login/Register */}
+          {/* Toggle Login/Register or Back to Login */}
           <button
-            onClick={() => setView(view === "login" ? "register" : "login")}
+            onClick={() => setView(view === "forgot" ? "login" : view === "login" ? "register" : "login")}
             className="w-full border border-gray-200 hover:border-emerald-300 hover:bg-emerald-50 text-gray-600 rounded-xl py-2.5 text-sm font-medium transition-colors"
           >
-            {view === "login"
+            {view === "forgot"
+              ? "Back to login"
+              : view === "login"
               ? "Don't have an account? Sign up"
               : "Already have an account? Sign in"}
           </button>
@@ -313,7 +347,18 @@ export const Navbar = () => {
   const [notificationAnchor, setNotificationAnchor] = useState(null);
   const isMobile = useMediaQuery("(max-width:768px)");
   const location = useLocation();
+  const navigate = useNavigate();
   const isAdmin = user?.is_superuser;
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("login") === "true") {
+      setAuthModal("login");
+      params.delete("login");
+      const newSearch = params.toString();
+      navigate(location.pathname + (newSearch ? `?${newSearch}` : ""), { replace: true });
+    }
+  }, [location.search]);
 
   const handleUserMenuClick = (event) => {
     setAnchorEl(event.currentTarget);

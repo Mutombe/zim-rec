@@ -94,6 +94,38 @@ export const resendVerificationEmail = createAsyncThunk(
   }
 );
 
+export const requestPasswordReset = createAsyncThunk(
+  "auth/requestPasswordReset",
+  async (email, { rejectWithValue }) => {
+    try {
+      const response = await api.post("password-reset/", { email });
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data || { detail: "Failed to send reset email" }
+      );
+    }
+  }
+);
+
+export const confirmPasswordReset = createAsyncThunk(
+  "auth/confirmPasswordReset",
+  async ({ uid, token, new_password }, { rejectWithValue }) => {
+    try {
+      const response = await api.post("password-reset/confirm/", {
+        uid,
+        token,
+        new_password,
+      });
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data || { detail: "Password reset failed" }
+      );
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState: {
@@ -103,6 +135,8 @@ const authSlice = createSlice({
     loading: false,
     status: "idle",
     error: null,
+    passwordResetLoading: false,
+    passwordResetError: null,
   },
   reducers: {
     logout: (state) => {
@@ -216,6 +250,30 @@ const authSlice = createSlice({
       .addCase(resendVerificationEmail.fulfilled, (state) => {
         state.status = "succeeded";
         state.error = null;
+      })
+      .addCase(requestPasswordReset.pending, (state) => {
+        state.passwordResetLoading = true;
+        state.passwordResetError = null;
+      })
+      .addCase(requestPasswordReset.fulfilled, (state) => {
+        state.passwordResetLoading = false;
+        state.passwordResetError = null;
+      })
+      .addCase(requestPasswordReset.rejected, (state, action) => {
+        state.passwordResetLoading = false;
+        state.passwordResetError = action.payload;
+      })
+      .addCase(confirmPasswordReset.pending, (state) => {
+        state.passwordResetLoading = true;
+        state.passwordResetError = null;
+      })
+      .addCase(confirmPasswordReset.fulfilled, (state) => {
+        state.passwordResetLoading = false;
+        state.passwordResetError = null;
+      })
+      .addCase(confirmPasswordReset.rejected, (state, action) => {
+        state.passwordResetLoading = false;
+        state.passwordResetError = action.payload;
       });
   },
 });

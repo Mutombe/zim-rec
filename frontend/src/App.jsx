@@ -19,6 +19,7 @@ import DocumentationPage from './components/about/documentation';
 import ProfilePage from './components/profile/profile';
 import AdminDashboard from './components/dashboard/adminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
+import ResetPassword from './components/auth/ResetPassword';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -58,6 +59,7 @@ function App() {
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
           <Route path="/issue-requests" element={<ProtectedRoute><IssueRequestDashboard /></ProtectedRoute>} />
+          <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />
         </Routes>
       </Layout>
     </BrowserRouter>
