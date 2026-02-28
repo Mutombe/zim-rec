@@ -201,14 +201,15 @@ APP_NAME = 'Zim-Rec'
 
 # settings.py
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.hostinger.com'  # Hostinger's SMTP server
-EMAIL_PORT = 587  # 465 for SSL
-EMAIL_USE_TLS = True  # Use False if using port 465
-EMAIL_USE_SSL = False  # Use True if using port 465
+EMAIL_HOST = 'smtp.hostinger.com'
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
 EMAIL_HOST_USER = 'admin@zim-rec.co.zw'
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'adminZimrec@2060')
 DEFAULT_FROM_EMAIL = 'Zim-Rec <admin@zim-rec.co.zw>'
-SERVER_EMAIL = 'admin@zim-rec.co.zw'  # For error notifications
+SERVER_EMAIL = 'admin@zim-rec.co.zw'
+EMAIL_TIMEOUT = 30
 
 
 # Database

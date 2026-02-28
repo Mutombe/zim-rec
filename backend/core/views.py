@@ -15,6 +15,9 @@ from django.db import transaction
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+import logging
+
+logger = logging.getLogger(__name__)
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
@@ -318,14 +321,21 @@ class PasswordResetRequestView(APIView):
             'app_name': getattr(settings, 'APP_NAME', 'Zim-Rec'),
         })
 
-        send_mail(
-            subject='Reset Your Password - Zim-Rec',
-            message=f'Click the following link to reset your password: {reset_link}',
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email],
-            html_message=html_message,
-            fail_silently=True,
-        )
+        try:
+            send_mail(
+                subject='Reset Your Password - Zim-Rec',
+                message=f'Click the following link to reset your password: {reset_link}',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                html_message=html_message,
+                fail_silently=False,
+            )
+        except Exception as e:
+            logger.error(f"Password reset email failed for {email}: {e}")
+            return Response(
+                {"detail": "Unable to send reset email. Please try again later."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
         return Response(response_msg, status=status.HTTP_200_OK)
 
@@ -410,7 +420,8 @@ class ContactView(APIView):
                 html_message=html_message,
                 fail_silently=False,
             )
-        except Exception:
+        except Exception as e:
+            logger.error(f"Contact form email failed: {e}")
             return Response(
                 {"detail": "Failed to send message. Please try again later."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR

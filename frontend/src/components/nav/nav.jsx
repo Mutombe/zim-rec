@@ -72,7 +72,7 @@ export function AuthHeader({ view }) {
 
 export const AuthModals = ({ openType, onClose }) => {
   const dispatch = useDispatch();
-  const { status, error } = useSelector((state) => state.auth);
+  const { status, error, passwordResetLoading } = useSelector((state) => state.auth);
   const [view, setView] = useState(openType);
   const [formData, setFormData] = useState({
     email: "",
@@ -101,7 +101,10 @@ export const AuthModals = ({ openType, onClose }) => {
           setView("login");
           setFormData({ email: "", password: "", username: "" });
         })
-        .catch((err) => console.error("Password reset request failed:", err));
+        .catch((err) => {
+          const detail = err?.detail || "Failed to send reset email. Please try again.";
+          toast.error(detail);
+        });
       return;
     }
     if (view === "login") {
@@ -272,13 +275,13 @@ export const AuthModals = ({ openType, onClose }) => {
           {/* Submit Button */}
           <button
             onClick={handleSubmit}
-            disabled={status === "loading"}
+            disabled={view === "forgot" ? passwordResetLoading : status === "loading"}
             className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white rounded-xl py-3 text-sm font-semibold shadow-sm transition-colors"
           >
-            {status === "loading" ? (
+            {(view === "forgot" ? passwordResetLoading : status === "loading") ? (
               <span className="flex items-center justify-center gap-2">
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Processing...
+                {view === "forgot" ? "Sending reset link..." : "Processing..."}
               </span>
             ) : view === "forgot" ? "Send Reset Link" : view === "login" ? "Sign In" : "Create Account"}
           </button>
