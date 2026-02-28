@@ -262,23 +262,21 @@ const Home = () => {
                   {isAuthenticated ? (
                     <Button
                       component={Link}
-                      onClick={() => navigate("/dashboard")}
                       to="/dashboard"
                       variant="contained"
                       size={isMobile ? "medium" : "large"}
                       endIcon={<ArrowRight size={isMobile ? 16 : 24} />}
-                      className={`!bg-emerald-500 !hover:bg-emerald-400 !text-blue-900 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full !shadow-lg !transform !hover:scale-105 !transition-all !duration-200`}
+                      className={`!bg-emerald-500 hover:!bg-emerald-400 !text-white !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full !shadow-lg !transform hover:!scale-105 !transition-all !duration-200`}
                     >
                       Dashboard
                     </Button>
                   ) : (
                     <Button
-                      component={Link}
                       onClick={() => setAuthModal("register")}
                       variant="contained"
                       size={isMobile ? "medium" : "large"}
                       endIcon={<ArrowRight size={isMobile ? 16 : 24} />}
-                      className={`!bg-emerald-500 !hover:bg-emerald-400 !text-blue-900 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full !shadow-lg !transform !hover:scale-105 !transition-all !duration-200`}
+                      className={`!bg-emerald-500 hover:!bg-emerald-400 !text-white !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full !shadow-lg !transform hover:!scale-105 !transition-all !duration-200`}
                     >
                       Get Started
                     </Button>
@@ -288,7 +286,7 @@ const Home = () => {
                     to="/about"
                     variant="outlined"
                     size={isMobile ? "medium" : "large"}
-                    className={`!border-emerald-400 !text-emerald-400 !hover:bg-emerald-400/10 !hover:border-emerald-300 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full !backdrop-blur-sm`}
+                    className={`!border-emerald-400 !text-emerald-400 hover:!bg-emerald-400/10 hover:!border-emerald-300 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full !backdrop-blur-sm`}
                   >
                     Learn More
                   </Button>
@@ -522,17 +520,16 @@ const Home = () => {
                       to="/dashboard"
                       variant="contained"
                       size={isMobile ? "medium" : "large"}
-                      className={`!bg-emerald-500 !text-blue-900 !hover:bg-emerald-400 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full !transform !hover:scale-105 !transition-all !duration-200`}
+                      className={`!bg-emerald-500 !text-white hover:!bg-emerald-400 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full !transform hover:!scale-105 !transition-all !duration-200`}
                     >
                       Go to Dashboard
                     </Button>
                   ) : (
                     <Button
-                      component={Link}
                       onClick={() => setAuthModal("register")}
                       variant="contained"
                       size={isMobile ? "medium" : "large"}
-                      className={`!bg-emerald-500 !text-blue-900 !hover:bg-emerald-400 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full !transform !hover:scale-105 !transition-all !duration-200`}
+                      className={`!bg-emerald-500 !text-white hover:!bg-emerald-400 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full !transform hover:!scale-105 !transition-all !duration-200`}
                     >
                       Create Account
                     </Button>
@@ -542,7 +539,7 @@ const Home = () => {
                     to="/contact"
                     variant="outlined"
                     size={isMobile ? "medium" : "large"}
-                    className={`!border-white !text-white !hover:bg-white/10 !hover:border-emerald-300 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full !backdrop-blur-sm`}
+                    className={`!border-white !text-white hover:!bg-white/10 hover:!border-emerald-300 !px-4 sm:!px-8 !py-2 sm:!py-3 !text-sm sm:!text-base !font-medium !rounded-full !backdrop-blur-sm`}
                   >
                     Contact Us
                   </Button>

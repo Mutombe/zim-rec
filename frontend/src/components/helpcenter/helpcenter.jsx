@@ -38,14 +38,17 @@ const HelpCenter = () => {
   };
 
   return (
-    <div className="pt-20 min-h-screen bg-gray-50 p-8">
+    <div className="pt-16 pb-16 min-h-screen bg-gray-50 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12 opacity-100 transform translate-y-0 transition-all duration-500">
           <div className="bg-green-100 w-16 h-16 flex items-center justify-center rounded-2xl mx-auto mb-6">
             <LifeBuoy className="text-green-600 w-8 h-8" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Help Center</h1>
-          
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">Help Center</h1>
+          <p className="text-lg text-gray-600 mb-6">
+            Find answers to common questions about the Zim-REC platform and renewable energy certificates.
+          </p>
+
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Search className="h-5 w-5 text-gray-400" />
@@ -71,7 +74,7 @@ const HelpCenter = () => {
               <div className="border rounded-lg shadow-sm bg-white overflow-hidden">
                 <button
                   onClick={() => toggleFaq(index)}
-                  className="w-full flex justify-between items-center p-4 text-left font-medium focus:outline-none"
+                  className="w-full flex justify-between items-center p-4 text-left font-medium text-gray-800 hover:text-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-inset transition-colors"
                 >
                   {faq.question}
                   <ChevronDown 
@@ -79,7 +82,7 @@ const HelpCenter = () => {
                   />
                 </button>
                 <div 
-                  className={`px-4 pb-4 text-gray-600 transition-all duration-300 ease-in-out ${openFaqIndex === index ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}
+                  className={`px-4 pb-4 text-gray-600 leading-relaxed transition-all duration-300 ease-in-out ${openFaqIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}
                 >
                   {faq.answer}
                 </div>
@@ -101,27 +104,27 @@ const HelpCenter = () => {
             <div>
               <input
                 type="email"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
                 placeholder="Your Email"
               />
             </div>
             <div>
               <input
                 type="text"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
                 placeholder="Subject"
               />
             </div>
             <div>
               <textarea
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
                 placeholder="Message"
                 rows="4"
               ></textarea>
             </div>
             <button
               type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-300"
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
             >
               Send Message
             </button>

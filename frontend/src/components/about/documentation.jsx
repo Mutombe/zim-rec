@@ -364,7 +364,7 @@ const DocumentationPage = () => {
                               size="small"
                               startIcon={<Download size={16} />}
                               onClick={() => handleDownload(doc.link, doc.title)}
-                              className="!bg-blue-600 !hover:bg-blue-700 !rounded-lg"
+                              className="!bg-blue-600 hover:!bg-blue-700 !rounded-lg"
                             >
                               Download
                             </Button>
@@ -384,7 +384,7 @@ const DocumentationPage = () => {
               className="text-center py-16"
             >
               <div className="bg-gray-100 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                <SearchIcon size={28} className="text-gray-400" />
+                <Search size={28} className="text-gray-400" />
               </div>
               <Typography variant="h6" className="text-gray-700 mb-2">
                 No documents found
@@ -425,7 +425,7 @@ const DocumentationPage = () => {
                   <Button
                     variant="contained"
                     endIcon={<ChevronRight size={16} />}
-                    className="!bg-white !text-blue-700 !hover:bg-blue-50 !w-full"
+                    className="!bg-white !text-blue-700 hover:!bg-blue-50 !w-full"
                   >
                     Contact Support
                   </Button>
@@ -503,7 +503,7 @@ const DocumentationPage = () => {
               <Button
                 variant="contained"
                 size="large"
-                className="!bg-emerald-500 !hover:bg-emerald-600 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
+                className="!bg-emerald-500 hover:!bg-emerald-600 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
               >
                 Register Your Project
               </Button>

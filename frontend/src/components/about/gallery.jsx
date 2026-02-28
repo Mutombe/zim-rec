@@ -69,7 +69,7 @@ const GalleryPage = () => {
     {
       id: 2,
       title: "Zim-Rec Launch",
-      type: "News",
+      type: "news",
       date: "February 2025",
       location: "Harare",
       tags: ["news", "launch", "event"],
@@ -89,7 +89,7 @@ const GalleryPage = () => {
       mediaType: "image"
     },
     {
-        id: 3,
+        id: 4,
         title: "REC Launch",
         type: "event",
         date: "January 2025",
@@ -100,9 +100,9 @@ const GalleryPage = () => {
         mediaType: "video"
       },
     {
-      id: 5,
+      id: 6,
       title: "REC Launch",
-      type: "News",
+      type: "news",
       date: "January 2025",
       location: "Harare",
       tags: ["training", "education"],
@@ -293,10 +293,15 @@ const GalleryPage = () => {
               onClick={() => setActiveFilter("project")}
               className={`!font-medium !px-3 !py-3 !rounded-full ${activeFilter === 'project' ? '!bg-emerald-500 !text-white' : '!bg-white !text-gray-700'}`}
             />
-            <Chip 
-              label="Events" 
+            <Chip
+              label="Events"
               onClick={() => setActiveFilter("event")}
               className={`!font-medium !px-3 !py-3 !rounded-full ${activeFilter === 'event' ? '!bg-emerald-500 !text-white' : '!bg-white !text-gray-700'}`}
+            />
+            <Chip
+              label="News"
+              onClick={() => setActiveFilter("news")}
+              className={`!font-medium !px-3 !py-3 !rounded-full ${activeFilter === 'news' ? '!bg-blue-600 !text-white' : '!bg-white !text-gray-700'}`}
             />
             {allTags.map(tag => (
               <Chip 
@@ -378,7 +383,7 @@ const GalleryPage = () => {
                         </div>
                       </div>
                       <IconButton 
-                        className="!absolute !top-2 !right-2 !bg-white/70 !opacity-0 !group-hover:opacity-100 !transition-opacity !duration-300"
+                        className="!absolute !top-2 !right-2 !bg-white/70 !opacity-0 group-hover:!opacity-100 !transition-opacity !duration-300"
                         size="small"
                         onClick={() => {
                           setCurrentImage(item);
@@ -543,13 +548,13 @@ const GalleryPage = () => {
             <div className="flex flex-wrap justify-center gap-4">
               <Button
                 variant="contained"
-                className="!bg-emerald-500 !hover:bg-emerald-400 !text-blue-900 !px-6 !py-2.5 !rounded-full !font-medium !shadow-md"
+                className="!bg-emerald-500 hover:!bg-emerald-400 !text-white !px-6 !py-2.5 !rounded-full !font-medium !shadow-md"
               >
                 Register Your Project
               </Button>
               <Button
                 variant="outlined"
-                className="!border-white !text-white !hover:bg-white/10 !px-6 !py-2.5 !rounded-full !font-medium"
+                className="!border-white !text-white hover:!bg-white/10 !px-6 !py-2.5 !rounded-full !font-medium"
               >
                 Contact Us
               </Button>

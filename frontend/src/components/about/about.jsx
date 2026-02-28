@@ -36,7 +36,7 @@ export function AnimatedLogo() {
   return (
     <div className="flex justify-center mb-4">
       <motion.div
-        className="w-20 h-16 rounded-full overflow-hidden"
+        className="w-16 h-16 rounded-full overflow-hidden"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ type: "spring", stiffness: 260, damping: 20 }}
@@ -135,7 +135,7 @@ const About = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white pt-20">
+    <div className="min-h-screen bg-white pt-16">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-white py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -162,7 +162,7 @@ const About = () => {
                 size="large"
                 startIcon={<FileText />}
                 onClick={() => navigate("/contact")}
-                className="!bg-blue-600 !hover:bg-blue-700 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
+                className="!bg-blue-600 hover:!bg-blue-700 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
               >
                 Learn More
               </Button>
@@ -171,7 +171,7 @@ const About = () => {
                 size="large"
                 endIcon={<ArrowRight />}
                 onClick={() => navigate("/dashboard")}
-                className="!border-emerald-500 !text-emerald-500 !hover:bg-emerald-50 !px-6 !py-3 !rounded-full !font-medium"
+                className="!border-emerald-500 !text-emerald-500 hover:!bg-emerald-50 !px-6 !py-3 !rounded-full !font-medium"
               >
                 Register Project
               </Button>
@@ -265,7 +265,7 @@ const About = () => {
                 <Button
                   variant="outlined"
                   endIcon={<ChevronRight />}
-                  className="!border-blue-600 !text-blue-600 !hover:bg-blue-50 !px-6 !py-2.5 !rounded-lg !font-medium"
+                  className="!border-blue-600 !text-blue-600 hover:!bg-blue-50 !px-6 !py-2.5 !rounded-lg !font-medium"
                 >
                   Our Mission & Vision
                 </Button>
@@ -280,12 +280,12 @@ const About = () => {
                 viewport={{ once: true }}
                 className="relative"
               >
-                <div className="aspect-w-16 aspect-h-9 rounded-2xl overflow-hidden shadow-xl">
-                  <div className="bg-gradient-to-br from-blue-200 to-emerald-100 w-full h-full flex items-center justify-center">
-                    <Typography variant="body1" className="text-gray-500">
-                      [Image: Renewable Energy Installation]
-                    </Typography>
-                  </div>
+                <div className="rounded-2xl overflow-hidden shadow-xl">
+                  <img
+                    src="https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                    alt="Renewable energy installation in Zimbabwe"
+                    className="w-full h-64 md:h-80 object-cover"
+                  />
                 </div>
                 <div className="absolute -bottom-8 -right-8 md:-bottom-10 md:-right-10 p-4 md:p-6 bg-white rounded-xl shadow-lg">
                   <div className="flex items-center space-x-4">
@@ -570,7 +570,7 @@ const About = () => {
                   variant="contained"
                   size="large"
                   onClick={() => navigate("/dashboard")}
-                  className="!bg-emerald-500 !text-blue-900 !hover:bg-emerald-400 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
+                  className="!bg-emerald-500 !text-white hover:!bg-emerald-400 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
                 >
                   See Devices
                 </Button>
@@ -579,7 +579,7 @@ const About = () => {
                   variant="contained"
                   size="large"
                   onClick={() => setAuthModal("register")}
-                  className="!bg-emerald-500 !text-blue-900 !hover:bg-emerald-400 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
+                  className="!bg-emerald-500 !text-white hover:!bg-emerald-400 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
                 >
                   Register Now
                 </Button>
@@ -588,7 +588,7 @@ const About = () => {
                 variant="outlined"
                 size="large"
                 onClick={() => navigate("/contact")}
-                className="!border-white !text-white !hover:bg-blue-600 !px-6 !py-3 !rounded-full !font-medium"
+                className="!border-white !text-white hover:!bg-blue-600 !px-6 !py-3 !rounded-full !font-medium"
               >
                 Contact Us
               </Button>
@@ -666,7 +666,7 @@ const About = () => {
               <Button
                 variant="outlined"
                 onClick={() => navigate("/contact")}
-                className="!border-blue-600 !text-blue-600 !hover:bg-blue-50 !px-6 !py-2.5 !rounded-lg !font-medium"
+                className="!border-blue-600 !text-blue-600 hover:!bg-blue-50 !px-6 !py-2.5 !rounded-lg !font-medium"
               >
                 Contact Support
               </Button>
@@ -695,7 +695,7 @@ const About = () => {
                   size="large"
                   startIcon={<Zap />}
                   onClick={() => navigate("/dashboard")}
-                  className="!bg-blue-600 !hover:bg-blue-700 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
+                  className="!bg-blue-600 hover:!bg-blue-700 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
                 >
                   Upload Devices
                 </Button>
@@ -705,7 +705,7 @@ const About = () => {
                   size="large"
                   startIcon={<Zap />}
                   onClick={() => setAuthModal("register")}
-                  className="!bg-blue-600 !hover:bg-blue-700 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
+                  className="!bg-blue-600 hover:!bg-blue-700 !px-6 !py-3 !rounded-full !font-medium !shadow-md"
                 >
                   Get Started
                 </Button>

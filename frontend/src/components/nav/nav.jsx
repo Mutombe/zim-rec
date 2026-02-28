@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -166,14 +166,14 @@ export const AuthModals = ({ openType, onClose }) => {
         <motion.div
           initial={{ scale: 0.95 }}
           animate={{ scale: 1 }}
-          className="p-6 space-y-6 space-x-4"
+          className="p-6 space-y-6"
         >
           <div className="text-center">
-            <div className="mx-auto w-20 h-16 mb-4">
+            <div className="mx-auto w-16 h-16 mb-4">
               <img
                 src="/logo.png"
                 alt="Zim-REC Logo"
-                className="rounded-2xl w-full h-full"
+                className="rounded-2xl w-full h-full object-contain"
               />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -218,8 +218,6 @@ export const AuthModals = ({ openType, onClose }) => {
               />
             )}
 
-            <Divider className="!my-4"></Divider>
-
             <TextField
               fullWidth
               label="Username"
@@ -233,7 +231,6 @@ export const AuthModals = ({ openType, onClose }) => {
                 ),
               }}
             />
-            <Divider className="!my-4"></Divider>
             <TextField
               fullWidth
               label="Password"
@@ -256,7 +253,7 @@ export const AuthModals = ({ openType, onClose }) => {
             size="large"
             onClick={handleSubmit}
             disabled={status === "loading"}
-            className="!bg-green-600 !hover:bg-green-700 !rounded-xl !py-3 !text-base !font-semibold !shadow-lg"
+            className="!bg-green-600 hover:!bg-green-700 !rounded-xl !py-3 !text-base !font-semibold !shadow-lg"
           >
             {status === "loading" ? (
               <span className="animate-pulse">Processing...</span>
@@ -305,8 +302,8 @@ export function Logo() {
   return (
     <div className="flex items-center">
       <Link to="/" className="flex-shrink-0 flex items-center">
-        <div className="w-15 h-15 mr-2 mt-2">
-          <img src="/logo.png" alt="Zim-REC Logo" className="rounded-full" />
+        <div className="w-10 h-10 mr-2">
+          <img src="/logo.png" alt="Zim-REC Logo" className="rounded-full w-full h-full object-contain" />
         </div>
       </Link>
     </div>
@@ -321,6 +318,7 @@ export const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notificationAnchor, setNotificationAnchor] = useState(null);
   const isMobile = useMediaQuery("(max-width:768px)");
+  const location = useLocation();
   const isAdmin = user?.is_superuser;
 
   const handleUserMenuClick = (event) => {
@@ -357,18 +355,27 @@ export const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex md:items-center md:space-x-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.path}
-                className="text-gray-700 hover:text-green-600 flex items-center px-3 py-2 rounded-md hover:bg-green-50 transition-colors group"
-              >
-                <span className="text-green-600 mr-2 group-hover:scale-110 transition-transform">
-                  {link.icon}
-                </span>
-                {link.name}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.path;
+              return (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  className={`flex items-center px-3 py-2 rounded-md transition-colors group ${
+                    isActive
+                      ? "text-green-700 bg-green-50 font-semibold"
+                      : "text-gray-700 hover:text-green-600 hover:bg-green-50"
+                  }`}
+                >
+                  <span className={`mr-2 group-hover:scale-110 transition-transform ${
+                    isActive ? "text-green-700" : "text-green-600"
+                  }`}>
+                    {link.icon}
+                  </span>
+                  {link.name}
+                </Link>
+              );
+            })}
 
             {isAuthenticated && (
               <>
@@ -408,10 +415,11 @@ export const Navbar = () => {
             {/* Mobile Menu Button */}
             {/* Right Section - Mobile Menu Button */}
             <button
-              className="block md:hidden" // Show on mobile, hide on desktop
+              className="block md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
               onClick={() => setMobileMenuOpen(true)}
+              aria-label="Open navigation menu"
             >
-              <Menu className="h-6 w-6 text-gray-900" />
+              <Menu className="h-6 w-6 text-gray-700" />
             </button>
 
             {/* Search Button 
@@ -429,7 +437,7 @@ export const Navbar = () => {
                 <div className="flex items-center gap-1">
                   <Button
                     onClick={handleUserMenuClick}
-                    className="!flex !items-center !space-x-2 !px-2 !text-gray-700 !hover:bg-green-50"
+                    className="!flex !items-center !space-x-2 !px-2 !text-gray-700 hover:!bg-green-50"
                     endIcon={<ChevronDown size={16} />}
                   >
                     <Avatar className="!h-8 !w-8 !bg-green-600">
@@ -445,7 +453,7 @@ export const Navbar = () => {
                   variant="outlined"
                   startIcon={<LogIn size={18} />}
                   onClick={() => setAuthModal("login")}
-                  className="!border-green-600 !text-green-600 !hover:bg-green-50"
+                  className="!border-green-600 !text-green-600 hover:!bg-green-50"
                 >
                   Sign In
                 </Button>
@@ -453,7 +461,7 @@ export const Navbar = () => {
                   variant="contained"
                   startIcon={<UserPlus size={18} />}
                   onClick={() => setAuthModal("register")}
-                  className="!bg-green-600 !hover:bg-green-700"
+                  className="!bg-green-600 hover:!bg-green-700"
                 >
                   Register
                 </Button>
@@ -492,7 +500,7 @@ export const Navbar = () => {
                 </IconButton>
               </div>
 
-              <div className="mt-6 space-y-1 flex-1">
+              <div className="mt-6 space-y-1 flex-1 flex flex-col">
                 {/* Search bar for mobile */}
                 <div className="relative mb-6">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -603,7 +611,7 @@ export const Navbar = () => {
                           setAuthModal("register");
                           setMobileMenuOpen(false);
                         }}
-                        className="!bg-green-600 !hover:bg-green-700"
+                        className="!bg-green-600 hover:!bg-green-700"
                       >
                         Register
                       </Button>
@@ -643,17 +651,11 @@ export const Navbar = () => {
         {isAdmin && (
           <MenuItem onClick={handleUserMenuClose} component={Link} to="/admin">
             <ListItemIcon>
-              <LayoutDashboard size={18} className="text-green-600" />
+              <Shield size={18} className="text-green-600" />
             </ListItemIcon>
             <ListItemText>Admin Dashboard</ListItemText>
           </MenuItem>
         )}
-        <MenuItem onClick={handleUserMenuClose} component={Link} to="/settings">
-          <ListItemIcon>
-            <Settings size={18} className="text-green-600" />
-          </ListItemIcon>
-          <ListItemText>Settings</ListItemText>
-        </MenuItem>
         <Divider />
         <MenuItem onClick={handleUserMenuClose} component={Link} to="/help">
           <ListItemIcon>

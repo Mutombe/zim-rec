@@ -289,7 +289,8 @@ const Contact = () => {
                       type="submit"
                       variant="contained"
                       size="large"
-                      className="!bg-emerald-500 !hover:bg-emerald-600 !py-3 !px-8 !rounded-full !shadow-md !transition-all !duration-300 !font-medium"
+                      fullWidth
+                      className="!bg-emerald-500 hover:!bg-emerald-600 !py-3 !rounded-xl !shadow-md !transition-all !duration-300 !font-medium"
                       startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Send />}
                       disabled={loading}
                     >
@@ -324,8 +325,8 @@ const Contact = () => {
                     <Typography variant="body2" className="text-gray-600">
                       8 Jackson Road, Hillside<br />
                       Harare, Zimbabwe
-                    </Typography>   <br />
-                    <Typography variant="body2" className="text-gray-600">
+                    </Typography>
+                    <Typography variant="body2" className="text-gray-600 mt-2">
                       NRZ Complex, Seke Road<br />
                       Harare, Zimbabwe
                     </Typography>
@@ -420,7 +421,7 @@ const Contact = () => {
         
         {/* Map Section - Now with actual Leaflet map */}
         <motion.div 
-          className="mt-12 rounded-2xl overflow-hidden shadow-lg h-64 md:h-80"
+          className="mt-12 rounded-2xl overflow-hidden shadow-lg h-72 md:h-96"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}

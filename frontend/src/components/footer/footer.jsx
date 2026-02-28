@@ -41,10 +41,10 @@ const Footer = () => {
   ];
 
   const quickLinks = [
-    { name: 'Home', path: '/home', icon: <Leaf size={16} /> },
+    { name: 'Home', path: '/', icon: <ChevronRight size={16} /> },
     { name: 'About', path: '/about', icon: <ChevronRight size={16} /> },
-    { name: 'Contact', path: '/contact', icon: <MapPin size={16} /> },
-    { name: 'Dashboard', path: '/dashboard', icon: <ChevronRight size={16} /> },
+    { name: 'Contact', path: '/contact', icon: <ChevronRight size={16} /> },
+    { name: 'Gallery', path: '/gallery', icon: <ChevronRight size={16} /> },
   ];
 
   // Animation variants
@@ -64,7 +64,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-gradient-to-b from-blue-600 to-blue-800 text-white mt-20 relative overflow-hidden">
+    <footer className="bg-gradient-to-b from-blue-600 to-blue-800 text-white relative overflow-hidden">
       {/* Decorative elements */}
       <div className="absolute -top-24 -right-24 w-64 h-64 bg-emerald-400 rounded-full opacity-20 blur-3xl"></div>
       <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-blue-300 rounded-full opacity-20 blur-3xl"></div>
@@ -80,14 +80,14 @@ const Footer = () => {
             {/* About Section */}
             <Grid item xs={12} md={4}>
               <motion.div variants={itemAnimation}>
-                <Link to="/" className="flex items-center space-x-2 mb-6">
-                <div className="bg-white p-2 rounded-full mr-2">
-        <img 
-          src="/logo.png" 
-          alt="Zim-REC Logo" 
-          className="h-6 w-6"
-        />
-      </div>
+                <Link to="/" className="flex items-center gap-3 mb-6">
+                  <div className="bg-white p-1.5 rounded-full">
+                    <img
+                      src="/logo.png"
+                      alt="Zim-REC Logo"
+                      className="h-8 w-8"
+                    />
+                  </div>
                   <Typography variant="h5" className="!font-bold !text-white">
                     Zim-REC
                   </Typography>
@@ -196,7 +196,7 @@ const Footer = () => {
                     >
                       <Button
                         variant="contained"
-                        className="!bg-emerald-500 !hover:bg-emerald-400 !text-blue-900 !font-medium !py-2 !normal-case !rounded-lg !shadow-lg !w-full"
+                        className="!bg-emerald-500 hover:!bg-emerald-400 !text-white !font-medium !py-2 !normal-case !rounded-lg !shadow-lg !w-full"
                         endIcon={<Send size={16} />}
                       >
                         Subscribe
