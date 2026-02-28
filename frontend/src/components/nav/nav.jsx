@@ -148,7 +148,7 @@ export const AuthModals = ({ openType, onClose }) => {
         <div className="p-7 space-y-6">
           {/* Header */}
           <div className="text-center">
-            <div className="mx-auto w-14 h-14 mb-4 rounded-xl overflow-hidden shadow-sm ring-2 ring-gray-100">
+            <div className="mx-auto w-14 h-14 mb-4  overflow-hidden">
               <img src="/logo.png" alt="Zim-REC Logo" className="w-full h-full object-contain" />
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-1">
