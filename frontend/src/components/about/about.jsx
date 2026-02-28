@@ -36,7 +36,7 @@ export function AnimatedLogo() {
   return (
     <div className="flex justify-center mb-4">
       <motion.div
-        className="w-16 h-16 rounded-full overflow-hidden"
+        className="w-full h-16 rounded-full overflow-hidden"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ type: "spring", stiffness: 260, damping: 20 }}
