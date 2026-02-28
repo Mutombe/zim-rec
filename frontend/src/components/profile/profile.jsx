@@ -395,10 +395,10 @@ const ProfilePage = () => {
   );
 
   return (
-    <div className="max-w-6xl mx-auto p-4 md:p-6 pt-20">
+    <div className="max-w-6xl mx-auto p-4 md:p-6 pt-20 min-h-screen bg-gray-50">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-        <Typography variant="h4" className="font-bold">
+        <Typography variant="h4" className="!font-bold !text-gray-900">
           My Profile
         </Typography>
         <Chip
@@ -436,7 +436,7 @@ const ProfilePage = () => {
       </Tabs>
 
       {/* Content */}
-      <Paper className="p-4 md:p-6 rounded-2xl shadow-sm">
+      <Paper className="!p-5 md:!p-7 !rounded-2xl !shadow-sm !border !border-gray-100">
         {loading && !profileData ? (
           <ProfileSkeleton />
         ) : error ? (

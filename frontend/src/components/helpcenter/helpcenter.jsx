@@ -38,24 +38,24 @@ const HelpCenter = () => {
   };
 
   return (
-    <div className="pt-16 pb-16 min-h-screen bg-gray-50 px-4 sm:px-6 lg:px-8">
+    <div className="pt-20 pb-16 min-h-screen bg-gradient-to-b from-gray-50 to-white px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12 opacity-100 transform translate-y-0 transition-all duration-500">
-          <div className="bg-green-100 w-16 h-16 flex items-center justify-center rounded-2xl mx-auto mb-6">
-            <LifeBuoy className="text-green-600 w-8 h-8" />
+        <div className="text-center mb-12">
+          <div className="bg-emerald-50 w-14 h-14 flex items-center justify-center rounded-2xl mx-auto mb-5 border border-emerald-100">
+            <LifeBuoy className="text-emerald-600 w-7 h-7" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">Help Center</h1>
-          <p className="text-lg text-gray-600 mb-6">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">Help Center</h1>
+          <p className="text-base text-gray-500 max-w-lg mx-auto mb-8">
             Find answers to common questions about the Zim-REC platform and renewable energy certificates.
           </p>
 
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <div className="relative max-w-xl mx-auto">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <Search className="h-5 w-5 text-gray-400" />
             </div>
             <input
               type="text"
-              className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="block w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-sm transition-all"
               placeholder="Search help articles..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -63,26 +63,22 @@ const HelpCenter = () => {
           </div>
         </div>
 
-        <div className="space-y-4 mb-12">
-          <h2 className="text-2xl font-semibold text-gray-800">FAQs</h2>
+        <div className="space-y-3 mb-12">
+          <h2 className="text-xl font-bold text-gray-900 mb-5">Frequently Asked Questions</h2>
           {faqs.map((faq, index) => (
-            <div 
-              key={index} 
-              className="opacity-100 transition-opacity duration-500" 
-              style={{ transitionDelay: `${index * 100}ms` }}
-            >
-              <div className="border rounded-lg shadow-sm bg-white overflow-hidden">
+            <div key={index}>
+              <div className={`border rounded-xl bg-white overflow-hidden transition-all duration-200 ${openFaqIndex === index ? 'border-emerald-200 shadow-sm' : 'border-gray-100'}`}>
                 <button
                   onClick={() => toggleFaq(index)}
-                  className="w-full flex justify-between items-center p-4 text-left font-medium text-gray-800 hover:text-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-inset transition-colors"
+                  className="w-full flex justify-between items-center p-5 text-left text-sm font-semibold text-gray-800 hover:text-emerald-700 focus:outline-none transition-colors"
                 >
                   {faq.question}
-                  <ChevronDown 
-                    className={`h-5 w-5 text-gray-500 transform transition-transform ${openFaqIndex === index ? 'rotate-180' : ''}`} 
+                  <ChevronDown
+                    className={`h-4 w-4 text-gray-400 transform transition-transform duration-200 flex-shrink-0 ml-4 ${openFaqIndex === index ? 'rotate-180 text-emerald-500' : ''}`}
                   />
                 </button>
-                <div 
-                  className={`px-4 pb-4 text-gray-600 leading-relaxed transition-all duration-300 ease-in-out ${openFaqIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}
+                <div
+                  className={`px-5 text-sm text-gray-500 leading-relaxed transition-all duration-300 ease-in-out ${openFaqIndex === index ? 'max-h-96 opacity-100 pb-5' : 'max-h-0 opacity-0 overflow-hidden'}`}
                 >
                   {faq.answer}
                 </div>
@@ -91,40 +87,34 @@ const HelpCenter = () => {
           ))}
         </div>
 
-        <div className="bg-white p-8 rounded-xl shadow-lg transform scale-100 transition-transform duration-500">
+        <div className="bg-white p-7 sm:p-8 rounded-2xl shadow-sm border border-gray-100">
           <div className="text-center mb-6">
-            <div className="mx-auto mb-4 w-16 h-16 flex items-center justify-center">
-              <Mail className="text-green-600 w-8 h-8" />
+            <div className="mx-auto mb-4 w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center border border-blue-100">
+              <Mail className="text-blue-600 w-6 h-6" />
             </div>
-            <h2 className="text-2xl font-semibold">Still need help?</h2>
-            <p className="text-gray-600 mb-4">Contact our support team directly</p>
+            <h2 className="text-xl font-bold text-gray-900 mb-1">Still need help?</h2>
+            <p className="text-sm text-gray-500">Send us a message and we will get back to you within 24 hours</p>
           </div>
-          
-          <form className="space-y-4">
-            <div>
-              <input
-                type="email"
-                className="w-full p-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
-                placeholder="Your Email"
-              />
-            </div>
-            <div>
-              <input
-                type="text"
-                className="w-full p-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
-                placeholder="Subject"
-              />
-            </div>
-            <div>
-              <textarea
-                className="w-full p-3 border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
-                placeholder="Message"
-                rows="4"
-              ></textarea>
-            </div>
+
+          <form className="space-y-3.5">
+            <input
+              type="email"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-sm transition-all"
+              placeholder="Your Email"
+            />
+            <input
+              type="text"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-sm transition-all"
+              placeholder="Subject"
+            />
+            <textarea
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-sm transition-all"
+              placeholder="Describe your issue..."
+              rows="4"
+            ></textarea>
             <button
               type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-4 rounded-xl shadow-sm transition-all duration-200 text-sm"
             >
               Send Message
             </button>

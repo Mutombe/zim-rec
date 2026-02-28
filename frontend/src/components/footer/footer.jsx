@@ -13,20 +13,20 @@ import {
   Send, 
   Zap 
 } from 'lucide-react';
-import { Typography, Grid, TextField, Button } from '@mui/material';
+import { Typography, Grid } from '@mui/material';
 
 
 export function SidebarLogo() {
   return (
-    <Link to="/" className="flex items-center space-x-2 mb-6">
-      <div className="w-10 h-10 mr-2">
-        <img 
-          src="/api/placeholder/40/40" 
-          alt="Zim-REC Logo" 
-          className="rounded-full"
+    <Link to="/" className="flex items-center gap-2.5 mb-6">
+      <div className="w-9 h-9 bg-white rounded-lg p-0.5 overflow-hidden">
+        <img
+          src="/logo.png"
+          alt="Zim-REC Logo"
+          className="w-full h-full object-contain"
         />
       </div>
-      <Typography variant="h5" className="!font-bold !text-white">
+      <Typography variant="h5" className="!font-bold !text-white !tracking-tight">
         Zim-REC
       </Typography>
     </Link>
@@ -64,12 +64,12 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-gradient-to-b from-blue-600 to-blue-800 text-white relative overflow-hidden">
+    <footer className="bg-gradient-to-b from-gray-900 to-gray-950 text-white relative overflow-hidden">
       {/* Decorative elements */}
-      <div className="absolute -top-24 -right-24 w-64 h-64 bg-emerald-400 rounded-full opacity-20 blur-3xl"></div>
-      <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-blue-300 rounded-full opacity-20 blur-3xl"></div>
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
+      <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500 rounded-full opacity-[0.04] blur-3xl"></div>
+      <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-500 rounded-full opacity-[0.04] blur-3xl"></div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16 relative z-10">
         <motion.div
           variants={staggerContainer}
           initial="hidden"
@@ -80,33 +80,33 @@ const Footer = () => {
             {/* About Section */}
             <Grid item xs={12} md={4}>
               <motion.div variants={itemAnimation}>
-                <Link to="/" className="flex items-center gap-3 mb-6">
-                  <div className="bg-white p-1.5 rounded-full">
+                <Link to="/" className="flex items-center gap-2.5 mb-5">
+                  <div className="bg-white/10 backdrop-blur-sm p-1.5 rounded-lg border border-white/10">
                     <img
                       src="/logo.png"
                       alt="Zim-REC Logo"
-                      className="h-8 w-8"
+                      className="h-7 w-7"
                     />
                   </div>
-                  <Typography variant="h5" className="!font-bold !text-white">
+                  <Typography variant="h6" className="!font-bold !text-white !tracking-tight">
                     Zim-REC
                   </Typography>
                 </Link>
-                <Typography variant="body2" className="!text-blue-50 !leading-relaxed mb-6">
-                  Zimbabwe's premier platform for renewable energy certification and trading, 
+                <Typography variant="body2" className="!text-gray-400 !leading-relaxed mb-6 max-w-xs">
+                  Zimbabwe's premier platform for renewable energy certification and trading,
                   accelerating the transition to a sustainable energy ecosystem.
                 </Typography>
-                
-                <div className="flex space-x-4 mt-6">
+
+                <div className="flex space-x-3">
                   {socialLinks.map((social, index) => (
                     <motion.a
                       key={index}
                       href={social.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      whileHover={{ scale: 1.2, rotate: 5 }}
+                      whileHover={{ scale: 1.1, y: -2 }}
                       whileTap={{ scale: 0.95 }}
-                      className="bg-emerald-500 hover:bg-emerald-400 text-white p-2 rounded-full transition-all"
+                      className="bg-white/10 hover:bg-emerald-500 text-gray-400 hover:text-white p-2.5 rounded-lg transition-all duration-200 border border-white/5"
                       aria-label={social.label}
                     >
                       {social.icon}
@@ -119,18 +119,17 @@ const Footer = () => {
             {/* Quick Links */}
             <Grid item xs={6} md={2}>
               <motion.div variants={itemAnimation}>
-                <Typography variant="subtitle1" className="!font-bold !mb-5 !text-white !flex !items-center">
-                  <ChevronRight className="text-emerald-300 mr-1" size={20} />
+                <Typography variant="subtitle2" className="!font-semibold !mb-5 !text-gray-300 !uppercase !text-xs !tracking-wider">
                   Quick Links
                 </Typography>
                 <div className="space-y-3">
                   {quickLinks.map((link) => (
-                    <motion.div key={link.name} whileHover={{ x: 8 }} className="transition-all">
-                      <Link 
-                        to={link.path} 
-                        className="!text-blue-50 hover:!text-emerald-300 !no-underline flex items-center"
+                    <motion.div key={link.name} whileHover={{ x: 4 }} className="transition-all">
+                      <Link
+                        to={link.path}
+                        className="!text-gray-400 hover:!text-emerald-400 !no-underline flex items-center text-sm transition-colors"
                       >
-                        <span className="text-emerald-300 mr-2">{link.icon}</span>
+                        <span className="text-emerald-500/60 mr-2">{link.icon}</span>
                         {link.name}
                       </Link>
                     </motion.div>
@@ -142,29 +141,28 @@ const Footer = () => {
             {/* Contact Information */}
             <Grid item xs={6} md={3}>
               <motion.div variants={itemAnimation}>
-                <Typography variant="subtitle1" className="!font-bold !mb-5 !text-white !flex !items-center">
-                  <MapPin className="text-emerald-300 mr-1" size={20} />
+                <Typography variant="subtitle2" className="!font-semibold !mb-5 !text-gray-300 !uppercase !text-xs !tracking-wider">
                   Contact Us
                 </Typography>
                 <div className="space-y-4">
-                  <motion.div whileHover={{ x: 5 }} className="flex items-center space-x-3">
-                    <div className="bg-emerald-500 p-2 rounded-full">
-                      <Phone className="text-white" size={16} />
+                  <div className="flex items-start space-x-3">
+                    <div className="bg-white/10 p-2 rounded-lg border border-white/5 mt-0.5">
+                      <Phone className="text-emerald-400" size={14} />
                     </div>
-                    <Typography variant="body2" className="!text-blue-50">
-                    +263 71 678 0112<br />
-                    +263 77 770 0465 <br />
+                    <Typography variant="body2" className="!text-gray-400 !text-sm !leading-relaxed">
+                      +263 71 678 0112<br />
+                      +263 77 770 0465<br />
                       +263 78 004 9196
                     </Typography>
-                  </motion.div>
-                  <motion.div whileHover={{ x: 5 }} className="flex items-center space-x-3">
-                    <div className="bg-emerald-500 p-2 rounded-full">
-                      <Mail className="text-white" size={16} />
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="bg-white/10 p-2 rounded-lg border border-white/5">
+                      <Mail className="text-emerald-400" size={14} />
                     </div>
-                    <Typography variant="body2" className="!text-blue-50">
+                    <Typography variant="body2" className="!text-gray-400 !text-sm">
                       admin@zim-rec.co.zw
                     </Typography>
-                  </motion.div>
+                  </div>
                 </div>
               </motion.div>
             </Grid>
@@ -172,40 +170,27 @@ const Footer = () => {
             {/* Newsletter */}
             <Grid item xs={12} md={3}>
               <motion.div variants={itemAnimation}>
-                <Typography variant="subtitle1" className="!font-bold !mb-5 !text-white !flex !items-center">
-                  <Send className="text-emerald-300 mr-1" size={20} />
+                <Typography variant="subtitle2" className="!font-semibold !mb-5 !text-gray-300 !uppercase !text-xs !tracking-wider">
                   Stay Updated
                 </Typography>
-                <div className="space-y-4">
-                  <div className="relative">
-                    <TextField
-                      fullWidth
-                      variant="outlined"
-                      size="small"
-                      placeholder="Enter your email"
-                      className="bg-blue-50 rounded-lg"
-                      InputProps={{
-                        className: "!text-sm !py-1",
-                        startAdornment: <Mail size={16} className="text-blue-700 mr-2" />,
-                      }}
-                    />
-                    <motion.div 
-                      whileHover={{ scale: 1.05 }} 
-                      whileTap={{ scale: 0.95 }}
-                      className="mt-3"
-                    >
-                      <Button
-                        variant="contained"
-                        className="!bg-emerald-500 hover:!bg-emerald-400 !text-white !font-medium !py-2 !normal-case !rounded-lg !shadow-lg !w-full"
-                        endIcon={<Send size={16} />}
-                      >
-                        Subscribe
-                      </Button>
-                    </motion.div>
-                  </div>
-                  <Typography variant="caption" className="!text-blue-100 !block !mt-2">
-                    Join our newsletter for updates on renewable energy projects and REC trading opportunities.
+                <div className="space-y-3">
+                  <Typography variant="body2" className="!text-gray-400 !text-sm !leading-relaxed !mb-4">
+                    Get updates on renewable energy projects and REC trading opportunities.
                   </Typography>
+                  <div className="flex gap-2">
+                    <input
+                      type="email"
+                      placeholder="Enter your email"
+                      className="flex-1 bg-white/10 border border-white/10 rounded-lg px-3.5 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+                    />
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 rounded-lg transition-colors flex items-center gap-1.5 text-sm font-medium whitespace-nowrap"
+                    >
+                      <Send size={14} />
+                    </motion.button>
+                  </div>
                 </div>
               </motion.div>
             </Grid>
@@ -218,26 +203,21 @@ const Footer = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
           viewport={{ once: true }}
-          className="border-t border-blue-500 mt-10 pt-6"
+          className="border-t border-white/10 mt-12 pt-6"
         >
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} md={6}>
-              <Typography variant="body2" className="!text-blue-100 !text-center md:!text-left">
-                © {new Date().getFullYear()} Zim-REC. All rights reserved.
+              <Typography variant="body2" className="!text-gray-500 !text-center md:!text-left !text-xs">
+                &copy; {new Date().getFullYear()} Zim-REC. All rights reserved.
               </Typography>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Typography variant="body2" className="!text-blue-100 !text-center md:!text-right">
-                A partnership between AICTS and Silver Carbon for a sustainable Zimbabwe.
+              <Typography variant="body2" className="!text-gray-500 !text-center md:!text-right !text-xs">
+                A partnership between AICTS and Silver Carbon &middot; Developed by{" "}
+                <a href="https://zettabyte.co.zw" className="!text-emerald-400 hover:!text-emerald-300 !transition-colors" target="_blank" rel="noopener noreferrer">Zettabyte</a>
               </Typography>
             </Grid>
           </Grid>
-
-          <div className="mt-4 text-center">
-            <Typography variant="body2" className="!text-blue-100">
-              Developed by <a href="https://zettabyte.co.zw" className="!text-emerald-300 hover:!text-white !transition-colors" target="_blank" rel="noopener noreferrer">Zettabyte</a>
-            </Typography>
-          </div>
         </motion.div>
       </div>
     </footer>

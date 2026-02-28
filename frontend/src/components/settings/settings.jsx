@@ -86,10 +86,10 @@ const Settings = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <div className="bg-green-100 w-fit p-4 rounded-2xl mb-6">
-            <Shield className="text-green-600 w-8 h-8" />
+          <div className="bg-emerald-50 w-fit p-3 rounded-xl mb-5 border border-emerald-100">
+            <Shield className="text-emerald-600 w-6 h-6" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900">Account Settings</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Account Settings</h1>
         </motion.div>
 
         {error && (
@@ -98,14 +98,14 @@ const Settings = () => {
           </Alert>
         )}
 
-        <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Profile Picture Upload */}
-            <div className="flex items-center space-x-4 mb-6">
-              <label htmlFor="profile-picture" className="cursor-pointer">
-                <Avatar 
-                  src={formData.previewImage} 
-                  className="!w-20 !h-20 !bg-green-100"
+            <div className="flex items-center space-x-5 mb-8 pb-6 border-b border-gray-100">
+              <label htmlFor="profile-picture" className="cursor-pointer group">
+                <Avatar
+                  src={formData.previewImage}
+                  className="!w-20 !h-20 !bg-emerald-50 !border-2 !border-gray-100 group-hover:!border-emerald-200 !transition-colors"
                 >
                   {profileData?.username?.[0]?.toUpperCase()}
                 </Avatar>
@@ -165,9 +165,9 @@ const Settings = () => {
                 disabled
                 className="!mb-4"
               />
-              <Button 
-                variant="outlined" 
-                className="!border-green-600 !text-green-600"
+              <Button
+                variant="outlined"
+                className="!border-gray-200 !text-gray-700 hover:!border-emerald-500 hover:!text-emerald-700 !rounded-lg !normal-case !font-medium"
                 component={Link}
                 to="/change-password"
               >
@@ -176,12 +176,12 @@ const Settings = () => {
             </div>
 
             {/* Submit Button */}
-            <div className="flex justify-end">
+            <div className="flex justify-end pt-4 border-t border-gray-100">
               <Button
                 type="submit"
                 variant="contained"
                 size="large"
-                className="!bg-green-600 hover:!bg-green-700"
+                className="!bg-emerald-600 hover:!bg-emerald-700 !rounded-xl !shadow-sm !normal-case !font-medium !px-8"
                 disabled={loading}
               >
                 {loading ? (

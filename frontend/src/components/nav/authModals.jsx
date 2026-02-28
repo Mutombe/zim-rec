@@ -104,114 +104,140 @@ export const AuthModals = ({ openType, onClose }) => {
 
   return (
     <>
-      <Dialog open={!!openType} onClose={onClose} maxWidth="xs" fullWidth>
+      <Dialog
+        open={!!openType}
+        onClose={onClose}
+        maxWidth="xs"
+        fullWidth
+        slotProps={{
+          paper: {
+            className: "!rounded-2xl !overflow-hidden",
+          },
+        }}
+      >
         <motion.div
-          initial={{ scale: 0.95 }}
-          animate={{ scale: 1 }}
-          className="p-6 space-y-6"
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.2 }}
         >
-          <div className="text-center">
-            <div className="mx-auto w-16 h-16 mb-4">
-              <img
-                src="/logo.png"
-                alt="Zim-REC Logo"
-                className="rounded-2xl w-full h-full"
-              />
+          {/* Gradient header strip */}
+          <div className="h-1.5 bg-gradient-to-r from-emerald-500 via-blue-500 to-emerald-500" />
+
+          <div className="p-7 space-y-5">
+            <div className="text-center">
+              <div className="mx-auto w-14 h-14 mb-4 rounded-xl overflow-hidden shadow-sm ring-2 ring-gray-100">
+                <img
+                  src="/logo.png"
+                  alt="Zim-REC Logo"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900 mb-1">
+                {view === "login" ? "Welcome back" : "Create your account"}
+              </h2>
+              <p className="text-sm text-gray-500">
+                {view === "login"
+                  ? "Sign in to continue to your dashboard"
+                  : "Get started with free REC trading"}
+              </p>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              {view === "login" ? "Welcome Back!" : "Join Zim-REC"}
-            </h2>
-            <p className="text-gray-600">
-              {view === "login"
-                ? "Sign in to continue to your account"
-                : "Create your free REC trading account"}
-            </p>
-          </div>
 
-          {error && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="bg-red-50 p-3 rounded-lg text-red-700 text-sm"
-            >
-              {view === "register"
-                ? getRegistrationError()
-                : typeof error === "object"
-                ? error.detail || JSON.stringify(error)
-                : error}
-            </motion.div>
-          )}
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-red-50 border border-red-100 p-3.5 rounded-xl text-red-700 text-sm"
+              >
+                {view === "register"
+                  ? getRegistrationError()
+                  : typeof error === "object"
+                  ? error.detail || JSON.stringify(error)
+                  : error}
+              </motion.div>
+            )}
 
-          <div className="space-y-4">
-            {view === "register" && (
+            <div className="space-y-3.5">
+              {view === "register" && (
+                <TextField
+                  fullWidth
+                  label="Email"
+                  type="email"
+                  size="small"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  InputProps={{
+                    startAdornment: <AtSign className="text-gray-400 mr-2" size={18} />,
+                  }}
+                  className="[&_.MuiOutlinedInput-root]:!rounded-xl"
+                />
+              )}
+
               <TextField
                 fullWidth
-                label="Email"
-                type="email"
-                value={formData.email}
+                label="Username"
+                size="small"
+                value={formData.username}
                 onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
+                  setFormData({ ...formData, username: e.target.value })
                 }
                 InputProps={{
-                  startAdornment: <AtSign className="text-gray-400 mr-2" />,
+                  startAdornment: <User className="text-gray-400 mr-2" size={18} />,
                 }}
+                className="[&_.MuiOutlinedInput-root]:!rounded-xl"
               />
-            )}
+              <TextField
+                fullWidth
+                label="Password"
+                type="password"
+                size="small"
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                InputProps={{
+                  startAdornment: <Lock className="text-gray-400 mr-2" size={18} />,
+                }}
+                className="[&_.MuiOutlinedInput-root]:!rounded-xl"
+              />
+            </div>
 
-            <TextField
+            <Button
               fullWidth
-              label="Username"
-              value={formData.username}
-              onChange={(e) =>
-                setFormData({ ...formData, username: e.target.value })
-              }
-              InputProps={{
-                startAdornment: <User className="text-gray-400 mr-2" />,
-              }}
-            />
-            <TextField
+              variant="contained"
+              size="large"
+              onClick={handleSubmit}
+              disabled={status === "loading"}
+              className="!bg-emerald-600 hover:!bg-emerald-700 !rounded-xl !py-3 !text-sm !font-semibold !shadow-sm !normal-case"
+            >
+              {status === "loading" ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Processing...
+                </span>
+              ) : view === "login" ? (
+                "Sign In"
+              ) : (
+                "Create Account"
+              )}
+            </Button>
+
+            <div className="relative my-5">
+              <Divider className="!text-gray-400 !text-xs">or</Divider>
+            </div>
+
+            <Button
               fullWidth
-              label="Password"
-              type="password"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              InputProps={{
-                startAdornment: <Lock className="text-gray-400 mr-2" />,
-              }}
-            />
+              variant="outlined"
+              onClick={() => setView(view === "login" ? "register" : "login")}
+              className="!rounded-xl !py-2.5 !text-gray-600 !border-gray-200 hover:!border-emerald-300 hover:!bg-emerald-50 !normal-case !text-sm !font-medium"
+            >
+              {view === "login"
+                ? "Don't have an account? Sign up"
+                : "Already have an account? Sign in"}
+            </Button>
           </div>
-
-          <Button
-            fullWidth
-            variant="contained"
-            size="large"
-            onClick={handleSubmit}
-            disabled={status === "loading"}
-            className="!bg-green-600 hover:!bg-green-700 !rounded-xl !py-3 !text-base !font-semibold !shadow-lg"
-          >
-            {status === "loading" ? (
-              <span className="animate-pulse">Processing...</span>
-            ) : view === "login" ? (
-              "Sign In"
-            ) : (
-              "Create Account"
-            )}
-          </Button>
-
-          <Divider className="!my-6">or</Divider>
-
-          <Button
-            fullWidth
-            variant="outlined"
-            onClick={() => setView(view === "login" ? "register" : "login")}
-            className="!rounded-xl !py-2.5 !text-gray-700 !border-green-600 !text-green-700"
-          >
-            {view === "login"
-              ? "Create New Account"
-              : "Already have an account? Sign In"}
-          </Button>
         </motion.div>
       </Dialog>
 

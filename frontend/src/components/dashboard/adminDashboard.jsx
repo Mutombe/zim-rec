@@ -487,9 +487,9 @@ const AdminDashboard = () => {
       variants={staggerChildren}
     >
       <div className="max-w-7xl mx-auto">
-        <motion.div variants={fadeIn} className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600">
+        <motion.div variants={fadeIn} className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">Admin Dashboard</h1>
+          <p className="text-sm text-gray-500">
             Manage devices and issue requests across all users
           </p>
         </motion.div>
@@ -497,49 +497,49 @@ const AdminDashboard = () => {
         {/* Dashboard Stats Cards */}
         <motion.div
           variants={fadeIn}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
         >
-          <div className="bg-white rounded-lg shadow p-4 flex items-center">
-            <div className="rounded-full bg-blue-100 p-3 mr-4">
-              <BarChart2 className="h-6 w-6 text-blue-600" />
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center">
+            <div className="rounded-xl bg-blue-50 p-3 mr-4 border border-blue-100">
+              <BarChart2 className="h-5 w-5 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">Total Devices</p>
-              <p className="text-xl font-semibold">{allDevices.length}</p>
+              <p className="text-xs text-gray-500 font-medium">Total Devices</p>
+              <p className="text-xl font-bold text-gray-900">{allDevices.length}</p>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-4 flex items-center">
-            <div className="rounded-full bg-yellow-100 p-3 mr-4">
-              <Clock className="h-6 w-6 text-yellow-600" />
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center">
+            <div className="rounded-xl bg-yellow-50 p-3 mr-4 border border-yellow-100">
+              <Clock className="h-5 w-5 text-yellow-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">Pending Devices</p>
+              <p className="text-xs text-gray-500 font-medium">Pending Devices</p>
               <p className="text-xl font-semibold">
                 {pendingStats.pendingDevices}
               </p>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-4 flex items-center">
-            <div className="rounded-full bg-red-100 p-3 mr-4">
-              <AlertTriangle className="h-6 w-6 text-red-600" />
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center">
+            <div className="rounded-xl bg-red-50 p-3 mr-4 border border-red-100">
+              <AlertTriangle className="h-5 w-5 text-red-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">Open Issues</p>
-              <p className="text-xl font-semibold">
+              <p className="text-xs text-gray-500 font-medium">Open Issues</p>
+              <p className="text-xl font-bold text-gray-900">
                 {pendingStats.pendingRequests}
               </p>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-4 flex items-center">
-            <div className="rounded-full bg-green-100 p-3 mr-4">
-              <FileText className="h-6 w-6 text-green-600" />
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center">
+            <div className="rounded-xl bg-emerald-50 p-3 mr-4 border border-emerald-100">
+              <FileText className="h-5 w-5 text-emerald-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">Energy Types</p>
-              <p className="text-xl font-semibold">
+              <p className="text-xs text-gray-500 font-medium">Energy Types</p>
+              <p className="text-xl font-bold text-gray-900">
                 {Object.keys(energyStats).length}
               </p>
             </div>
@@ -549,7 +549,7 @@ const AdminDashboard = () => {
         {/* Tabs for Devices and Issue Requests */}
         <motion.div
           variants={fadeIn}
-          className="bg-white rounded-lg shadow mb-6"
+          className="bg-white rounded-xl shadow-sm border border-gray-100 mb-6"
         >
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <Tabs

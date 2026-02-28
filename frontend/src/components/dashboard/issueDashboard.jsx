@@ -254,51 +254,54 @@ const IssueRequestDashboard = () => {
       <div className="max-w-7xl mx-auto">
         <motion.div variants={fadeIn}>
           {/* Header with Stats */}
-          <div className="bg-white rounded-lg shadow mb-8">
-            <div className="p-6 border-b">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-8">
+            <div className="p-6 border-b border-gray-100">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Issue Request Management
-                </h2>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">
+                    Issue Request Management
+                  </h2>
+                  <p className="text-sm text-gray-500 mt-1">Track and manage your REC issuance requests</p>
+                </div>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleCreate}
-                  className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-400 to-blue-400 text-white rounded-md hover:from-green-500 hover:to-blue-500"
+                  className="inline-flex items-center px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium text-sm shadow-sm transition-colors"
                 >
-                  <PlusCircle className="w-5 h-5 mr-2" />
+                  <PlusCircle className="w-4 h-4 mr-2" />
                   <span>New Request</span>
                 </motion.button>
               </div>
             </div>
 
             {/* Stats Grid */}
-            <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-5 grid grid-cols-2 lg:grid-cols-4 gap-4">
               {stats.map((stat, index) => (
-                <motion.div 
-                  key={index} 
-                  className={`${stat.color} rounded-xl p-4 transition-all duration-300 hover:shadow-md`}
-                  whileHover={{ y: -5 }}
+                <motion.div
+                  key={index}
+                  className={`${stat.color} rounded-xl p-4 border border-gray-100/50 transition-all duration-300 hover:shadow-sm`}
+                  whileHover={{ y: -3 }}
                 >
                   <div className="flex justify-between items-start">
-                    <p className="text-gray-700 font-medium">{stat.title}</p>
-                    {stat.icon}
+                    <p className="text-gray-600 text-sm font-medium">{stat.title}</p>
+                    <div className="opacity-60">{stat.icon}</div>
                   </div>
-                  <p className="text-2xl font-bold mt-2">{stat.value}</p>
+                  <p className="text-2xl font-bold mt-2 text-gray-900">{stat.value}</p>
                 </motion.div>
               ))}
             </div>
           </div>
 
           {/* Search and Filters */}
-          <div className="bg-white rounded-lg shadow mb-8">
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-8">
+            <div className="p-5">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
                 <div className="md:col-span-5 relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <input
                     type="text"
-                    className="w-full pl-10 pr-4 py-2 border rounded-md"
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
                     placeholder="Search requests..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -307,7 +310,7 @@ const IssueRequestDashboard = () => {
 
                 <div className="md:col-span-4">
                   <select
-                    className="w-full border rounded-md px-3 py-2"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
                   >
@@ -322,7 +325,7 @@ const IssueRequestDashboard = () => {
                 <div className="md:col-span-3">
                   <button
                     onClick={handleRefresh}
-                    className="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+                    className="w-full inline-flex items-center justify-center px-4 py-2.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-sm text-gray-600 font-medium transition-colors"
                   >
                     <RefreshCw className="w-4 h-4 mr-2" /> Refresh
                   </button>
@@ -332,7 +335,7 @@ const IssueRequestDashboard = () => {
           </div>
 
           {/* Requests Table */}
-          <div className="bg-white rounded-lg shadow mb-8">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-8">
             {/* Mobile card view */}
             <div className="md:hidden space-y-3 p-4">
               <AnimatePresence>
@@ -381,11 +384,11 @@ const IssueRequestDashboard = () => {
             {/* Desktop table view */}
             <div className="hidden md:block overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-50/80">
                   <tr>
-                    <th 
+                    <th
                       onClick={() => handleSort("id")}
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                      className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                     >
                       <div className="flex items-center gap-2">
                         ID
@@ -463,15 +466,15 @@ const IssueRequestDashboard = () => {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white divide-y divide-gray-100">
                   <AnimatePresence>
-                    {paginatedRequests.map((request) => (
-                      <motion.tr 
-                        key={request.id} 
+                    {paginatedRequests.map((request, idx) => (
+                      <motion.tr
+                        key={request.id}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="hover:bg-gray-50 transition-colors"
+                        className={`hover:bg-emerald-50/40 transition-colors ${idx % 2 === 0 ? "bg-white" : "bg-gray-50/50"}`}
                       >
                         <td className="px-6 py-4 whitespace-nowrap text-sm">{request.id}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -552,23 +555,23 @@ const IssueRequestDashboard = () => {
             )}
 
             {/* Pagination */}
-            <div className="px-6 py-4 border-t flex justify-between items-center">
-              <div className="text-sm text-gray-500">
+            <div className="px-6 py-3.5 border-t border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row justify-between items-center gap-3">
+              <div className="text-xs text-gray-500 font-medium">
                 Showing {page * rowsPerPage + 1} to {Math.min((page + 1) * rowsPerPage, filteredAndSortedRequests.length)} of{' '}
-                <span className="font-medium">{filteredAndSortedRequests.length}</span> results
+                <span className="text-gray-700">{filteredAndSortedRequests.length}</span> results
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => setPage(Math.max(0, page - 1))}
                   disabled={page === 0}
-                  className="px-3 py-1 border rounded-md hover:bg-gray-50 disabled:opacity-50"
+                  className="px-4 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 text-sm font-medium text-gray-600 transition-colors"
                 >
                   Previous
                 </button>
                 <button
                   onClick={() => setPage(page + 1)}
                   disabled={(page + 1) * rowsPerPage >= filteredAndSortedRequests.length}
-                  className="px-3 py-1 border rounded-md hover:bg-gray-50 disabled:opacity-50"
+                  className="px-4 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 text-sm font-medium text-gray-600 transition-colors"
                 >
                   Next
                 </button>
@@ -793,16 +796,16 @@ const IssueRequestDashboard = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3 p-6 border-t bg-gray-50">
+              <div className="flex justify-end gap-3 p-6 border-t border-gray-100 bg-gray-50/50">
                 <button
                   onClick={() => setOpenDialog(false)}
-                  className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  className="px-5 py-2.5 text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-100 text-sm font-medium transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="px-4 py-2 bg-gradient-to-r from-green-400 to-blue-400 text-white rounded-lg hover:from-green-500 hover:to-blue-500"
+                  className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium shadow-sm transition-colors"
                 >
                   {currentRequest?.id ? 'Update Request' : 'Create Request'}
                 </button>

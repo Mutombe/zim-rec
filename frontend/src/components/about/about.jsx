@@ -135,7 +135,7 @@ const About = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white pt-16">
+    <div className="min-h-screen bg-white pt-20">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-white py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -502,9 +502,9 @@ const About = () => {
           >
             {benefitItems.map((item, index) => (
               <motion.div key={index} variants={itemAnimation}>
-                <Card className="h-full shadow-md hover:shadow-lg transition-shadow duration-300">
-                  <CardContent className="p-6">
-                    <div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mb-4">
+                <Card className="h-full !shadow-sm hover:!shadow-md !transition-shadow !duration-300 !rounded-2xl !border !border-gray-100">
+                  <CardContent className="!p-6">
+                    <div className="bg-blue-50 w-12 h-12 rounded-xl flex items-center justify-center mb-4 border border-blue-100">
                       <div className="text-blue-600">{item.icon}</div>
                     </div>
                     <Typography

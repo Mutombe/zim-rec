@@ -247,17 +247,20 @@ const UserDashboard = () => {
     >
       <div className="max-w-7xl mx-auto">
         <motion.div variants={fadeIn}>
-          <div className="bg-white rounded-lg shadow mb-8">
-            <div className="p-6 border-b">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-8">
+            <div className="p-6 border-b border-gray-100">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Device Management
-                </h2>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">
+                    Device Management
+                  </h2>
+                  <p className="text-sm text-gray-500 mt-1">Register and manage your renewable energy devices</p>
+                </div>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setOpen(true)}
-                  className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-400 to-blue-400 text-white rounded-md hover:bg-blue-700"
+                  className="inline-flex items-center px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium text-sm shadow-sm transition-colors"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add New Device
@@ -265,13 +268,13 @@ const UserDashboard = () => {
               </div>
             </div>
 
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
+            <div className="p-5">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-3 mb-6">
                 <div className="md:col-span-4 relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <input
                     type="text"
-                    className="w-full pl-10 pr-4 py-2 border rounded-md"
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
                     placeholder="Search devices..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -280,7 +283,7 @@ const UserDashboard = () => {
 
                 <div className="md:col-span-3">
                   <select
-                    className="w-full border rounded-md px-3 py-2"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
                   >
@@ -294,7 +297,7 @@ const UserDashboard = () => {
 
                 <div className="md:col-span-3">
                   <select
-                    className="w-full border rounded-md px-3 py-2"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
                     value={filterFuel}
                     onChange={(e) => setFilterFuel(e.target.value)}
                   >
@@ -310,7 +313,7 @@ const UserDashboard = () => {
                 <div className="md:col-span-2">
                   <button
                     onClick={handleRefresh}
-                    className="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+                    className="w-full inline-flex items-center justify-center px-4 py-2.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-sm text-gray-600 font-medium transition-colors"
                   >
                     <RefreshCw className="w-4 h-4 mr-2" /> Refresh
                   </button>
@@ -373,7 +376,7 @@ const UserDashboard = () => {
               {/* Desktop table view */}
               <div className="hidden md:block overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-gray-50/80">
                     <tr>
                       {[
                         "Device Name",
@@ -388,7 +391,7 @@ const UserDashboard = () => {
                           onClick={() =>
                             handleSort(header.toLowerCase().replace(/ /g, "_"))
                           }
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                         >
                           <div className="flex items-center gap-2">
                             {header}
@@ -402,20 +405,20 @@ const UserDashboard = () => {
                           </div>
                         </th>
                       ))}
-                      <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3.5 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-white divide-y divide-gray-100">
                     <AnimatePresence>
-                      {sortedAndFilteredDevices.map((device) => (
+                      {sortedAndFilteredDevices.map((device, idx) => (
                         <motion.tr
                           key={device.id}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
-                          className="hover:bg-gray-50 transition-colors"
+                          className={`hover:bg-emerald-50/40 transition-colors ${idx % 2 === 0 ? "bg-white" : "bg-gray-50/50"}`}
                         >
                           <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
                             {device.device_name}
@@ -486,18 +489,21 @@ const UserDashboard = () => {
               </div>
 
               {sortedAndFilteredDevices.length === 0 && (
-                <div className="text-center py-12">
-                  <h4 className="text-gray-500 text-lg font-medium">
+                <div className="text-center py-16 px-4">
+                  <div className="mx-auto w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-5">
+                    <Search className="w-7 h-7 text-gray-400" />
+                  </div>
+                  <h4 className="text-gray-900 text-lg font-semibold mb-2">
                     No devices found
                   </h4>
-                  <p className="text-gray-400 mt-2 mb-6">
+                  <p className="text-gray-500 text-sm max-w-sm mx-auto mb-6">
                     {searchTerm || filterStatus || filterFuel
                       ? "No devices match your search criteria. Try adjusting your filters."
                       : "Start by registering a new device using the button above."}
                   </p>
-                  {(searchTerm || filterStatus || filterFuel) && (
+                  {(searchTerm || filterStatus || filterFuel) ? (
                     <button
-                      className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+                      className="px-5 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors"
                       onClick={() => {
                         setSearchTerm("");
                         setFilterStatus("");
@@ -506,12 +512,20 @@ const UserDashboard = () => {
                     >
                       Clear All Filters
                     </button>
+                  ) : (
+                    <button
+                      className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
+                      onClick={() => setOpen(true)}
+                    >
+                      <Plus className="w-4 h-4 mr-1.5 inline" />
+                      Register Your First Device
+                    </button>
                   )}
                 </div>
               )}
             </div>
-            <div className="px-6 py-4 border-t">
-              <p className="text-sm text-gray-500">
+            <div className="px-6 py-3.5 border-t border-gray-100 bg-gray-50/50">
+              <p className="text-xs text-gray-500 font-medium">
                 Showing {sortedAndFilteredDevices.length} of{" "}
                 {devices?.length || 0} devices
               </p>

@@ -162,120 +162,149 @@ export const AuthModals = ({ openType, onClose }) => {
 
   return (
     <>
-      <Dialog open={!!openType} onClose={onClose} maxWidth="xs" fullWidth>
+      <Dialog
+        open={!!openType}
+        onClose={onClose}
+        maxWidth="xs"
+        fullWidth
+        slotProps={{
+          paper: {
+            className: "!rounded-2xl !overflow-hidden",
+          },
+        }}
+      >
         <motion.div
-          initial={{ scale: 0.95 }}
-          animate={{ scale: 1 }}
-          className="p-6 space-y-6"
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.2 }}
         >
-          <div className="text-center">
-            <div className="mx-auto w-16 h-16 mb-4">
-              <img
-                src="/logo.png"
-                alt="Zim-REC Logo"
-                className="rounded-2xl w-full h-full object-contain"
-              />
+          {/* Gradient header strip */}
+          <div className="h-1.5 bg-gradient-to-r from-emerald-500 via-blue-500 to-emerald-500" />
+
+          <div className="p-7 space-y-5">
+            <div className="text-center">
+              <div className="mx-auto w-14 h-14 mb-4 rounded-xl overflow-hidden shadow-sm ring-2 ring-gray-100">
+                <img
+                  src="/logo.png"
+                  alt="Zim-REC Logo"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900 mb-1">
+                {view === "login" ? "Welcome back" : "Create your account"}
+              </h2>
+              <p className="text-sm text-gray-500">
+                {view === "login"
+                  ? "Sign in to continue to your dashboard"
+                  : "Get started with free REC trading"}
+              </p>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              {view === "login" ? "Welcome Back!" : "Join Zim-Rec"}
-            </h2>
-            <p className="text-gray-600">
-              {view === "login"
-                ? "Sign in to continue to your account"
-                : "Create your free REC trading account"}
-            </p>
-          </div>
 
-          {error && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="bg-red-50 p-3 rounded-lg text-red-700 text-sm"
-            >
-              {view === "register"
-                ? getRegistrationError()
-                : typeof error === "object"
-                ? error.detail || JSON.stringify(error)
-                : error}
-            </motion.div>
-          )}
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-red-50 border border-red-100 p-3.5 rounded-xl text-red-700 text-sm flex items-start gap-2"
+              >
+                <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                <span>
+                  {view === "register"
+                    ? getRegistrationError()
+                    : typeof error === "object"
+                    ? error.detail || JSON.stringify(error)
+                    : error}
+                </span>
+              </motion.div>
+            )}
 
-          <div className="space-y-4">
-            {view === "register" && (
+            <div className="space-y-3.5">
+              {view === "register" && (
+                <TextField
+                  fullWidth
+                  label="Email"
+                  type="email"
+                  size="small"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  InputProps={{
+                    startAdornment: (
+                      <AtSign className="text-gray-400 mr-2" size={18} />
+                    ),
+                  }}
+                  className="[&_.MuiOutlinedInput-root]:!rounded-xl"
+                />
+              )}
+
               <TextField
                 fullWidth
-                label="Email"
-                type="email"
-                value={formData.email}
+                label="Username"
+                size="small"
+                value={formData.username}
                 onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
+                  setFormData({ ...formData, username: e.target.value })
                 }
                 InputProps={{
                   startAdornment: (
-                    <AtSign className="text-gray-400 mr-2" size={18} />
+                    <User className="text-gray-400 mr-2" size={18} />
                   ),
                 }}
+                className="[&_.MuiOutlinedInput-root]:!rounded-xl"
               />
-            )}
+              <TextField
+                fullWidth
+                label="Password"
+                type="password"
+                size="small"
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                InputProps={{
+                  startAdornment: (
+                    <Lock className="text-gray-400 mr-2" size={18} />
+                  ),
+                }}
+                className="[&_.MuiOutlinedInput-root]:!rounded-xl"
+              />
+            </div>
 
-            <TextField
+            <Button
               fullWidth
-              label="Username"
-              value={formData.username}
-              onChange={(e) =>
-                setFormData({ ...formData, username: e.target.value })
-              }
-              InputProps={{
-                startAdornment: (
-                  <User className="text-gray-400 mr-2" size={18} />
-                ),
-              }}
-            />
-            <TextField
+              variant="contained"
+              size="large"
+              onClick={handleSubmit}
+              disabled={status === "loading"}
+              className="!bg-emerald-600 hover:!bg-emerald-700 !rounded-xl !py-3 !text-sm !font-semibold !shadow-sm !normal-case"
+            >
+              {status === "loading" ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Processing...
+                </span>
+              ) : view === "login" ? (
+                "Sign In"
+              ) : (
+                "Create Account"
+              )}
+            </Button>
+
+            <div className="relative my-5">
+              <Divider className="!text-gray-400 !text-xs">or</Divider>
+            </div>
+
+            <Button
               fullWidth
-              label="Password"
-              type="password"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              InputProps={{
-                startAdornment: (
-                  <Lock className="text-gray-400 mr-2" size={18} />
-                ),
-              }}
-            />
+              variant="outlined"
+              onClick={() => setView(view === "login" ? "register" : "login")}
+              className="!rounded-xl !py-2.5 !text-gray-600 !border-gray-200 hover:!border-emerald-300 hover:!bg-emerald-50 !normal-case !text-sm !font-medium"
+            >
+              {view === "login"
+                ? "Don't have an account? Sign up"
+                : "Already have an account? Sign in"}
+            </Button>
           </div>
-
-          <Button
-            fullWidth
-            variant="contained"
-            size="large"
-            onClick={handleSubmit}
-            disabled={status === "loading"}
-            className="!bg-green-600 hover:!bg-green-700 !rounded-xl !py-3 !text-base !font-semibold !shadow-lg"
-          >
-            {status === "loading" ? (
-              <span className="animate-pulse">Processing...</span>
-            ) : view === "login" ? (
-              "Sign In"
-            ) : (
-              "Create Account"
-            )}
-          </Button>
-
-          <Divider className="!my-6">or</Divider>
-
-          <Button
-            fullWidth
-            variant="outlined"
-            onClick={() => setView(view === "login" ? "register" : "login")}
-            className="!rounded-xl !py-2.5 !text-gray-700 !border-green-600 !text-green-700"
-          >
-            {view === "login"
-              ? "Create New Account"
-              : "Already have an account? Sign In"}
-          </Button>
         </motion.div>
       </Dialog>
 
@@ -301,10 +330,13 @@ export const AuthModals = ({ openType, onClose }) => {
 export function Logo() {
   return (
     <div className="flex items-center">
-      <Link to="/" className="flex-shrink-0 flex items-center">
-        <div className="w-10 h-10 mr-2">
-          <img src="/logo.png" alt="Zim-REC Logo" className="rounded-full w-full h-full object-contain" />
+      <Link to="/" className="flex-shrink-0 flex items-center gap-2.5 group">
+        <div className="w-9 h-9 rounded-lg overflow-hidden ring-2 ring-emerald-100 group-hover:ring-emerald-200 transition-all">
+          <img src="/logo.png" alt="Zim-REC Logo" className="w-full h-full object-contain" />
         </div>
+        <span className="text-lg font-bold text-gray-900 tracking-tight">
+          Zim-<span className="text-emerald-600">REC</span>
+        </span>
       </Link>
     </div>
   );
@@ -345,7 +377,7 @@ export const Navbar = () => {
   ];
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
+    <nav className="bg-white/80 backdrop-blur-xl border-b border-gray-100 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Left Section - Logo */}
@@ -354,58 +386,62 @@ export const Navbar = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex md:items-center md:space-x-6">
+          <div className="hidden md:flex md:items-center md:space-x-1">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.path;
               return (
                 <Link
                   key={link.name}
                   to={link.path}
-                  className={`flex items-center px-3 py-2 rounded-md transition-colors group ${
+                  className={`relative flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 group ${
                     isActive
-                      ? "text-green-700 bg-green-50 font-semibold"
-                      : "text-gray-700 hover:text-green-600 hover:bg-green-50"
+                      ? "text-emerald-700 bg-emerald-50/80"
+                      : "text-gray-600 hover:text-emerald-700 hover:bg-gray-50"
                   }`}
                 >
-                  <span className={`mr-2 group-hover:scale-110 transition-transform ${
-                    isActive ? "text-green-700" : "text-green-600"
+                  <span className={`mr-2 transition-transform duration-200 group-hover:scale-110 ${
+                    isActive ? "text-emerald-600" : "text-gray-400 group-hover:text-emerald-500"
                   }`}>
                     {link.icon}
                   </span>
                   {link.name}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-emerald-600 rounded-full" />
+                  )}
                 </Link>
               );
             })}
 
             {isAuthenticated && (
               <>
-                <Link
-                  to="/documentation"
-                  className="text-gray-700 hover:text-green-600 flex items-center px-3 py-2 rounded-md hover:bg-green-50 transition-colors group"
-                >
-                  <span className="text-green-600 mr-2 group-hover:scale-110 transition-transform">
-                    <FileText size={18} />
-                  </span>
-                  Documentation
-                </Link>
-                <Link
-                  to="/issue-requests"
-                  className="text-gray-700 hover:text-green-600 flex items-center px-3 py-2 rounded-md hover:bg-green-50 transition-colors group"
-                >
-                  <span className="text-green-600 mr-2 group-hover:scale-110 transition-transform">
-                    <LayoutDashboard size={18} />
-                  </span>
-                  Issue Requests
-                </Link>
-                <Link
-                  to="/dashboard"
-                  className="text-gray-700 hover:text-green-600 flex items-center px-3 py-2 rounded-md hover:bg-green-50 transition-colors group"
-                >
-                  <span className="text-green-600 mr-2 group-hover:scale-110 transition-transform">
-                    <LayoutDashboard size={18} />
-                  </span>
-                  Devices
-                </Link>
+                {[
+                  { to: "/documentation", icon: <FileText size={18} />, label: "Documentation" },
+                  { to: "/issue-requests", icon: <LayoutDashboard size={18} />, label: "Issue Requests" },
+                  { to: "/dashboard", icon: <LayoutDashboard size={18} />, label: "Devices" },
+                ].map((item) => {
+                  const isActive = location.pathname === item.to;
+                  return (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      className={`relative flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 group ${
+                        isActive
+                          ? "text-emerald-700 bg-emerald-50/80"
+                          : "text-gray-600 hover:text-emerald-700 hover:bg-gray-50"
+                      }`}
+                    >
+                      <span className={`mr-2 transition-transform duration-200 group-hover:scale-110 ${
+                        isActive ? "text-emerald-600" : "text-gray-400 group-hover:text-emerald-500"
+                      }`}>
+                        {item.icon}
+                      </span>
+                      {item.label}
+                      {isActive && (
+                        <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-emerald-600 rounded-full" />
+                      )}
+                    </Link>
+                  );
+                })}
               </>
             )}
           </div>
@@ -431,19 +467,17 @@ export const Navbar = () => {
 
             {isAuthenticated ? (
               <div className="hidden md:flex items-center gap-3">
-                {/* Notifications */}
-
                 {/* User Menu */}
-                <div className="flex items-center gap-1">
+                <div className="flex items-center">
                   <Button
                     onClick={handleUserMenuClick}
-                    className="!flex !items-center !space-x-2 !px-2 !text-gray-700 hover:!bg-green-50"
-                    endIcon={<ChevronDown size={16} />}
+                    className="!flex !items-center !gap-2 !px-2 !py-1.5 !text-gray-700 hover:!bg-gray-50 !rounded-xl !normal-case !min-w-0"
+                    endIcon={<ChevronDown size={14} className="text-gray-400" />}
                   >
-                    <Avatar className="!h-8 !w-8 !bg-green-600">
+                    <Avatar className="!h-8 !w-8 !bg-gradient-to-br !from-emerald-500 !to-blue-600 !text-sm !font-semibold">
                       {user?.username?.[0]?.toUpperCase()}
                     </Avatar>
-                    <span className="hidden lg:block">{user?.username}</span>
+                    <span className="hidden lg:block text-sm font-medium">{user?.username}</span>
                   </Button>
                 </div>
               </div>
@@ -451,17 +485,17 @@ export const Navbar = () => {
               <div className="hidden md:flex items-center gap-2">
                 <Button
                   variant="outlined"
-                  startIcon={<LogIn size={18} />}
+                  startIcon={<LogIn size={16} />}
                   onClick={() => setAuthModal("login")}
-                  className="!border-green-600 !text-green-600 hover:!bg-green-50"
+                  className="!border-gray-300 !text-gray-700 hover:!border-emerald-500 hover:!text-emerald-700 hover:!bg-emerald-50 !rounded-lg !text-sm !normal-case !font-medium !px-4"
                 >
                   Sign In
                 </Button>
                 <Button
                   variant="contained"
-                  startIcon={<UserPlus size={18} />}
+                  startIcon={<UserPlus size={16} />}
                   onClick={() => setAuthModal("register")}
-                  className="!bg-green-600 hover:!bg-green-700"
+                  className="!bg-emerald-600 hover:!bg-emerald-700 !rounded-lg !text-sm !normal-case !font-medium !shadow-sm !px-4"
                 >
                   Register
                 </Button>
@@ -471,156 +505,167 @@ export const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu Backdrop + Slide Panel */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden fixed inset-0 z-50 bg-white"
-          >
-            <div className="p-4 h-full flex flex-col">
-              <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-                <Link
-                  to="/"
-                  className="flex items-center"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <div className="bg-gradient-to-r from-green-500 to-green-600 p-2 rounded-full mr-2">
-                    <Zap className="h-6 w-6 text-white" />
-                  </div>
-                  <span className="text-xl font-bold text-gray-900">
-                    Zim-<span className="text-green-600">REC</span>
-                  </span>
-                </Link>
-                <IconButton onClick={() => setMobileMenuOpen(false)}>
-                  <X className="text-gray-600" />
-                </IconButton>
-              </div>
-
-              <div className="mt-6 space-y-1 flex-1 flex flex-col">
-                {/* Search bar for mobile */}
-                <div className="relative mb-6">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search size={18} className="text-gray-400" />
-                  </div>
-                  <input
-                    type="text"
-                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500"
-                    placeholder="Search"
-                  />
-                </div>
-
-                {/* Navigation Links */}
-                {navLinks.map((link) => (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            {/* Slide Panel */}
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              className="md:hidden fixed inset-y-0 right-0 z-50 w-[85%] max-w-sm bg-white shadow-2xl"
+            >
+              <div className="p-5 h-full flex flex-col overflow-y-auto">
+                <div className="flex items-center justify-between pb-5 border-b border-gray-100">
                   <Link
-                    key={link.name}
-                    to={link.path}
-                    className="flex items-center p-3 rounded-lg hover:bg-green-50 text-gray-700"
+                    to="/"
+                    className="flex items-center gap-2.5"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <span className="bg-green-100 p-2 rounded-lg mr-4 text-green-600">
-                      {link.icon}
+                    <div className="w-9 h-9 rounded-lg overflow-hidden">
+                      <img src="/logo.png" alt="Zim-REC Logo" className="w-full h-full object-contain" />
+                    </div>
+                    <span className="text-lg font-bold text-gray-900">
+                      Zim-<span className="text-emerald-600">REC</span>
                     </span>
-                    <span className="font-medium">{link.name}</span>
                   </Link>
-                ))}
+                  <IconButton
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="!bg-gray-100 !rounded-lg"
+                    size="small"
+                  >
+                    <X className="text-gray-600" size={20} />
+                  </IconButton>
+                </div>
 
                 {isAuthenticated && (
-                  <>
-                    <Link
-                      to="/dashboard"
-                      className="flex items-center p-3 rounded-lg hover:bg-green-50 text-gray-700"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <span className="bg-green-100 p-2 rounded-lg mr-4 text-green-600">
-                        <LayoutDashboard size={18} />
-                      </span>
-                      <span className="font-medium">Device Registration</span>
-                    </Link>
-                    <Link
-                      to="/issue-requests"
-                      className="flex items-center p-3 rounded-lg hover:bg-green-50 text-gray-700"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <span className="bg-green-100 p-2 rounded-lg mr-4 text-green-600">
-                        <FileText size={18} />
-                      </span>
-                      <span className="font-medium">Issue Request</span>
-                    </Link>
-                    {isAdmin && (
-                      <Link
-                        to="/admin"
-                        className="flex items-center p-3 rounded-lg hover:bg-green-50 text-gray-700"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        <span className="bg-green-100 p-2 rounded-lg mr-4 text-green-600">
-                          <LayoutDashboard size={18} />
-                        </span>
-                        <span className="font-medium">Admin Dashboard</span>
-                      </Link>
-                    )}
-                    <Link
-                      to="/settings"
-                      className="flex items-center p-3 rounded-lg hover:bg-green-50 text-gray-700"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <span className="bg-green-100 p-2 rounded-lg mr-4 text-green-600">
-                        <User size={18} />
-                      </span>
-                      <span className="font-medium">My Profile</span>
-                    </Link>
-                  </>
+                  <div className="flex items-center gap-3 py-5 border-b border-gray-100">
+                    <Avatar className="!h-10 !w-10 !bg-gradient-to-br !from-emerald-500 !to-blue-600 !text-sm !font-semibold">
+                      {user?.username?.[0]?.toUpperCase()}
+                    </Avatar>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">{user?.username}</p>
+                      <p className="text-xs text-gray-500">{user?.email || "Member"}</p>
+                    </div>
+                  </div>
                 )}
 
-                <div className="mt-auto border-t border-gray-100 pt-4">
-                  {isAuthenticated ? (
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      className="!border-red-500 !text-red-500 !mt-4"
-                      startIcon={<LogOut size={18} />}
-                      onClick={() => {
-                        dispatch(logout());
-                        setMobileMenuOpen(false);
-                      }}
-                    >
-                      Logout
-                    </Button>
-                  ) : (
-                    <div className="grid grid-cols-1 gap-3 mt-4">
+                <div className="mt-4 space-y-1 flex-1 flex flex-col">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">Navigation</p>
+                  {navLinks.map((link) => {
+                    const isActive = location.pathname === link.path;
+                    return (
+                      <Link
+                        key={link.name}
+                        to={link.path}
+                        className={`flex items-center p-3 rounded-xl transition-colors ${
+                          isActive
+                            ? "bg-emerald-50 text-emerald-700"
+                            : "text-gray-700 hover:bg-gray-50"
+                        }`}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <span className={`p-2 rounded-lg mr-3 ${
+                          isActive ? "bg-emerald-100 text-emerald-600" : "bg-gray-100 text-gray-500"
+                        }`}>
+                          {link.icon}
+                        </span>
+                        <span className="font-medium text-sm">{link.name}</span>
+                      </Link>
+                    );
+                  })}
+
+                  {isAuthenticated && (
+                    <>
+                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2 mt-5">Manage</p>
+                      {[
+                        { to: "/dashboard", icon: <LayoutDashboard size={18} />, label: "Devices" },
+                        { to: "/issue-requests", icon: <FileText size={18} />, label: "Issue Requests" },
+                        ...(isAdmin ? [{ to: "/admin", icon: <Shield size={18} />, label: "Admin Dashboard" }] : []),
+                        { to: "/settings", icon: <User size={18} />, label: "My Profile" },
+                      ].map((item) => {
+                        const isActive = location.pathname === item.to;
+                        return (
+                          <Link
+                            key={item.to}
+                            to={item.to}
+                            className={`flex items-center p-3 rounded-xl transition-colors ${
+                              isActive
+                                ? "bg-emerald-50 text-emerald-700"
+                                : "text-gray-700 hover:bg-gray-50"
+                            }`}
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            <span className={`p-2 rounded-lg mr-3 ${
+                              isActive ? "bg-emerald-100 text-emerald-600" : "bg-gray-100 text-gray-500"
+                            }`}>
+                              {item.icon}
+                            </span>
+                            <span className="font-medium text-sm">{item.label}</span>
+                          </Link>
+                        );
+                      })}
+                    </>
+                  )}
+
+                  <div className="mt-auto border-t border-gray-100 pt-5">
+                    {isAuthenticated ? (
                       <Button
                         fullWidth
                         variant="outlined"
-                        startIcon={<LogIn size={18} />}
+                        className="!border-red-200 !text-red-600 hover:!bg-red-50 !rounded-xl !py-2.5 !normal-case !font-medium"
+                        startIcon={<LogOut size={18} />}
                         onClick={() => {
-                          setAuthModal("login");
+                          dispatch(logout());
                           setMobileMenuOpen(false);
                         }}
-                        className="!border-green-600 !text-green-600"
                       >
-                        Sign In
+                        Sign Out
                       </Button>
-                      <Button
-                        fullWidth
-                        variant="contained"
-                        startIcon={<UserPlus size={18} />}
-                        onClick={() => {
-                          setAuthModal("register");
-                          setMobileMenuOpen(false);
-                        }}
-                        className="!bg-green-600 hover:!bg-green-700"
-                      >
-                        Register
-                      </Button>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="grid grid-cols-1 gap-3">
+                        <Button
+                          fullWidth
+                          variant="contained"
+                          startIcon={<UserPlus size={16} />}
+                          onClick={() => {
+                            setAuthModal("register");
+                            setMobileMenuOpen(false);
+                          }}
+                          className="!bg-emerald-600 hover:!bg-emerald-700 !rounded-xl !py-2.5 !normal-case !font-medium !shadow-sm"
+                        >
+                          Create Account
+                        </Button>
+                        <Button
+                          fullWidth
+                          variant="outlined"
+                          startIcon={<LogIn size={16} />}
+                          onClick={() => {
+                            setAuthModal("login");
+                            setMobileMenuOpen(false);
+                          }}
+                          className="!border-gray-300 !text-gray-700 hover:!border-emerald-500 !rounded-xl !py-2.5 !normal-case !font-medium"
+                        >
+                          Sign In
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
 
@@ -631,6 +676,11 @@ export const Navbar = () => {
         onClose={handleUserMenuClose}
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        slotProps={{
+          paper: {
+            className: "!mt-2 !rounded-xl !shadow-lg !border !border-gray-100 !min-w-[220px]",
+          },
+        }}
       >
         <MenuItem onClick={handleUserMenuClose} component={Link} to="/settings">
           <ListItemIcon>

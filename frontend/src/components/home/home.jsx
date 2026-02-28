@@ -52,18 +52,19 @@ const useScrollAnimation = () => {
 const FeatureCard = ({ icon, title, description, delay }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
     transition={{ delay, duration: 0.5 }}
-    whileHover={{ y: -10, transition: { duration: 0.2 } }}
+    whileHover={{ y: -6, transition: { duration: 0.2 } }}
   >
-    <Card className="h-full p-4 sm:p-6 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-t-4 border-emerald-500">
-      <div className="mb-4 bg-gradient-to-br from-emerald-50 to-blue-50 w-12 h-12 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center">
+    <Card className="h-full p-5 sm:p-7 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
+      <div className="mb-5 bg-gradient-to-br from-emerald-50 to-blue-50 w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
         {icon}
       </div>
-      <Typography variant="h6" className="text-gray-800 font-bold mb-2 sm:mb-3">
+      <Typography variant="h6" className="!text-gray-900 !font-bold !mb-2 !text-base sm:!text-lg">
         {title}
       </Typography>
-      <Typography variant="body2" className="text-gray-600">
+      <Typography variant="body2" className="!text-gray-500 !leading-relaxed">
         {description}
       </Typography>
     </Card>
@@ -73,21 +74,22 @@ const FeatureCard = ({ icon, title, description, delay }) => (
 // Statistics component
 const Statistic = ({ value, label, icon }) => (
   <motion.div
-    whileHover={{ scale: 1.05 }}
-    className="bg-white/95 backdrop-blur-sm p-3 sm:p-6 rounded-2xl shadow-md flex flex-col items-center"
+    whileHover={{ scale: 1.03, y: -4 }}
+    transition={{ duration: 0.2 }}
+    className="bg-white p-5 sm:p-7 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow duration-300"
   >
-    <div className="rounded-full bg-gradient-to-br from-emerald-100 to-blue-100 p-2 sm:p-3 mb-2 sm:mb-4">
+    <div className="rounded-xl bg-gradient-to-br from-emerald-50 to-blue-50 p-3 mb-4">
       {icon}
     </div>
     <Typography
       variant="h4"
-      className="text-emerald-700 font-bold mb-1 text-center"
+      className="!text-gray-900 !font-bold !mb-1 !text-2xl sm:!text-3xl"
     >
       {value}
     </Typography>
     <Typography
       variant="body2"
-      className="text-gray-600 text-center text-xs sm:text-sm"
+      className="!text-gray-500 !text-xs sm:!text-sm !font-medium"
     >
       {label}
     </Typography>
@@ -372,31 +374,34 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Statistics Section 
-      <section className="py-12 sm:py-16 bg-gray-50">
+      {/* Statistics Section */}
+      <section className="py-16 sm:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-center mb-8 sm:mb-12"
+            className="text-center mb-10 sm:mb-14"
           >
+            <span className="inline-block text-emerald-600 text-sm font-semibold tracking-wider uppercase mb-3">
+              Our Impact
+            </span>
             <Typography
               variant="h3"
-              className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-4"
+              className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4"
             >
-              Making an Impact
+              Powering Zimbabwe's Green Transition
             </Typography>
             <Typography
               variant="body1"
-              className="text-gray-600 max-w-2xl mx-auto"
+              className="text-gray-500 max-w-2xl mx-auto text-base sm:text-lg"
             >
-              Join thousands of users contributing to Zimbabwe's renewable energy transformation
+              Join a growing community contributing to Zimbabwe's renewable energy transformation
             </Typography>
           </motion.div>
 
-          <Grid container spacing={3} sm={4}>
+          <Grid container spacing={3}>
             {statistics.map((stat, index) => (
               <Grid item xs={6} md={3} key={index}>
                 <motion.div
@@ -411,42 +416,42 @@ const Home = () => {
             ))}
           </Grid>
         </div>
-      </section>*/}
+      </section>
 
-      {/* Features Section 
-      <section className="py-12 sm:py-16 md:py-20 bg-white relative overflow-hidden">
-  
-        <div 
-          className="absolute inset-0 opacity-5"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1497440001374-f26997328c1b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`
-          }}
-        />
-        
+      {/* Features Section */}
+      <section className="py-16 sm:py-20 md:py-24 bg-white relative overflow-hidden">
+        {/* Subtle background pattern */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23059669' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        }} />
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-center mb-8 sm:mb-12 lg:mb-16"
+            className="text-center mb-10 sm:mb-14 lg:mb-16"
           >
+            <span className="inline-block text-blue-600 text-sm font-semibold tracking-wider uppercase mb-3">
+              What We Offer
+            </span>
             <Typography
               variant="h3"
-              className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-4"
+              className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4"
             >
-              Comprehensive Renewable Energy Solutions
+              Comprehensive Energy Solutions
             </Typography>
             <Typography
               variant="body1"
-              className="text-gray-600 max-w-3xl mx-auto text-base sm:text-lg"
+              className="text-gray-500 max-w-3xl mx-auto text-base sm:text-lg"
             >
-              From solar to hydro, wind to compliance - we provide everything you need 
+              From solar to hydro, wind to compliance -- everything you need
               to participate in Zimbabwe's clean energy marketplace
             </Typography>
           </motion.div>
 
-          <Grid container spacing={3} sm={4}>
+          <Grid container spacing={3}>
             {features.map((feature, index) => (
               <Grid item xs={12} sm={6} lg={4} key={index}>
                 <FeatureCard {...feature} delay={index * 0.1} />
@@ -454,10 +459,10 @@ const Home = () => {
             ))}
           </Grid>
         </div>
-      </section>*/}
+      </section>
 
       {/* CTA Section */}
-      <section className="py-12 sm:py-16 md:py-20 bg-gray-50">
+      <section className="py-16 sm:py-20 md:py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0 }}

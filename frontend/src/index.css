@@ -3,6 +3,48 @@
 @layer base {
   html {
     font-family: 'IBM Plex Sans', sans-serif;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    color: #1f2937;
+    line-height: 1.6;
+  }
+
+  /* Better focus-visible for accessibility */
+  *:focus-visible {
+    outline: 2px solid #059669;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Smooth transitions on interactive elements */
+  a, button, input, select, textarea {
+    transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  /* Better scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+  }
+
+  /* Selection color matching brand */
+  ::selection {
+    background-color: #d1fae5;
+    color: #065f46;
   }
 }
 
@@ -10,4 +52,20 @@
   100% {
     transform: translateX(100%);
   }
+}
+
+/* Page transition animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out;
 }
