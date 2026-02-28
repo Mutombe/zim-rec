@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMediaQuery } from "@mui/material";
-import { logout, login, register } from "../../redux/slices/authSlice";
+import { logout, login, register, googleLogin } from "../../redux/slices/authSlice";
 import {
   ImageIcon,
   Zap,
@@ -30,6 +30,8 @@ import {
   Shield,
   HelpCircle,
   Book,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import {
   Dialog,
@@ -48,7 +50,9 @@ import {
   MenuItem,
   ListItemIcon,
   ListItemText,
+  InputAdornment,
 } from "@mui/material";
+import { GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 
 export function AuthHeader({ view }) {
@@ -87,6 +91,7 @@ export const AuthModals = ({ openType, onClose }) => {
     password: "",
     username: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   // Update view when openType changes
@@ -101,6 +106,7 @@ export const AuthModals = ({ openType, onClose }) => {
         password: "",
         username: "",
       });
+      setShowPassword(false);
     }
   }, [openType]);
 
@@ -131,19 +137,35 @@ export const AuthModals = ({ openType, onClose }) => {
             severity: "success",
           });
           onClose();
-          localStorage.setItem(
-            "auth",
-            JSON.stringify({
-              access: response.access,
-              refresh: response.refresh,
-              user: response.user,
-            })
-          );
         })
         .catch((err) => {
           console.error("Registration Failed:", err);
         });
     }
+  };
+
+  const handleGoogleSuccess = (credentialResponse) => {
+    dispatch(googleLogin({ credential: credentialResponse.credential }))
+      .unwrap()
+      .then(() => {
+        setSnackbar({
+          open: true,
+          message: "Signed in with Google!",
+          severity: "success",
+        });
+        onClose();
+      })
+      .catch((err) => {
+        console.error("Google Login Failed:", err);
+      });
+  };
+
+  const handleGoogleError = () => {
+    setSnackbar({
+      open: true,
+      message: "Google sign-in failed. Please try again.",
+      severity: "error",
+    });
   };
 
   const getRegistrationError = () => {
@@ -217,7 +239,7 @@ export const AuthModals = ({ openType, onClose }) => {
               </motion.div>
             )}
 
-            <div className="space-y-3.5">
+            <div className="space-y-5">
               {view === "register" && (
                 <TextField
                   fullWidth
@@ -255,7 +277,7 @@ export const AuthModals = ({ openType, onClose }) => {
               <TextField
                 fullWidth
                 label="Password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 size="small"
                 value={formData.password}
                 onChange={(e) =>
@@ -264,6 +286,21 @@ export const AuthModals = ({ openType, onClose }) => {
                 InputProps={{
                   startAdornment: (
                     <Lock className="text-gray-400 mr-2" size={18} />
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                        size="small"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="text-gray-400" size={18} />
+                        ) : (
+                          <Eye className="text-gray-400" size={18} />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
                   ),
                 }}
                 className="[&_.MuiOutlinedInput-root]:!rounded-xl"
@@ -292,6 +329,17 @@ export const AuthModals = ({ openType, onClose }) => {
 
             <div className="relative my-5">
               <Divider className="!text-gray-400 !text-xs">or</Divider>
+            </div>
+
+            <div className="flex justify-center">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                theme="outline"
+                size="large"
+                shape="pill"
+                text={view === "login" ? "signin_with" : "signup_with"}
+              />
             </div>
 
             <Button

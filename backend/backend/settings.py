@@ -20,10 +20,16 @@ ALLOWED_HOSTS = [
 TIME_ZONE = 'UTC' 
 USE_TZ = True
 
+GOOGLE_OAUTH_CLIENT_ID = os.environ.get(
+    'GOOGLE_OAUTH_CLIENT_ID',
+    '329840909855-hv6k15qekecc36smuu71s37ceuqeilqk.apps.googleusercontent.com'
+)
+
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'https://zim-rec.co.zw',
-    'http://127.0.0.1:5173'
+    'http://127.0.0.1:5173',
+    'https://zim-rec.onrender.com',
 ]
 
 CORS_TRUSTED_ORIGINS = [

@@ -12,6 +12,10 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from .permissions import IsDeviceOwner
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.db import transaction
+from django.conf import settings
+from django.contrib.auth.models import User
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -142,3 +146,74 @@ class IssueRequestViewSet(viewsets.ModelViewSet):
         issue_request.status = 'submitted'
         issue_request.save()
         return Response({'status': 'submitted'})
+
+
+class GoogleAuthView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        credential = request.data.get('credential')
+        if not credential:
+            return Response(
+                {'detail': 'Google credential is required.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            idinfo = id_token.verify_oauth2_token(
+                credential,
+                google_requests.Request(),
+                settings.GOOGLE_OAUTH_CLIENT_ID
+            )
+        except ValueError:
+            return Response(
+                {'detail': 'Invalid Google token.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        email = idinfo.get('email')
+        given_name = idinfo.get('given_name', '')
+        family_name = idinfo.get('family_name', '')
+
+        if not email:
+            return Response(
+                {'detail': 'Email not provided by Google.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            # Generate username from email prefix, ensure uniqueness
+            base_username = email.split('@')[0]
+            username = base_username
+            counter = 1
+            while User.objects.filter(username=username).exists():
+                username = f"{base_username}{counter}"
+                counter += 1
+
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+            )
+            user.set_unusable_password()
+            user.save()
+
+        # Update profile first/last name if empty
+        try:
+            profile = user.profile
+        except Profile.DoesNotExist:
+            profile = Profile.objects.create(user=user)
+
+        if not profile.first_name and given_name:
+            profile.first_name = given_name
+        if not profile.last_name and family_name:
+            profile.last_name = family_name
+        profile.save()
+
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'user': UserSerializer(user).data,
+        })
