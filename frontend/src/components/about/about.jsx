@@ -145,7 +145,6 @@ const About = () => {
             variants={fadeIn}
             className="text-center mb-12"
           >
-            <AnimatedLogo />
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Driving Zimbabwe's
               <br />
