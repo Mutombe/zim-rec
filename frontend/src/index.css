@@ -69,3 +69,8 @@
 .animate-fade-in-up {
   animation: fadeInUp 0.4s ease-out;
 }
+
+/* Constrain Google Sign-In iframe so it doesn't overlay the navbar */
+#credential_picker_container {
+  z-index: 999 !important;
+}

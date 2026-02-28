@@ -425,7 +425,7 @@ export const Navbar = () => {
   ];
 
   return (
-    <nav className="bg-white/80 backdrop-blur-xl border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+    <nav className="bg-white/80 backdrop-blur-xl border-b border-gray-100 sticky top-0 z-[1000] shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Left Section - Logo */}
@@ -563,7 +563,7 @@ export const Navbar = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="md:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+              className="md:hidden fixed inset-0 z-[1100] bg-black/40 backdrop-blur-sm"
               onClick={() => setMobileMenuOpen(false)}
             />
             {/* Slide Panel */}
@@ -572,7 +572,7 @@ export const Navbar = () => {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="md:hidden fixed inset-y-0 right-0 z-50 w-[85%] max-w-sm bg-white shadow-2xl"
+              className="md:hidden fixed inset-y-0 right-0 z-[1100] w-[85%] max-w-sm bg-white shadow-2xl"
             >
               <div className="p-5 h-full flex flex-col overflow-y-auto">
                 <div className="flex items-center justify-between pb-5 border-b border-gray-100">

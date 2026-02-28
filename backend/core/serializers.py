@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from .models import Device, DeviceDocument, IssueRequest, Profile
-from django.contrib.auth.models import User  
+from .models import Device, DeviceDocument, IssueRequest, Profile, NewsletterSubscriber
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from decimal import Decimal
 
@@ -260,3 +260,10 @@ class IssueRequestSerializer(serializers.ModelSerializer):
             })
             
         return super().create(validated_data)
+
+
+class NewsletterSubscriberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsletterSubscriber
+        fields = ['id', 'email', 'subscribed_at']
+        read_only_fields = ['subscribed_at']

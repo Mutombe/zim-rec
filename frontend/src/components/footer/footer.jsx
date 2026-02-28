@@ -1,19 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-  Facebook, 
-  Twitter, 
-  Linkedin, 
-  Mail, 
-  Phone, 
-  Leaf,     
-  MapPin, 
-  ChevronRight, 
-  Send, 
-  Zap 
+import {
+  Facebook,
+  Twitter,
+  Linkedin,
+  Mail,
+  Phone,
+  Leaf,
+  MapPin,
+  ChevronRight,
+  Send,
+  Zap,
+  Loader2,
 } from 'lucide-react';
 import { Typography, Grid } from '@mui/material';
+import { toast } from 'sonner';
+import api from '../../utils/api';
 
 
 export function SidebarLogo() {
@@ -34,6 +37,30 @@ export function SidebarLogo() {
 }
 
 const Footer = () => {
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [subscribing, setSubscribing] = useState(false);
+
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    if (!newsletterEmail.trim()) {
+      toast.error('Please enter your email address.');
+      return;
+    }
+    setSubscribing(true);
+    try {
+      const response = await api.post('newsletter/subscribe/', { email: newsletterEmail });
+      toast.success(response.data.detail);
+      setNewsletterEmail('');
+    } catch (err) {
+      const message = err.response?.data?.detail
+        || err.response?.data?.email?.[0]
+        || 'Subscription failed. Please try again.';
+      toast.error(message);
+    } finally {
+      setSubscribing(false);
+    }
+  };
+
   const socialLinks = [
     { icon: <Twitter size={20} />, url: 'https://twitter.com/zimrec', label: 'Twitter' },
     { icon: <Linkedin size={20} />, url: 'https://linkedin.com/company/zimrec', label: 'LinkedIn' },
@@ -177,20 +204,25 @@ const Footer = () => {
                   <Typography variant="body2" className="!text-gray-400 !text-sm !leading-relaxed !mb-4">
                     Get updates on renewable energy projects and REC trading opportunities.
                   </Typography>
-                  <div className="flex gap-2">
+                  <form onSubmit={handleNewsletterSubmit} className="flex gap-2">
                     <input
                       type="email"
                       placeholder="Enter your email"
-                      className="flex-1 bg-white/10 border border-white/10 rounded-lg px-3.5 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+                      value={newsletterEmail}
+                      onChange={(e) => setNewsletterEmail(e.target.value)}
+                      disabled={subscribing}
+                      className="flex-1 bg-white/10 border border-white/10 rounded-lg px-3.5 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all disabled:opacity-50"
                     />
                     <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 rounded-lg transition-colors flex items-center gap-1.5 text-sm font-medium whitespace-nowrap"
+                      type="submit"
+                      disabled={subscribing}
+                      whileHover={{ scale: subscribing ? 1 : 1.05 }}
+                      whileTap={{ scale: subscribing ? 1 : 0.95 }}
+                      className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 rounded-lg transition-colors flex items-center gap-1.5 text-sm font-medium whitespace-nowrap disabled:opacity-50"
                     >
-                      <Send size={14} />
+                      {subscribing ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
                     </motion.button>
-                  </div>
+                  </form>
                 </div>
               </motion.div>
             </Grid>

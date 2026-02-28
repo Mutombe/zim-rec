@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import {
   useLocation
 } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import GalleryPage from './components/about/gallery';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './components/home/home';
@@ -33,6 +34,7 @@ const Layout = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col">
       <ScrollToTop />
+      <Toaster position="top-center" richColors />
       <Navbar />
       <main className="flex-grow">{children}</main>
       <Footer />

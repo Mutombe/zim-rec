@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Device, DeviceDocument, IssueRequest, Profile
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
-from .serializers import DeviceSerializer, DeviceDocumentSerializer, IssueRequestSerializer, UserSerializer, ProfileSerializer
+from .serializers import DeviceSerializer, DeviceDocumentSerializer, IssueRequestSerializer, UserSerializer, ProfileSerializer, NewsletterSubscriberSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -14,8 +14,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.db import transaction
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
+from .models import NewsletterSubscriber
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -217,3 +219,69 @@ class GoogleAuthView(APIView):
             'refresh': str(refresh),
             'user': UserSerializer(user).data,
         })
+
+
+class NewsletterSubscribeView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = NewsletterSubscriberSerializer(data=request.data)
+        if serializer.is_valid():
+            subscriber = serializer.save()
+
+            # Send confirmation email
+            try:
+                send_mail(
+                    subject='Welcome to the Zim-REC Newsletter!',
+                    message=(
+                        f'Thank you for subscribing to the Zim-REC newsletter!\n\n'
+                        f'You will now receive updates on renewable energy projects '
+                        f'and REC trading opportunities in Zimbabwe.\n\n'
+                        f'Best regards,\nThe Zim-REC Team'
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[subscriber.email],
+                    html_message=(
+                        f'<h2>Welcome to Zim-REC!</h2>'
+                        f'<p>Thank you for subscribing to the Zim-REC newsletter.</p>'
+                        f'<p>You will now receive updates on:</p>'
+                        f'<ul>'
+                        f'<li>Renewable energy projects in Zimbabwe</li>'
+                        f'<li>REC trading opportunities</li>'
+                        f'<li>Policy updates and industry news</li>'
+                        f'</ul>'
+                        f'<p>Best regards,<br>The Zim-REC Team</p>'
+                    ),
+                    fail_silently=True,
+                )
+            except Exception:
+                pass  # Don't fail the subscription if email fails
+
+            return Response(
+                {'detail': 'Successfully subscribed to the newsletter!'},
+                status=status.HTTP_201_CREATED
+            )
+
+        # Handle duplicate email gracefully
+        if 'email' in serializer.errors:
+            error_messages = serializer.errors['email']
+            for msg in error_messages:
+                if 'already exists' in str(msg).lower() or 'unique' in str(msg).lower():
+                    # Check if they unsubscribed and resubscribe them
+                    try:
+                        existing = NewsletterSubscriber.objects.get(email=request.data.get('email'))
+                        if not existing.is_active:
+                            existing.is_active = True
+                            existing.save()
+                            return Response(
+                                {'detail': 'Welcome back! You have been re-subscribed.'},
+                                status=status.HTTP_200_OK
+                            )
+                    except NewsletterSubscriber.DoesNotExist:
+                        pass
+                    return Response(
+                        {'detail': 'This email is already subscribed.'},
+                        status=status.HTTP_200_OK
+                    )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

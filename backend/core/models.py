@@ -184,7 +184,7 @@ class IssueRequest(models.Model):
     recipient_account = models.CharField(max_length=255)
     notes = models.TextField(blank=True, null=True)
     upload_file = models.FileField(upload_to='issue-requests/', null=True)
-    
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -198,3 +198,15 @@ class IssueRequest(models.Model):
         self.status_changed = self.status != self._original_status
         super().save(*args, **kwargs)
         self._original_status = self.status
+
+
+class NewsletterSubscriber(models.Model):
+    email = models.EmailField(unique=True)
+    subscribed_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['-subscribed_at']
+
+    def __str__(self):
+        return self.email
