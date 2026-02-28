@@ -466,34 +466,6 @@ const Home = () => {
                   </Button>
                 </div>
               </Grid>
-              <Grid
-                item
-                xs={12}
-                md={5}
-                className="hidden md:flex justify-center items-center"
-              >
-                <motion.div 
-                  animate={{ 
-                    rotate: [0, 5, -5, 0],
-                    scale: [1, 1.05, 1]
-                  }}
-                  transition={{ 
-                    duration: 6, 
-                    repeat: Infinity, 
-                    ease: "easeInOut" 
-                  }}
-                  className="relative"
-                >
-                  <div className="absolute inset-0 bg-emerald-500/30 rounded-full blur-2xl"></div>
-                  <div className="relative rounded-full bg-white/10 p-6 lg:p-8 backdrop-blur-sm border border-white/20">
-                    <img 
-                      src="/logo.png" 
-                      alt="Company Logo" 
-                      className="w-16 h-16 lg:w-20 lg:h-20"
-                    />
-                  </div>
-                </motion.div>
-              </Grid>
             </Grid>
           </motion.div>
         </div>

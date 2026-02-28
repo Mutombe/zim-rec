@@ -112,7 +112,7 @@ const Footer = () => {
                     <img
                       src="/logo.png"
                       alt="Zim-REC Logo"
-                      className="h-15 w-15"
+                      className="h-15 w-full"
                     />
                   </div>
                 </Link>
