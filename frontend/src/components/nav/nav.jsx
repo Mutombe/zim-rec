@@ -55,7 +55,7 @@ export function AuthHeader({ view }) {
         <img
           src="/logo.png"
           alt="Zim-REC Logo"
-          className="rounded-2xl w-full h-full"
+          className=" w-full h-full"
         />
       </div>
       <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -296,12 +296,9 @@ export function Logo() {
   return (
     <div className="flex items-center">
       <Link to="/" className="flex-shrink-0 flex items-center gap-2.5 group">
-        <div className="w-9 h-9 rounded-lg overflow-hidden ring-2 ring-emerald-100 group-hover:ring-emerald-200 transition-all">
+        <div className="w-9 h-9  overflow-hidden transition-all">
           <img src="/logo.png" alt="Zim-REC Logo" className="w-full h-full object-contain" />
         </div>
-        <span className="text-lg font-bold text-gray-900 tracking-tight">
-          Zim-<span className="text-emerald-600">REC</span>
-        </span>
       </Link>
     </div>
   );
@@ -489,12 +486,9 @@ export const Navbar = () => {
                     className="flex items-center gap-2.5"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <div className="w-9 h-9 rounded-lg overflow-hidden">
+                    <div className="w-9 h-9 overflow-hidden">
                       <img src="/logo.png" alt="Zim-REC Logo" className="w-full h-full object-contain" />
                     </div>
-                    <span className="text-lg font-bold text-gray-900">
-                      Zim-<span className="text-emerald-600">REC</span>
-                    </span>
                   </Link>
                   <button
                     onClick={() => setMobileMenuOpen(false)}

@@ -108,16 +108,13 @@ const Footer = () => {
             <Grid item xs={12} md={4}>
               <motion.div variants={itemAnimation}>
                 <Link to="/" className="flex items-center gap-2.5 mb-5">
-                  <div className="bg-white/10 backdrop-blur-sm p-1.5 rounded-lg border border-white/10">
+                  <div className=" p-1.5 ">
                     <img
                       src="/logo.png"
                       alt="Zim-REC Logo"
                       className="h-7 w-7"
                     />
                   </div>
-                  <Typography variant="h6" className="!font-bold !text-white !tracking-tight">
-                    Zim-REC
-                  </Typography>
                 </Link>
                 <Typography variant="body2" className="!text-gray-400 !leading-relaxed mb-6 max-w-xs">
                   Zimbabwe's premier platform for renewable energy certification and trading,
@@ -246,7 +243,7 @@ const Footer = () => {
             <Grid item xs={12} md={6}>
               <Typography variant="body2" className="!text-gray-500 !text-center md:!text-right !text-xs">
                 A partnership between AICTS and Silver Carbon &middot; Developed by{" "}
-                <a href="https://zettabyte.co.zw" className="!text-emerald-400 hover:!text-emerald-300 !transition-colors" target="_blank" rel="noopener noreferrer">Zettabyte</a>
+                <a href="https://bitstudio.co.zw" className="!text-emerald-400 hover:!text-emerald-300 !transition-colors" target="_blank" rel="noopener noreferrer">Bit Studio</a>
               </Typography>
             </Grid>
           </Grid>
