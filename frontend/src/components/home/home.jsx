@@ -3,9 +3,7 @@ import { motion, useAnimation } from "framer-motion";
 import {
   Button,
   Typography,
-  Card,
   Grid,
-  Box,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -19,9 +17,6 @@ import {
   Award,
   TrendingUp,
   Shield,
-  Users,
-  Leaf,
-  Globe,
 } from "lucide-react";
 import { AuthModals } from "../nav/nav";
 import { useNavigate } from "react-router-dom";
@@ -49,52 +44,37 @@ const useScrollAnimation = () => {
 };
 
 // Animated feature card component
-const FeatureCard = ({ icon, title, description, delay }) => (
+const FeatureCard = ({ icon, title, description, delay, accent }) => (
   <motion.div
-    initial={{ opacity: 0, y: 20 }}
+    initial={{ opacity: 0, y: 24 }}
     whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ delay, duration: 0.5 }}
-    whileHover={{ y: -6, transition: { duration: 0.2 } }}
+    viewport={{ once: true, margin: "-40px" }}
+    transition={{ delay, duration: 0.5, ease: "easeOut" }}
+    className="group h-full"
   >
-    <Card className="h-full p-5 sm:p-7 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
-      <div className="mb-5 bg-gradient-to-br from-emerald-50 to-blue-50 w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-        {icon}
+    <div className="relative h-full p-6 sm:p-8 bg-white rounded-2xl border border-gray-100 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/5 hover:border-emerald-200/60 hover:-translate-y-1">
+      {/* Accent line */}
+      <div className={`absolute top-0 left-6 right-6 h-0.5 rounded-full bg-gradient-to-r ${accent} scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left`} />
+
+      <div className={`mb-5 w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${accent} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+        <div className="text-white">{icon}</div>
       </div>
-      <Typography variant="h6" className="!text-gray-900 !font-bold !mb-2 !text-base sm:!text-lg">
+
+      <h3 className="text-gray-900 font-bold text-base sm:text-lg mb-2 leading-snug">
         {title}
-      </Typography>
-      <Typography variant="body2" className="!text-gray-500 !leading-relaxed">
+      </h3>
+      <p className="text-gray-500 text-sm sm:text-[15px] leading-relaxed">
         {description}
-      </Typography>
-    </Card>
+      </p>
+
+      <div className="mt-5 flex items-center text-emerald-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <span>Learn more</span>
+        <ArrowRight size={14} className="ml-1 group-hover:translate-x-1 transition-transform duration-200" />
+      </div>
+    </div>
   </motion.div>
 );
 
-// Statistics component
-const Statistic = ({ value, label, icon }) => (
-  <motion.div
-    whileHover={{ scale: 1.03, y: -4 }}
-    transition={{ duration: 0.2 }}
-    className="bg-white p-5 sm:p-7 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow duration-300"
-  >
-    <div className="rounded-xl bg-gradient-to-br from-emerald-50 to-blue-50 p-3 mb-4">
-      {icon}
-    </div>
-    <Typography
-      variant="h4"
-      className="!text-gray-900 !font-bold !mb-1 !text-2xl sm:!text-3xl"
-    >
-      {value}
-    </Typography>
-    <Typography
-      variant="body2"
-      className="!text-gray-500 !text-xs sm:!text-sm !font-medium"
-    >
-      {label}
-    </Typography>
-  </motion.div>
-);
 
 const Home = () => {
   const theme = useTheme();
@@ -108,63 +88,46 @@ const Home = () => {
 
   const features = [
     {
-      icon: <Sun size={isMobile ? 24 : 32} className="text-emerald-500" />,
+      icon: <Sun size={24} />,
       title: "Solar Energy Certificates",
       description:
         "Track and trade solar energy production with transparent, blockchain-verified certificates.",
+      accent: "from-amber-400 to-orange-500",
     },
     {
-      icon: <Wind size={isMobile ? 24 : 32} className="text-blue-600" />,
+      icon: <Wind size={24} />,
       title: "Wind Power RECs",
       description:
         "Connect with wind energy producers and purchase certified renewable energy credits.",
+      accent: "from-sky-400 to-blue-600",
     },
     {
-      icon: <Droplet size={isMobile ? 24 : 32} className="text-blue-500" />,
+      icon: <Droplet size={24} />,
       title: "Hydro Energy Trading",
       description:
         "Access Zimbabwe's growing hydroelectric energy market through verified certificates.",
+      accent: "from-cyan-400 to-teal-500",
     },
     {
-      icon: <Shield size={isMobile ? 24 : 32} className="text-emerald-600" />,
+      icon: <Shield size={24} />,
       title: "Compliance Solutions",
       description:
         "Meet regulatory requirements and sustainability goals with verified RECs.",
+      accent: "from-emerald-400 to-green-600",
     },
     {
-      icon: <TrendingUp size={isMobile ? 24 : 32} className="text-blue-600" />,
+      icon: <TrendingUp size={24} />,
       title: "Market Analytics",
       description:
         "Access real-time data and insights on renewable energy market trends.",
+      accent: "from-violet-400 to-purple-600",
     },
     {
-      icon: <Award size={isMobile ? 24 : 32} className="text-emerald-500" />,
+      icon: <Award size={24} />,
       title: "Sustainability Reporting",
       description:
         "Generate comprehensive reports to showcase your environmental impact.",
-    },
-  ];
-
-  const statistics = [
-    {
-      value: "500+",
-      label: "Active Users",
-      icon: <Users size={isMobile ? 20 : 24} className="text-emerald-600" />,
-    },
-    {
-      value: "50MW",
-      label: "Energy Traded",
-      icon: <Zap size={isMobile ? 20 : 24} className="text-blue-600" />,
-    },
-    {
-      value: "25%",
-      label: "Carbon Reduced",
-      icon: <Leaf size={isMobile ? 20 : 24} className="text-emerald-600" />,
-    },
-    {
-      value: "15+",
-      label: "Partners",
-      icon: <Globe size={isMobile ? 20 : 24} className="text-blue-600" />,
+      accent: "from-rose-400 to-pink-600",
     },
   ];
 
@@ -374,90 +337,43 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Statistics Section */}
-      <section className="py-16 sm:py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-10 sm:mb-14"
-          >
-            <span className="inline-block text-emerald-600 text-sm font-semibold tracking-wider uppercase mb-3">
-              Our Impact
-            </span>
-            <Typography
-              variant="h3"
-              className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4"
-            >
-              Powering Zimbabwe's Green Transition
-            </Typography>
-            <Typography
-              variant="body1"
-              className="text-gray-500 max-w-2xl mx-auto text-base sm:text-lg"
-            >
-              Join a growing community contributing to Zimbabwe's renewable energy transformation
-            </Typography>
-          </motion.div>
-
-          <Grid container spacing={3}>
-            {statistics.map((stat, index) => (
-              <Grid item xs={6} md={3} key={index}>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <Statistic {...stat} />
-                </motion.div>
-              </Grid>
-            ))}
-          </Grid>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-16 sm:py-20 md:py-24 bg-white relative overflow-hidden">
-        {/* Subtle background pattern */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23059669' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }} />
+      {/* What We Offer Section */}
+      <section className="py-20 sm:py-24 md:py-28 bg-gray-50 relative overflow-hidden">
+        {/* Decorative blobs */}
+        <div className="absolute top-0 left-0 w-72 h-72 bg-emerald-100 rounded-full opacity-30 blur-3xl -translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-100 rounded-full opacity-30 blur-3xl translate-x-1/3 translate-y-1/3" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          {/* Header */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="text-center mb-10 sm:mb-14 lg:mb-16"
+            className="text-center mb-14 sm:mb-16 lg:mb-20"
           >
-            <span className="inline-block text-blue-600 text-sm font-semibold tracking-wider uppercase mb-3">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 border border-emerald-200 rounded-full text-emerald-700 text-xs sm:text-sm font-semibold tracking-wide uppercase mb-5">
+              <Zap size={14} />
               What We Offer
             </span>
-            <Typography
-              variant="h3"
-              className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4"
-            >
-              Comprehensive Energy Solutions
-            </Typography>
-            <Typography
-              variant="body1"
-              className="text-gray-500 max-w-3xl mx-auto text-base sm:text-lg"
-            >
-              From solar to hydro, wind to compliance -- everything you need
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
+              Comprehensive Energy{" "}
+              <span className="bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
+                Solutions
+              </span>
+            </h2>
+            <p className="text-gray-500 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed">
+              From solar to hydro, wind to compliance — everything you need
               to participate in Zimbabwe's clean energy marketplace
-            </Typography>
+            </p>
           </motion.div>
 
-          <Grid container spacing={3}>
+          {/* Cards grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
             {features.map((feature, index) => (
-              <Grid item xs={12} sm={6} lg={4} key={index}>
-                <FeatureCard {...feature} delay={index * 0.1} />
-              </Grid>
+              <FeatureCard key={index} {...feature} delay={index * 0.08} />
             ))}
-          </Grid>
+          </div>
         </div>
       </section>
 
