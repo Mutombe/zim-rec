@@ -193,7 +193,7 @@ AUTHENTICATION_BACKENDS = [
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
-FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://zim-rec.co.zw' if not DEBUG else 'http://localhost:5173')
 
 ADMIN_BASE_URL = 'https://zim-rec.co.zw/'
 ADMINS = [('Zim-Rec Admin', 'admin@zim-rec.co.zw')]
