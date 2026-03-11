@@ -23,19 +23,88 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Centralized token refresh function
-export const refreshTokens = async (refresh) => {
-  try {
-    const { data } = await api.post("core/auth/refresh/", { refresh });
-    return {
-      access: data.access,
-      refresh: data.refresh || refresh,
-    };
-  } catch (error) {
-    console.error("Token Refresh Error:", error);
-    throw error;
-  }
+// Response interceptor — auto-refresh on 401
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
 };
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    // Only attempt refresh on 401, not on login/register/refresh requests
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url.includes("login/") &&
+      !originalRequest.url.includes("refresh/") &&
+      !originalRequest.url.includes("register/")
+    ) {
+      if (isRefreshing) {
+        // Queue requests while refresh is in progress
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        }).then((token) => {
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+          return api(originalRequest);
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      const authData = JSON.parse(localStorage.getItem("auth"));
+      const refreshToken = authData?.refresh;
+
+      if (!refreshToken) {
+        isRefreshing = false;
+        processQueue(error, null);
+        // Clear stale auth
+        localStorage.removeItem("auth");
+        return Promise.reject(error);
+      }
+
+      try {
+        const { data } = await axios.post(
+          "https://zim-rec-backend.onrender.com/refresh/",
+          { refresh: refreshToken }
+        );
+
+        const newAccess = data.access;
+        const updatedAuth = {
+          ...authData,
+          access: newAccess,
+        };
+        localStorage.setItem("auth", JSON.stringify(updatedAuth));
+
+        processQueue(null, newAccess);
+
+        originalRequest.headers.Authorization = `Bearer ${newAccess}`;
+        return api(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError, null);
+        // Refresh failed — token fully expired, clear auth
+        localStorage.removeItem("auth");
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export const deviceAPI = {
   getFuelOptions: () => api.get("/fuel-options/"),
