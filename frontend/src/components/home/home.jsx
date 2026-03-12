@@ -223,7 +223,7 @@ const Home = () => {
                   Join the revolution in clean energy trading. Buy, sell, and track renewable energy certificates.
                 </Typography>
 
-                <div className="flex flex-wrap gap-3 sm:gap-4">
+                <div className="flex flex-wrap gap-3 sm:gap-4 pt-2">
                   {isAuthenticated ? (
                     <Button
                       component={Link}
