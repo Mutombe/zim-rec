@@ -258,69 +258,6 @@ const Home = () => {
                 </div>
               </motion.div>
             </Grid>
-            
-            <Grid item xs={12} md={5} className="relative">
-              <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 1, delay: 0.3 }}
-                className="relative"
-              >
-                {/* Main Hero Image */}
-                <div className="relative rounded-3xl overflow-hidden shadow-2xl">
-                  <img
-                    src="https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-                    alt="Solar panels in Zimbabwe landscape"
-                    className="w-full h-64 sm:h-80 lg:h-96 object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-blue-900/50 to-transparent" />
-                  
-                  {/* Floating Energy Icons */}
-                  <motion.div
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                    className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm p-3 rounded-full"
-                  >
-                    <Sun size={24} className="text-yellow-300" />
-                  </motion.div>
-                  
-                  <motion.div
-                    animate={{ y: [0, 10, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, delay: 1 }}
-                    className="absolute bottom-4 left-4 bg-white/20 backdrop-blur-sm p-3 rounded-full"
-                  >
-                    <Wind size={24} className="text-blue-300" />
-                  </motion.div>
-                </div>
-
-                {/* Smaller accent images */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.8, delay: 0.6 }}
-                  className="absolute -bottom-6 -left-6 w-24 h-24 sm:w-32 sm:h-32 rounded-2xl overflow-hidden shadow-xl border-4 border-white"
-                >
-                  <img
-                    src="https://images.unsplash.com/photo-1497440001374-f26997328c1b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                    alt="Wind turbines"
-                    className="w-full h-full object-cover"
-                  />
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.8, delay: 0.9 }}
-                  className="absolute -top-6 -right-6 w-20 h-20 sm:w-28 sm:h-28 rounded-2xl overflow-hidden shadow-xl border-4 border-white"
-                >
-                  <img
-                    src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                    alt="Hydroelectric dam"
-                    className="w-full h-full object-cover"
-                  />
-                </motion.div>
-              </motion.div>
-            </Grid>
           </Grid>
         </div>
 
