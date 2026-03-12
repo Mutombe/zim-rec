@@ -4,6 +4,36 @@ import {
   useLocation
 } from 'react-router-dom';
 import { Toaster } from 'sonner';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+const fontFamily = "'Outfit', 'DM Sans', 'Space Grotesk', 'Sora', sans-serif";
+
+const theme = createTheme({
+  typography: {
+    fontFamily,
+    allVariants: { fontFamily },
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: { fontFamily },
+      },
+    },
+    MuiButton: {
+      styleOverrides: { root: { fontFamily, textTransform: 'none' } },
+    },
+    MuiTypography: {
+      styleOverrides: { root: { fontFamily } },
+    },
+    MuiInputBase: {
+      styleOverrides: { root: { fontFamily } },
+    },
+    MuiMenuItem: {
+      styleOverrides: { root: { fontFamily } },
+    },
+  },
+});
 import GalleryPage from './components/about/gallery';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './components/home/home';
@@ -45,9 +75,11 @@ const Layout = ({ children }) => {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Layout>
-      <Routes>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <BrowserRouter>
+        <Layout>
+        <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
@@ -61,8 +93,9 @@ function App() {
           <Route path="/issue-requests" element={<ProtectedRoute><IssueRequestDashboard /></ProtectedRoute>} />
           <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />
         </Routes>
-      </Layout>
-    </BrowserRouter>
+        </Layout>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 export default App

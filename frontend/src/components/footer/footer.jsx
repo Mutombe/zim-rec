@@ -92,6 +92,14 @@ const Footer = () => {
 
   return (
     <footer className="bg-gradient-to-b from-gray-900 to-gray-950 text-white relative overflow-hidden">
+      {/* Background image blend */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.06]"
+        style={{
+          backgroundImage: `url('https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=2070&q=80')`,
+        }}
+      />
+
       {/* Decorative elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500 rounded-full opacity-[0.04] blur-3xl"></div>
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-500 rounded-full opacity-[0.04] blur-3xl"></div>
