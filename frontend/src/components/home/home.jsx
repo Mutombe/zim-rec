@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { motion, useAnimation } from "framer-motion";
+import React, { useEffect, useState, useCallback } from "react";
+import { motion, useAnimation, AnimatePresence } from "framer-motion";
 import {
   Button,
   Typography,
@@ -86,6 +86,20 @@ const Home = () => {
   const navigate = useNavigate();
   const controls = useScrollAnimation();
 
+  const heroImages = [
+    "https://images.unsplash.com/photo-1466611653911-95081537e5b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+    "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=2070&q=80",
+    "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=2070&q=80",
+  ];
+  const [currentImage, setCurrentImage] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImage((prev) => (prev + 1) % heroImages.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
+
   const features = [
     {
       icon: <Sun size={24} />,
@@ -135,13 +149,20 @@ const Home = () => {
     <div className="overflow-hidden">
       {/* Hero Section */}
       <section className="relative min-h-screen overflow-hidden bg-gradient-to-br from-blue-900 via-blue-700 to-emerald-600">
-        {/* Background Image Overlay */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1466611653911-95081537e5b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`
-          }}
-        />
+        {/* Background Image Carousel */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentImage}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.2 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.5, ease: "easeInOut" }}
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url('${heroImages[currentImage]}')`
+            }}
+          />
+        </AnimatePresence>
         
         {/* Floating Solar Panels */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
